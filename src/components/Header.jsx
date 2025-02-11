@@ -2,57 +2,25 @@ import React, { useState, useEffect, useRef } from "react";
 import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 
-const navItemOptions = {
-    ["Cues & Accessories"]: [
-        {
-            text: "Pool Cues",
-            link: "/collections/available",
-        },
-        {
-            text: "Accessories",
-            link: "/collections/available",
-        },
-        {
-            text: "View All",
-            link: "/collections/available",
-        },
+const options = {
+    "Cues & Accessories": [
+        { text: "Pool Cues", link: "/collections/available" },
+        { text: "Accessories", link: "/collections/available" },
+        { text: "View All", link: "/collections/available" }
     ],
-    ["Materials"]: [
-        {
-            text: "Woods",
-            link: "/collections/materials",
-        },
-        {
-            text: "Crystals",
-            link: "/collections/materials",
-        },
-        {
-            text: "View All",
-            link: "/collections/materials",
-        },
-    ],
-}
+    "Materials": [
+        { text: "Woods", link: "/collections/materials" },
+        { text: "Crystals", link: "/collections/materials" },
+        { text: "View All", link: "/collections/materials" }
+    ]
+};
 
 const navItems = [
-    {
-        text: "Cues & Accessories",
-        options: navItemOptions["Cues & Accessories"],
-    },
-    {
-        text: "Coming Soon",
-        link: "/collections/coming-soon",
-    },
-    {
-        text: "Build-A-Que",
-        link: "/build-a-que",
-    },
-    {
-        text: "Materials",
-        options: navItemOptions["Materials"],
-    }
+    { text: "Cues & Accessories", options: options["Cues & Accessories"] },
+    { text: "Coming Soon", link: "/collections/coming-soon" },
+    { text: "Build-A-Que", link: "/build-a-que" },
+    { text: "Materials", options: options["Materials"] }
 ];
-
-
 
 export default function Header() {
     const [openDropdown, setOpenDropdown] = useState(null);
@@ -72,7 +40,6 @@ export default function Header() {
             }, 300);
         } else {
             // If no dropdown is open, open the new one immediately
-            console.log(openDropdown, item)
             setOpenDropdown(item);
         }
     }
@@ -152,10 +119,8 @@ function NavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}
     // Use the custom hook to handle outside clicks
     useOutsideClick(ref, (e) => {
         if (!isOpen) return;
-        console.log(e)
-        if (text !== e.target.id && e.target.id !== undefined) {
 
-        } else {
+        if (e.target.id === "" && !(text !== e.target.id && e.target.id !== "")) {
             onToggle(text);
         }
     });
@@ -173,7 +138,7 @@ function NavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}
               onKeyDown={isDropdown ? handleKeyDown : undefined}
               tabIndex={0} 
               href={link}
-              className="main-nav-text"
+              className={isOpen ? "main-nav-text open" : "main-nav-text"}
               id={text}
             >
                 {text}
@@ -181,6 +146,7 @@ function NavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}
                     <button 
                       className={isOpen ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down"} 
                       tabIndex={-1}
+                      id={text}
                     />
                 }
             </a>

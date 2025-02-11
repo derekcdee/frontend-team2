@@ -101,12 +101,6 @@ button:hover {
   height: 100%;
   color: var(--miller-white);
 }
-.header-nav-item:hover,
-.header-list-menu a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  color: var(--miller-white);
-}
 .header-nav-item .fa-chevron-down,
 .header-nav-item .fa-chevron-up {
   padding: 0px 0px 0px 7px;
@@ -118,7 +112,9 @@ button:hover {
   cursor: pointer;
   color: var(--miller-white);
 }
-.main-nav-text:hover {
+.main-nav-text:hover,
+.main-nav-text.open,      
+.header-list-menu a:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
   color: var(--miller-white);

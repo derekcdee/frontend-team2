@@ -24,22 +24,25 @@ const navItems = [
 
 export default function Header() {
     const [openDropdown, setOpenDropdown] = useState(null);
+    const [openDrawer, setOpenDrawer] = useState(false);
     const [hasScrolled, setHasScrolled] = useState(false);
-    const timeoutRef = useRef(null);
+    const headerRef = useRef(null);
+
+    if (openDrawer) {
+        document.body.style.overflow = 'hidden'; 
+    } else {
+        document.body.style.overflow = 'auto';   
+    }
 
     const handleDropdown = (item) => {
-        clearTimeout(timeoutRef.current);
-        
         if (openDropdown === item) {
             setOpenDropdown(null);
         } else if (openDropdown) {
-            // If another dropdown is open, first close it, then open the new one after a delay
             setOpenDropdown(null);
-            timeoutRef.current = setTimeout(() => {
+            setTimeout(() => {
                 setOpenDropdown(item);
             }, 300);
         } else {
-            // If no dropdown is open, open the new one immediately
             setOpenDropdown(item);
         }
     }
@@ -54,29 +57,45 @@ export default function Header() {
     }
 
     useEffect(() => {
+        const height = headerRef.current?.offsetHeight;  // Get the current height of the header
+        document.documentElement.style.setProperty('--header-height', `${height}px`);
+    }, [hasScrolled])
+
+    useEffect(() => {
         window.addEventListener('scroll', handleScroll);
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            clearTimeout(timeoutRef.current); // Clear any pending timeouts when the component unmounts
         }
     }, []);
 
     return (
-        <header className="main-header sticky">
+        <header className="main-header sticky" ref={headerRef}>
+            {openDrawer && <div className="overlay" />}
             {/* Drawer */}
             <div className="header-drawer">
-                <button className="fa-solid fa-bars header-icon" />
+                <button className={openDrawer ? "fa-solid fa-xmark header-icon" : "fa-solid fa-bars header-icon"} onClick={() => setOpenDrawer(!openDrawer)}/>
 
                 {/* MENU DRAWER HERE*/}
-                <div> 
+                <div className={openDrawer ? "header-drawer-menu open" : "header-drawer-menu"}>
+                    
                     {/* MENU DRAWER NAV*/}
-                    <nav>
+                    <nav className="header-drawer-nav">
+                        <ul className="list-menu">
+                            {navItems.map((navItem) => {
+                                const { text, link, options } = navItem;
 
+                                return (
+                                    <li>
+                                        <DrawerNavItem text={text} />
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </nav>
                     {/* MENU DRAWER FOOTER*/}
-                    <div>
-
+                    <div className="menu-drawer-footer">
+                        footer
                     </div>
                 </div>
             </div>
@@ -90,13 +109,13 @@ export default function Header() {
 
             {/* Nav Section w/ Dropdown Menu*/}
             <nav className="header-navigation">
-                <ul className="header-list-menu">
+                <ul className="header-list-menu list-menu">
                     {navItems.map((navItem) => {
                         const { text, link, options } = navItem;
 
                         return (
                             <li>
-                                <NavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} />
+                                <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} />
                             </li>
                         );
                     })}
@@ -113,7 +132,7 @@ export default function Header() {
     );
 }
 
-function NavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}) {
+function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}) {
     const ref = useRef(null); // Create a ref for the dropdown container
 
     // Use the custom hook to handle outside clicks
@@ -166,6 +185,25 @@ function NavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}
                     })}
                 </ul>
             </div>
+        </div>
+    );
+}
+
+function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, link = false }) {
+    return (
+        <div className="drawer-nav-item">
+            <a
+                onClick={isDropdown ? () => onToggle(text) : undefined}
+                onKeyDown={isDropdown ? handleKeyDown : undefined}
+                tabIndex={0}
+                href={link}
+                id={text}
+                className="main-nav-text"
+            >
+                {text}
+                <button className="fa-solid fa-arrow-right" tabIndex={-1} />
+            </a>
+           
         </div>
     );
 }

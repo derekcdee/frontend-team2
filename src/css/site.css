@@ -11,6 +11,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+
 }
 
 a {
@@ -51,6 +53,23 @@ button:hover {
   border-color: #646cff;
 }
 
+.overlay {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+.list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
 
 /*==============================================================
 # Header
@@ -58,7 +77,7 @@ button:hover {
 .main-header {
   background-color: var(--miller-black);
   color: var(--miller-white);
-  z-index: 1;
+  z-index: 5;
   align-items: center;
   padding: 4px 50px 4px 50px;
 
@@ -71,6 +90,38 @@ button:hover {
 .header-drawer {
   grid-area: drawer;
 }
+.header-drawer-menu {
+  position: absolute;
+  background: #333 !important;
+  z-index: 1;
+  left: 0;
+  top: 100%;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+
+  display: none;
+  grid-template-rows: 1fr auto;
+  align-content: space-between;
+  height: calc(100vh - var(--header-height));
+}
+.header-drawer-menu.open {
+  display: grid;
+}
+@media (min-width: 750px) {
+  .header-drawer-menu {
+    width: 400px;
+  }
+}
+.header-drawer-nav {
+  padding: 30px 0px;
+}
+.drawer-nav-item {
+  padding: 6px 52px 6px 30px;
+  font-size: 20px;
+  display: flex;
+  align-content: space-between;
+}
 
 .header-navigation {
   display: none;
@@ -81,9 +132,6 @@ button:hover {
 .header-list-menu {
   display: inline-flex;
   flex-wrap: wrap;
-  list-style: none;
-  padding: 0;
-  margin: 0;
 }
 .header-list-sub-menu {
   list-style: none;
@@ -179,6 +227,9 @@ button:hover {
 }
 .header-icon.fa-bars {
   font-size: 1.2em;
+}
+.header-icon.fa-xmark {
+  font-size: 2.5rem;
 }
 .header-icon:hover {
   transform: scale(1.25);

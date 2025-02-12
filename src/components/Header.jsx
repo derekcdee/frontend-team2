@@ -27,9 +27,28 @@ export default function Header() {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [hasScrolled, setHasScrolled] = useState(false);
+    const [focusTrap, setFocusTrap] = useState(null);
     const headerRef = useRef(null);
 
-    const [focusTrap, setFocusTrap] = useState(null);
+    const handleDropdown = (item) => {
+        if (openDropdown === item) {
+            setOpenDropdown(null);
+        } else if (openDropdown) {
+            setOpenDropdown(null);
+            setTimeout(() => {
+                setOpenDropdown(item);
+            }, 300);
+        } else {
+            setOpenDropdown(item);
+        }
+    }
+
+    if (openDrawer) {
+        document.body.style.overflow = 'hidden'; 
+    } else {
+        document.body.style.overflow = 'auto';   
+    }
+
     useEffect(() => {
         if (openDrawer) {
             const trap = createFocusTrap('.main-header', {
@@ -47,44 +66,34 @@ export default function Header() {
         }
     }, [openDrawer]);
 
-    if (openDrawer) {
-        document.body.style.overflow = 'hidden'; 
-    } else {
-        document.body.style.overflow = 'auto';   
-    }
-
-    const handleDropdown = (item) => {
-        if (openDropdown === item) {
-            setOpenDropdown(null);
-        } else if (openDropdown) {
-            setOpenDropdown(null);
-            setTimeout(() => {
-                setOpenDropdown(item);
-            }, 300);
-        } else {
-            setOpenDropdown(item);
-        }
-    }
-
-    const handleScroll = () => {
-        const offset = 100;
-        if (window.scrollY > offset) {
-            setHasScrolled(true);
-        } else if (window.scrollY === 0) {
-            setHasScrolled(false);
-        }
-    }
-
     useEffect(() => {
-        const height = headerRef.current?.offsetHeight;  // Get the current height of the header
+        const height = headerRef.current?.offsetHeight;
         document.documentElement.style.setProperty('--header-height', `${height}px`);
     }, [hasScrolled])
 
     useEffect(() => {
+        const handleScroll = () => {
+            const offset = 100;
+            if (window.scrollY > offset) {
+                setHasScrolled(true);
+            } else if (window.scrollY === 0) {
+                setHasScrolled(false);
+            }
+        }
+    
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape' && openDrawer) {
+                setOpenDrawer(false);
+                focusTrap && focusTrap.deactivate();
+            }
+        };
+
         window.addEventListener('scroll', handleScroll);
+        window.addEventListener('keydown', handleKeyDown);
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener('keydown', handleKeyDown);
         }
     }, []);
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
+import { createFocusTrap } from "focus-trap";
 
 const options = {
     "Cues & Accessories": [
@@ -27,6 +28,24 @@ export default function Header() {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [hasScrolled, setHasScrolled] = useState(false);
     const headerRef = useRef(null);
+
+    const [focusTrap, setFocusTrap] = useState(null);
+    useEffect(() => {
+        if (openDrawer) {
+            const trap = createFocusTrap('.main-header', {
+                onActivate: () => document.body.classList.add('trap-is-active'),
+                onDeactivate: () => document.body.classList.remove('trap-is-active'),
+                initialFocus: openDrawer ? '.header-drawer' : undefined,
+                fallbackFocus: '.main-header',
+                escapeDeactivates: true,
+                clickOutsideDeactivates: true
+            });
+            trap.activate();
+            setFocusTrap(trap);
+        } else if (focusTrap) {
+            focusTrap.deactivate();
+        }
+    }, [openDrawer]);
 
     if (openDrawer) {
         document.body.style.overflow = 'hidden'; 
@@ -71,7 +90,7 @@ export default function Header() {
 
     return (
         <header className="main-header sticky" ref={headerRef}>
-            {openDrawer && <div className="overlay" />}
+            {openDrawer && <div className="overlay header-overlay" />}
             {/* Drawer */}
             <div className="header-drawer">
                 <button className={openDrawer ? "fa-solid fa-xmark header-icon" : "fa-solid fa-bars header-icon"} onClick={() => setOpenDrawer(!openDrawer)}/>
@@ -80,7 +99,7 @@ export default function Header() {
                 <div className={openDrawer ? "header-drawer-menu open" : "header-drawer-menu"}>
                     
                     {/* MENU DRAWER NAV*/}
-                    <nav className="header-drawer-nav">
+                    <nav className="drawer-nav">
                         <ul className="list-menu">
                             {navItems.map((navItem) => {
                                 const { text, link, options } = navItem;
@@ -94,7 +113,7 @@ export default function Header() {
                         </ul>
                     </nav>
                     {/* MENU DRAWER FOOTER*/}
-                    <div className="menu-drawer-footer">
+                    <div className="drawer-footer">
                         footer
                     </div>
                 </div>
@@ -198,7 +217,7 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
                 tabIndex={0}
                 href={link}
                 id={text}
-                className="main-nav-text"
+                className="drawer-nav-text"
             >
                 {text}
                 <button className="fa-solid fa-arrow-right" tabIndex={-1} />

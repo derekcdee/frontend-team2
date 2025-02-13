@@ -28,10 +28,10 @@ export default function Header() {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [hasScrolled, setHasScrolled] = useState(false);
     const [focusTrap, setFocusTrap] = useState(null);
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const headerRef = useRef(null);
 
     const handleDropdown = (item) => {
-        console.log(item)
         if (openDropdown === item) {
             setOpenDropdown(null);
         } else if (openDropdown) {
@@ -44,12 +44,6 @@ export default function Header() {
         }
     }
 
-    if (openDrawer) {
-        document.body.style.overflow = 'hidden'; 
-    } else {
-        document.body.style.overflow = 'auto';   
-    }
-
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === 'Escape' && openDrawer) {
@@ -58,11 +52,17 @@ export default function Header() {
             }
         };
 
-        if (openDrawer) {
+        if (openDrawer && screenWidth <= 990) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        if (openDrawer && screenWidth <= 990) {
             const trap = createFocusTrap('.main-header', {
                 onActivate: () => document.body.classList.add('trap-is-active'),
                 onDeactivate: () => document.body.classList.remove('trap-is-active'),
-                initialFocus: openDrawer ? '.header-drawer' : undefined,
+                initialFocus: '.header-drawer',
                 fallbackFocus: '.main-header',
                 escapeDeactivates: true,
                 clickOutsideDeactivates: true
@@ -70,19 +70,23 @@ export default function Header() {
             trap.activate();
             setFocusTrap(trap);
 
-            // Add keydown listener
+            // Add keydown event listener
             document.addEventListener('keydown', handleKeyDown);
         } else {
-            focusTrap && focusTrap.deactivate();
+            if (focusTrap) {
+                focusTrap.deactivate();
+            }
             document.removeEventListener('keydown', handleKeyDown);
         }
 
-        // Cleanup function
+        // Cleanup function to deactivate focus trap and remove event listener
         return () => {
-            focusTrap && focusTrap.deactivate();
+            if (focusTrap) {
+                focusTrap.deactivate();
+            }
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [openDrawer]);
+    }, [openDrawer, screenWidth]);
 
     useEffect(() => {
         const height = headerRef.current?.offsetHeight;
@@ -103,6 +107,12 @@ export default function Header() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => setScreenWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (

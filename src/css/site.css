@@ -124,6 +124,9 @@ button:hover {
     width: 400px;
   }
 }
+.header-drawer-menu.hidden {
+
+}
 
 .sub-menu {
   transform: translateX(100%);
@@ -155,6 +158,10 @@ button:hover {
 .drawer-nav-text.left {
   padding: 6px 35px 6px 15px;
   justify-content: left;
+}
+
+.drawer-nav-text.hidden {
+  display: none;
 }
 
 .header-navigation {

@@ -133,7 +133,7 @@ export default function Header() {
 
                                 return (
                                     <li>
-                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} />
+                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown}/>
                                     </li>
                                 );
                             })}
@@ -235,9 +235,7 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
     );
 }
 
-function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, link = false, isLeft=false }) {
-    
-
+function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, options = false, link = false, isLeft=false }) {
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             onToggle(text);
@@ -254,7 +252,7 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
                 tabIndex={0}
                 href={link}
                 id={text}
-                className={isLeft ? "drawer-nav-text left" : "drawer-nav-text"}
+                className={isLeft ? "drawer-nav-text left" : openDropdown ? "drawer-nav-text hidden" : "drawer-nav-text"}
             >
                 {isLeft ?
                 <>

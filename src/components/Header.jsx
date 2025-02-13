@@ -234,7 +234,7 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
         }
     };
 
-    const allOptions = options?.length ? [{ text: "Back", onToggle: () => onToggle(text) }, ...options ] : options;
+    const allOptions = options?.length ? [{ text: text, onToggle: () => onToggle(text) }, ...options ] : options;
 
     return (
         <div className="drawer-nav-item">

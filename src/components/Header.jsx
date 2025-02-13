@@ -31,6 +31,7 @@ export default function Header() {
     const headerRef = useRef(null);
 
     const handleDropdown = (item) => {
+        console.log(item)
         if (openDropdown === item) {
             setOpenDropdown(null);
         } else if (openDropdown) {
@@ -122,7 +123,7 @@ export default function Header() {
 
                                 return (
                                     <li>
-                                        <DrawerNavItem text={text} />
+                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} />
                                     </li>
                                 );
                             })}
@@ -225,6 +226,16 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
 }
 
 function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, link = false }) {
+    
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            onToggle(text);
+        }
+    };
+
+    const allOptions = options?.length ? [{ text: "Back", onToggle: () => onToggle(text) }, ...options ] : options;
+
     return (
         <div className="drawer-nav-item">
             <a
@@ -240,9 +251,23 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
             </a>
 
             {/* SUB DRAWER MENU */}
-            {/* <div>
-                
-            </div> */}
+            <div className={isOpen ? "header-drawer-menu open sub-menu" : "header-drawer-menu sub-menu"}>
+                {/* MENU DRAWER NAV*/}
+                <nav className="drawer-nav">
+                    <ul className="list-menu">
+                        {allOptions?.length && allOptions.map((navItem) => {
+                            const { link, onToggle } = navItem;
+                            const subText = navItem.text;
+
+                            return (
+                                <li>
+                                    <DrawerNavItem text={subText} link={link} onToggle={() => onToggle(text)} isDropdown={true}/>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </nav>
+            </div>
         </div>
     );
 }

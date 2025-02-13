@@ -138,17 +138,23 @@ button:hover {
 }
 .drawer-nav-item {
   font-size: 20px;
-
 }
 .drawer-nav-text {
   padding: 6px 15px 6px 35px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--miller-white);
 }
-.drawer-nav-item .fa-arrow-right {
+.drawer-nav-item .fa-arrow-right,
+.drawer-nav-item .fa-arrow-left {
   align-self: flex-end;
   font-size: 1rem;
+}
+
+.drawer-nav-text.left {
+  padding: 6px 35px 6px 15px;
+  justify-content: left;
 }
 
 .header-navigation {

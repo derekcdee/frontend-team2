@@ -235,7 +235,7 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
     );
 }
 
-function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, link = false }) {
+function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, link = false, isLeft=false }) {
     
 
     const handleKeyDown = (event) => {
@@ -244,7 +244,7 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
         }
     };
 
-    const allOptions = options?.length ? [{ text: text, onToggle: () => onToggle(text) }, ...options ] : options;
+    const allOptions = options?.length ? [{ text: text, onToggle: () => onToggle(text), isLeft: true }, ...options ] : options;
 
     return (
         <div className="drawer-nav-item">
@@ -254,10 +254,20 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
                 tabIndex={0}
                 href={link}
                 id={text}
-                className="drawer-nav-text"
+                className={isLeft ? "drawer-nav-text left" : "drawer-nav-text"}
             >
-                {text}
-                <button className="fa-solid fa-arrow-right" tabIndex={-1} />
+                {isLeft ?
+                <>
+                    <button className="fa-solid fa-arrow-left" tabIndex={-1} />
+                    {text}
+                </>
+                :
+                <>
+                    {text}
+                    {!link && <button className="fa-solid fa-arrow-right" tabIndex={-1} />}
+                </>
+                }
+                
             </a>
 
             {/* SUB DRAWER MENU */}
@@ -266,12 +276,12 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
                 <nav className="drawer-nav">
                     <ul className="list-menu">
                         {allOptions?.length && allOptions.map((navItem) => {
-                            const { link, onToggle } = navItem;
+                            const { link, onToggle, isLeft } = navItem;
                             const subText = navItem.text;
 
                             return (
                                 <li>
-                                    <DrawerNavItem text={subText} link={link} onToggle={() => onToggle(text)} isDropdown={true}/>
+                                    <DrawerNavItem text={subText} link={link} onToggle={() => onToggle(text)} isDropdown={true} isLeft={isLeft}/>
                                 </li>
                             );
                         })}

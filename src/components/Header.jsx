@@ -50,6 +50,13 @@ export default function Header() {
     }
 
     useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape' && openDrawer) {
+                setOpenDrawer(false);
+                focusTrap && focusTrap.deactivate();
+            }
+        };
+
         if (openDrawer) {
             const trap = createFocusTrap('.main-header', {
                 onActivate: () => document.body.classList.add('trap-is-active'),
@@ -61,9 +68,19 @@ export default function Header() {
             });
             trap.activate();
             setFocusTrap(trap);
-        } else if (focusTrap) {
-            focusTrap.deactivate();
+
+            // Add keydown listener
+            document.addEventListener('keydown', handleKeyDown);
+        } else {
+            focusTrap && focusTrap.deactivate();
+            document.removeEventListener('keydown', handleKeyDown);
         }
+
+        // Cleanup function
+        return () => {
+            focusTrap && focusTrap.deactivate();
+            document.removeEventListener('keydown', handleKeyDown);
+        };
     }, [openDrawer]);
 
     useEffect(() => {
@@ -76,25 +93,15 @@ export default function Header() {
             const offset = 100;
             if (window.scrollY > offset) {
                 setHasScrolled(true);
-            } else if (window.scrollY === 0) {
+            } else {
                 setHasScrolled(false);
-            }
-        }
-    
-        const handleKeyDown = (event) => {
-            if (event.key === 'Escape' && openDrawer) {
-                setOpenDrawer(false);
-                focusTrap && focusTrap.deactivate();
             }
         };
 
         window.addEventListener('scroll', handleScroll);
-        window.addEventListener('keydown', handleKeyDown);
-
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            document.removeEventListener('keydown', handleKeyDown);
-        }
+        };
     }, []);
 
     return (
@@ -231,7 +238,11 @@ function DrawerNavItem({ text, isDropdown, isOpen, onToggle, options = false, li
                 {text}
                 <button className="fa-solid fa-arrow-right" tabIndex={-1} />
             </a>
-           
+
+            {/* SUB DRAWER MENU */}
+            {/* <div>
+                
+            </div> */}
         </div>
     );
 }

@@ -140,8 +140,15 @@ export default function Header() {
                         </ul>
                     </nav>
                     {/* MENU DRAWER FOOTER*/}
-                    <div className="drawer-footer">
-                        footer
+                    <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
+                        <a className="drawer-foot-nav-text" tabIndex={0} href="/">
+                            <button className="fa-solid fa-user drawer-login-icon" tabIndex={-1}/>
+                            Log In
+                        </a>
+                        <div>
+                            <button className="fa-brands fa-instagram header-icon" />
+                            <button className="fa-brands fa-facebook header-icon" />
+                        </div>
                     </div>
                 </div>
             </div>

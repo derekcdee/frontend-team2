@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 import { createFocusTrap } from "focus-trap";
+import { LoginButton } from "./util/Buttons";
 
 const options = {
     "Cues & Accessories": [
@@ -178,7 +179,7 @@ export default function Header() {
             {/* Icons */}
             <div className="header-icons">
                 <button className="fa-solid fa-magnifying-glass header-icon" />
-                <button className="fa-solid fa-user header-icon" />
+                <LoginButton />
                 <button className="fa-solid fa-cart-shopping header-icon" />
             </div>
         </header>

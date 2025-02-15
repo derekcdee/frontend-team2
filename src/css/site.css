@@ -124,9 +124,6 @@ button:hover {
     width: 400px;
   }
 }
-.header-drawer-menu.hidden {
-
-}
 
 .sub-menu {
   transform: translateX(100%);
@@ -149,6 +146,9 @@ button:hover {
   justify-content: space-between;
   color: var(--miller-white);
   cursor: pointer;
+}
+.drawer-nav-text:hover {
+  background-color: rgb(109, 109, 109);
 }
 .drawer-foot-nav-text {
   color: var(--miller-white);

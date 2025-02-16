@@ -1,5 +1,6 @@
 :root {
     --miller-black: rgb(0, 0, 0);
+    --miller-dark-grey: rgb(42, 42, 42);
     --miller-red: rgb(250, 49, 41);
     --miller-white: rgb(255, 255, 255);
 }

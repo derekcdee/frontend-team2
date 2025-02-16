@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 import { createFocusTrap } from "focus-trap";
-import { LoginButton } from "./util/Buttons";
+import { DrawerLoginButton, LoginButton } from "./util/Buttons";
 
 const options = {
     "Cues & Accessories": [
@@ -142,10 +142,7 @@ export default function Header() {
                     </nav>
                     {/* MENU DRAWER FOOTER*/}
                     <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
-                        <a className="drawer-foot-nav-text" tabIndex={0} href="/">
-                            <button className="fa-solid fa-user drawer-login-icon" tabIndex={-1}/>
-                            Log In
-                        </a>
+                        <DrawerLoginButton />
                         <div>
                             <button className="fa-brands fa-instagram header-icon" />
                             <button className="fa-brands fa-facebook header-icon" />

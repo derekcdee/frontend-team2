@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FormField } from "../util/Inputs";
 import { useForm } from "react-hook-form";
+import { Button } from "../util/Buttons";
 
 export default function LoginPage () {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
@@ -44,7 +45,7 @@ export default function LoginPage () {
 
                 {/* ACTIONS */}
                 <div>
-                    <button type="submit">Submit</button>
+                    <Button text="Sign in"/>
                 </div>
             </form>
         </section>

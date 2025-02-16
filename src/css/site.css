@@ -52,10 +52,6 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
 }
 
 .overlay {
@@ -104,7 +100,7 @@ button:hover {
 .header-drawer-menu {
   display: grid;
   position: absolute;
-  background: #333 !important;
+  background: var(--miller-dark-grey);
   z-index: 10;
   left: 0;
   top: 100%;
@@ -251,7 +247,7 @@ button:hover {
   overflow-y: auto;
   right: 0;
   top: 100%;
-  background-color: #424242;
+  background-color: var(--miller-dark-grey);
   display: none;
 }
 .dropdown-menu.open {

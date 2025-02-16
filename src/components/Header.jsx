@@ -99,7 +99,7 @@ export default function Header() {
             const offset = 100;
             if (window.scrollY > offset) {
                 setHasScrolled(true);
-            } else {
+            } else if (window.scrollY === 0) {
                 setHasScrolled(false);
             }
         };

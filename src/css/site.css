@@ -97,6 +97,7 @@ button:hover {
   grid-area: drawer;
 }
 .header-drawer-menu {
+  display: grid;
   position: absolute;
   background: #333 !important;
   z-index: 1;
@@ -114,7 +115,6 @@ button:hover {
   transition: transform 0.2s ease, visibility 0s linear 0.2s;
 }
 .header-drawer-menu.open {
-  display: grid;
   transform: translateX(0%);
   visibility: visible;
   transition: transform 0.2s ease, visibility 0s 0s;

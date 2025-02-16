@@ -38,8 +38,13 @@ h1 {
   line-height: 1.1;
 }
 
+input {
+  border-radius: 3px;
+  background-color: #f4f4f4;
+}
+
 button {
-  border-radius: 8px;
+  border-radius: 3px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -77,14 +82,14 @@ button:hover {
 .main-header {
   background-color: var(--miller-black);
   color: var(--miller-white);
-  z-index: 5;
+  z-index: 10;
   align-items: center;
   padding: 4px 30px 4px 30px;
 
   display: grid;
   grid-template-areas: "drawer heading icons";
   grid-template-columns: 1fr 6fr 1fr;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 6px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 
 @media (min-width: 990px) {
@@ -100,7 +105,7 @@ button:hover {
   display: grid;
   position: absolute;
   background: #333 !important;
-  z-index: 1;
+  z-index: 10;
   left: 0;
   top: 100%;
   padding: 0;

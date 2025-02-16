@@ -63,8 +63,6 @@
     }
 }
 
-
-
 .featured-listing ul li {
     width: calc(50% - 8px * 3 / 4);
     flex-grow: 1;

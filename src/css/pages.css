@@ -18,10 +18,11 @@
 # Login page
 ==============================================================*/
 .login-area {
-    padding: 25px;
     border-radius: 10px;
     background-color: var(--miller-white);
     border: none;
+    max-width: 500px;
+    width: 100%;
 }
 @media (min-width: 500px) {
     .login-area {
@@ -40,7 +41,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 450px;
+    padding: 0 20px 20px 20px;
 }
 
 .login-actions {

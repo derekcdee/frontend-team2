@@ -44,8 +44,12 @@ export default function LoginPage () {
                 {errors.password && <p>{errors.password.message}</p>}
 
                 {/* ACTIONS */}
-                <div>
+                <div className="login-actions">
                     <Button text="Sign in"/>
+                    <div>
+                        <p>New customer? <a href="/account/login">Create account</a></p>
+                        <a href="/account/login">Forgot your password?</a>
+                    </div>
                 </div>
             </form>
         </section>

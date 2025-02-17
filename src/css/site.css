@@ -41,7 +41,7 @@ h1 {
 
 input {
   border-radius: 3px;
-  background-color: #f4f4f4;
+  background-color: var(--miller-white);
 }
 
 button {

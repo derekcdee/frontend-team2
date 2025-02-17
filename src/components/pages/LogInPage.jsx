@@ -19,7 +19,7 @@ export default function LoginPage () {
     const password = watch("password");
 
     return (
-        <section className="page-content">
+        <section className="form-content">
             <div className="login-area">
                 {/* HEADER */}
                 <h1 className="login-page-title">
@@ -48,8 +48,12 @@ export default function LoginPage () {
                     <div className="login-actions">
                         <Button text="Sign in"/>
                         <div>
-                            <p>New customer? <a href="/account/login">Create account</a></p>
-                            <a href="/account/login">Forgot your password?</a>
+                            <span className="form-action-row">
+                                New customer? <a href="/account/login">Create account</a>
+                            </span>
+                            <span className="form-action-row">
+                                <a href="/account/login">Forgot your password?</a>
+                            </span>
                         </div>
                     </div>
                 </form>

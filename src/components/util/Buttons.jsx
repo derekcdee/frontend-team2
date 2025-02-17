@@ -48,7 +48,7 @@ export function Button({text, onClick}) {
     const handleClick = (e) => {
         createRipple(e)
         onClick && onClick(e);
-    }
+    };
 
     return (
         <button className="default-button" onClick={handleClick}>

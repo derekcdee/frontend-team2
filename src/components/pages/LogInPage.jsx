@@ -19,39 +19,41 @@ export default function LoginPage () {
     const password = watch("password");
 
     return (
-        <section className="login-page">
-            {/* HEADER */}
-            <h1 className="login-page-title">
-                Login
-            </h1>
+        <section className="page-content">
+            <div className="login-area">
+                {/* HEADER */}
+                <h1 className="login-page-title">
+                    Login
+                </h1>
 
-            {/* FIELDS */}
-            <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-                <FormField 
-                    title="Email"
-                    type="text"
-                    value={email}
-                    {...register("email")} 
-                />
-                {errors.email && <p>{errors.email.message}</p>}
+                {/* FIELDS */}
+                <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
+                    <FormField 
+                        title="Email"
+                        type="text"
+                        value={email}
+                        {...register("email")} 
+                    />
+                    {errors.email && <p>{errors.email.message}</p>}
 
-                <FormField 
-                    title="Password"
-                    type="password"
-                    value={password}
-                    {...register("password")} 
-                />
-                {errors.password && <p>{errors.password.message}</p>}
+                    <FormField 
+                        title="Password"
+                        type="password"
+                        value={password}
+                        {...register("password")} 
+                    />
+                    {errors.password && <p>{errors.password.message}</p>}
 
-                {/* ACTIONS */}
-                <div className="login-actions">
-                    <Button text="Sign in"/>
-                    <div>
-                        <p>New customer? <a href="/account/login">Create account</a></p>
-                        <a href="/account/login">Forgot your password?</a>
+                    {/* ACTIONS */}
+                    <div className="login-actions">
+                        <Button text="Sign in"/>
+                        <div>
+                            <p>New customer? <a href="/account/login">Create account</a></p>
+                            <a href="/account/login">Forgot your password?</a>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </section>
     );
 }

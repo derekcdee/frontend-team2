@@ -160,6 +160,7 @@ p {
 }
 .drawer-nav-text:hover {
   background-color: rgb(109, 109, 109);
+  color: var(--miller-white);
 }
 .drawer-foot-nav-text {
   color: var(--miller-white);

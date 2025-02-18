@@ -10,7 +10,7 @@
 }
 
 .form-field-input {
-    border: 1px solid #d7d7d7;
+    border: 1px solid #c9c9c9;
     padding: 24px 10px 6px 10px;
     height: 18px;
     color: var(--miller-black);
@@ -39,7 +39,7 @@
 }
 
 .form-field-input:hover {
-    border: 1px solid #a8a8a8;
+    border: 1px solid #a0a0a0;
 }
 
 .form-field-input:focus{

@@ -33,17 +33,25 @@ export default function LoginPage () {
                         type="text"
                         value={email}
                         onChange={(e) => console.log(e.target.value)}
-                        {...register("email")} 
+                        error={errors.email && errors.email.message}
+                        {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                                value: /^[^@ ]+@[^@ ]+\.[^@ .]{1,}$/,
+                                message: "Invalid email address"
+                            }
+                        })} 
                     />
-                    {errors.email && <p>{errors.email.message}</p>}
 
                     <FormField 
                         title="Password"
                         type="password"
                         value={password}
-                        {...register("password")} 
+                        error={errors.password && errors.password.message}
+                        {...register("password", {
+                            required: "Password is required",
+                        })} 
                     />
-                    {errors.password && <p>{errors.password.message}</p>}
 
                     {/* ACTIONS */}
                     <div className="login-actions">

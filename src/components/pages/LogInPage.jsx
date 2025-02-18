@@ -50,7 +50,7 @@ export default function LoginPage () {
                         <Button text="Sign in"/>
                         <div>
                             <span className="form-action-row">
-                                New customer? <a href="/account/login">Create account</a>
+                                New customer? <a href="/account/create-account">Create account</a>
                             </span>
                             <span className="form-action-row">
                                 <a href="/account/login">Forgot your password?</a>

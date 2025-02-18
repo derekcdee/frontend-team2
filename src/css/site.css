@@ -18,6 +18,11 @@
 a {
   font-weight: 400;
   text-decoration: inherit;
+  color: var(--miller-red);
+}
+
+a:hover {
+  color: rgb(255, 95, 90);;
 }
 
 body {
@@ -31,6 +36,7 @@ body {
 #root {
   display: grid;
   grid-template-rows: auto 1fr auto;
+  height: 100vh;
 }
 
 h1 {
@@ -38,8 +44,13 @@ h1 {
   line-height: 1.1;
 }
 
+input {
+  border-radius: 3px;
+  background-color: var(--miller-white);
+}
+
 button {
-  border-radius: 8px;
+  border-radius: 3px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -47,10 +58,6 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
 }
 
 .overlay {
@@ -70,6 +77,10 @@ button:hover {
     margin: 0;
 }
 
+p {
+  margin: 0
+}
+
 
 /*==============================================================
 # Header
@@ -77,14 +88,14 @@ button:hover {
 .main-header {
   background-color: var(--miller-black);
   color: var(--miller-white);
-  z-index: 5;
+  z-index: 10;
   align-items: center;
-  padding: 4px 50px 4px 50px;
+  padding: 4px 30px 4px 30px;
 
   display: grid;
   grid-template-areas: "drawer heading icons";
   grid-template-columns: 1fr 6fr 1fr;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 6px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 
 @media (min-width: 990px) {
@@ -97,9 +108,10 @@ button:hover {
   grid-area: drawer;
 }
 .header-drawer-menu {
+  display: grid;
   position: absolute;
-  background: #333 !important;
-  z-index: 1;
+  background: var(--miller-dark-grey);
+  z-index: 10;
   left: 0;
   top: 100%;
   padding: 0;
@@ -114,7 +126,6 @@ button:hover {
   transition: transform 0.2s ease, visibility 0s linear 0.2s;
 }
 .header-drawer-menu.open {
-  display: grid;
   transform: translateX(0%);
   visibility: visible;
   transition: transform 0.2s ease, visibility 0s 0s;
@@ -149,6 +160,7 @@ button:hover {
 }
 .drawer-nav-text:hover {
   background-color: rgb(109, 109, 109);
+  color: var(--miller-white);
 }
 .drawer-foot-nav-text {
   color: var(--miller-white);
@@ -246,7 +258,7 @@ button:hover {
   overflow-y: auto;
   right: 0;
   top: 100%;
-  background-color: #424242;
+  background-color: var(--miller-dark-grey);
   display: none;
 }
 .dropdown-menu.open {
@@ -314,6 +326,7 @@ button:hover {
 @media (min-width: 990px) {
   .main-header {
     grid-template-areas: "heading navigation icons";
+    padding: 6px 50px 6px 50px;
   }
 
   .header-drawer {

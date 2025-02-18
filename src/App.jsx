@@ -9,6 +9,7 @@ import ProductPage from "./components/pages/ProductPage.jsx";
 import MaterialPage from "./components/pages/MaterialPage.jsx";
 import BuildAQuePage from "./components/pages/BuildAQuePage.jsx";
 import NotFoundPage from "./components/pages/NotFoundPage.jsx";
+import LoginPage from "./components/pages/LogInPage.jsx";
 
 import "./css/fontawesome/fontawesome.css";
 import "./css/fontawesome/brands.css";
@@ -46,16 +47,20 @@ function App() {
           {/* 
             User Pages
           */}
-          <Route path="/login" element={<Navigate to="/" replace />} />
-          <Route path="/password-reset" element={<Navigate to="/" replace />} />
+          
   
-          {/* <Route path="/user">
+          <Route path="/account">
             <Route index element={<Navigate to="/" replace />} />
-            <Route path="account" element={<CollectionsPage />} />
-            <Route path="orders" element={<CollectionsPage />} />
-            <Route path="notifications" element={<CollectionsPage />} />
-            <Route path="admin" element={<CollectionsPage />} />
-          </Route> */}
+            <Route path="login" element={<LoginPage />} />
+            <Route path="password-reset" element={<Navigate to="/" replace />} />
+            <Route path="password-request" element={<Navigate to="/" replace />} />
+            <Route path="2fa" element={<Navigate to="/" replace />} />
+
+            <Route path="details" element={<Navigate to="/" replace />} />
+            <Route path="orders" element={<Navigate to="/" replace />} />
+            <Route path="notifications" element={<Navigate to="/" replace />} />
+            <Route path="admin" element={<Navigate to="/" replace />} />
+          </Route>
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

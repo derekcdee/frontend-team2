@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-export const FormField = forwardRef(({ type = "text", title, value, ...restProps }, ref) => {
+export const FormField = forwardRef(({ type = "text", title, value, onChange, ...restProps }, ref) => {
     
     return (
         <div className={value?.length ? "form-field text-within" : "form-field"}>
@@ -10,6 +10,7 @@ export const FormField = forwardRef(({ type = "text", title, value, ...restProps
                 autoCapitalize="off"
                 autoCorrect="off"
                 className="form-field-input"
+                onChange={onChange}
                 {...restProps}
             />
             <label className="form-field-title">

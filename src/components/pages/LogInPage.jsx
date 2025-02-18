@@ -32,6 +32,7 @@ export default function LoginPage () {
                         title="Email"
                         type="text"
                         value={email}
+                        onChange={(e) => console.log(e.target.value)}
                         {...register("email")} 
                     />
                     {errors.email && <p>{errors.email.message}</p>}

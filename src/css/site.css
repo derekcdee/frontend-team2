@@ -18,6 +18,11 @@
 a {
   font-weight: 400;
   text-decoration: inherit;
+  color: var(--miller-red);
+}
+
+a:hover {
+  color: rgb(255, 95, 90);;
 }
 
 body {

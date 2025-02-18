@@ -48,8 +48,14 @@
     display: grid;
     font-size: 15px;
     gap: 20px;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: none;
+    grid-template-rows: auto 1fr;
     align-items: center;
+}
+@media (min-width: 500px) {
+    .login-actions {
+        grid-template-columns: auto 1fr;
+    }
 }
 
 .form-action-row {

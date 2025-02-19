@@ -10,7 +10,7 @@ import MaterialPage from "./components/pages/MaterialPage.jsx";
 import BuildAQuePage from "./components/pages/BuildAQuePage.jsx";
 import NotFoundPage from "./components/pages/NotFoundPage.jsx";
 import LoginPage from "./components/pages/LogInPage.jsx";
-// import CreateAccountPage from "./components/pages/CreateAccountPage.jsx";
+import CreateAccountPage from "./components/pages/CreateAccountPage.jsx";
 
 import "./css/fontawesome/fontawesome.css";
 import "./css/fontawesome/brands.css";
@@ -54,7 +54,7 @@ function App() {
           <Route path="/account">
             <Route index element={<Navigate to="/" replace />} />
             <Route path="login" element={<LoginPage />} />
-            {/* <Route path="create-account" element={<CreateAccountPage />} /> */}
+            <Route path="create-account" element={<CreateAccountPage />} />
             <Route path="password-reset" element={<Navigate to="/" replace />} />
             <Route path="2fa" element={<Navigate to="/" replace />} />
 

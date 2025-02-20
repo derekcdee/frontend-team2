@@ -33,14 +33,36 @@ export default function CreateAccountPage () {
                         type="text"
                         value={email}
                         onChange={(e) => console.log(e.target.value)}
-                        {...register("email")} 
+                        error={errors.email && errors.email.message}
+                        {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                                value: /^(?!\.)(?:"([^"\r\\]|\\["\r\\])*"|([-a-z0-9!#$%&'*+/=?^_`{|}~]|\.)*(?!\.))@[a-z0-9][\w.-]*[a-z0-9]\.[a-z][a-z.]*[a-z]$/,
+                                message: "Invalid email address"
+                            },
+                            maxLength: {
+                                value: 320,
+                                message: "Email must be at most 320 characters long"
+                            }
+                        })}
                     />
 
                     <FormField 
                         title="Password"
                         type="password"
                         value={password}
-                        {...register("password")} 
+                        error={errors.password && errors.password.message}
+                        {...register("password", {
+                            required: "Password is required",
+                            minLength: {
+                                value: 8,
+                                message: "Password must be at least 8 characters long"
+                            },
+                            maxLength: {
+                                value: 64,
+                                message: "Password must be at most 64 characters long"
+                            }
+                        })}
                     />
 
                     {/* ACTIONS */}

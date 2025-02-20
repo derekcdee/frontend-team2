@@ -37,7 +37,7 @@ export default function CreateAccountPage () {
                         {...register("email", {
                             required: "Email is required",
                             pattern: {
-                                value: /^(?!\.)(?:"([^"\r\\]|\\["\r\\])*"|([-a-z0-9!#$%&'*+/=?^_`{|}~]|\.)*(?!\.))@[a-z0-9][\w.-]*[a-z0-9]\.[a-z][a-z.]*[a-z]$/,
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                                 message: "Invalid email address"
                             },
                             maxLength: {

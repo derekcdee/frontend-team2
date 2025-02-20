@@ -1,21 +1,27 @@
 import { forwardRef } from "react";
 
-export const FormField = forwardRef(({ type = "text", title, value, onChange, ...restProps }, ref) => {
-    
+export const FormField = forwardRef(({ type = "text", title, value, onChange, error, ...restProps }, ref) => {
+    const classes = ["form-field"];
+    if (value?.length) classes.push("text-within")
+    if (error) classes.push("input-error")
+
     return (
-        <div className={value?.length ? "form-field text-within" : "form-field"}>
-            <input
-                type={type}
-                ref={ref}
-                autoCapitalize="off"
-                autoCorrect="off"
-                className="form-field-input"
-                onChange={onChange}
-                {...restProps}
-            />
-            <label className="form-field-title">
-                {title}
-            </label>
+        <div>     
+            <div className={classes.join(" ")}>
+                <input
+                    type={type}
+                    ref={ref}
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    className="form-field-input"
+                    onChange={onChange}
+                    {...restProps}
+                />
+                <label className="form-field-title">
+                    {title}
+                </label>
+            </div>
+            <p className="form-error-text">{error}</p>
         </div>
     );
 });

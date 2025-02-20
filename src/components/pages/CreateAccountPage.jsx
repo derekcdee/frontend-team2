@@ -3,7 +3,7 @@ import { FormField } from "../util/Inputs";
 import { useForm } from "react-hook-form";
 import { Button } from "../util/Buttons";
 
-export default function LoginPage () {
+export default function CreateAccountPage () {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
             email: "",
@@ -23,7 +23,7 @@ export default function LoginPage () {
             <div className="login-area">
                 {/* HEADER */}
                 <h1 className="login-page-title">
-                    Login
+                    Create account
                 </h1>
 
                 {/* FIELDS */}
@@ -36,7 +36,15 @@ export default function LoginPage () {
                         error={errors.email && errors.email.message}
                         {...register("email", {
                             required: "Email is required",
-                        })} 
+                            pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: "Invalid email address"
+                            },
+                            maxLength: {
+                                value: 320,
+                                message: "Email must be at most 320 characters long"
+                            }
+                        })}
                     />
 
                     <FormField 
@@ -46,18 +54,23 @@ export default function LoginPage () {
                         error={errors.password && errors.password.message}
                         {...register("password", {
                             required: "Password is required",
-                        })} 
+                            minLength: {
+                                value: 8,
+                                message: "Password must be at least 8 characters long"
+                            },
+                            maxLength: {
+                                value: 64,
+                                message: "Password must be at most 64 characters long"
+                            }
+                        })}
                     />
 
                     {/* ACTIONS */}
                     <div className="login-actions">
-                        <Button text="Sign in"/>
+                        <Button text="Create"/>
                         <div>
                             <span className="form-action-row">
-                                New customer? <a href="/account/create-account">Create account</a>
-                            </span>
-                            <span className="form-action-row">
-                                <a href="/account/login">Forgot your password?</a>
+                                Returning customer? <a href="/account/login">Sign in</a>
                             </span>
                         </div>
                     </div>

@@ -8,6 +8,12 @@
     display: flex;
     align-items: center;
 }
+.form-field.input-error .form-field-input{
+    border: 1px solid var(--miller-red) !important;
+}
+.form-field.input-error .form-field-input:focus {
+    box-shadow: 0px 1px 3px var(--miller-red) !important;
+}
 
 .form-field-input {
     border: 1px solid #c9c9c9;
@@ -37,7 +43,6 @@
     font-size: 13px;
     top: 28%;
 }
-
 .form-field-input:hover {
     border: 1px solid #a0a0a0;
 }
@@ -45,4 +50,12 @@
 .form-field-input:focus{
     border: 1px solid #747474;
     box-shadow: 0px 1px 3px #aaa;
+}
+
+.form-error-text {
+    font-size: 13px;
+    align-self: right;
+    color: var(--miller-red);
+    font-weight: 500;
+    height: 15px;
 }

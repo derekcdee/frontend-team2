@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer";
@@ -15,6 +16,7 @@ import CreateAccountPage from "./components/pages/CreateAccountPage.jsx";
 import "./css/fontawesome/fontawesome.css";
 import "./css/fontawesome/brands.css";
 import "./css/fontawesome/solid.css";
+import "react-toastify/dist/ReactToastify.css";
 
 
 function App() {
@@ -22,9 +24,19 @@ function App() {
 
   return (
     <>
-      <Header/>
-      <main>
-
+      <ToastContainer style={{ marginTop: "50px" }} 
+        position="top-center"
+        autoClose={10000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <main className="jmiller-app">
+        <Header />
         <Routes>
           {/* 
             Main Shop Pages
@@ -66,10 +78,9 @@ function App() {
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-
-        
+        <Footer />
       </main>
-      <Footer/>
+      
     </>
   )
 }

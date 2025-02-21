@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { toast } from 'react-toastify';
 
 
 export function _ajax(settings={}) {
@@ -6,24 +7,14 @@ export function _ajax(settings={}) {
 
     return $.ajax(settings)
         .then((res) => {
-            console.log('AJAX Reponse:', res);
+            console.log(res);
+            toast.success(`Operation successful: ${res}`);
             return res; 
         }).catch((err) => {
-            console.error('AJAX Request Failed:', err);
+            console.log(err);
+            toast.error(`Operation failed: ${err}`);
             throw err;
         });
-
-        // .then((res) => {
-        //     const response = JSON.parse(res);
-
-        //     if (typeof response.errors === 'string') {
-        //         // receiveResponse();
-        //         return Promise.reject();
-        //     } else {
-        //         return response;
-        //     }
-        //     return res;
-        // })
 }
 
 // test backend call

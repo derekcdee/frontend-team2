@@ -24,16 +24,18 @@ function App() {
 
   return (
     <>
-      <ToastContainer style={{ marginTop: "50px" }} 
+      <ToastContainer
         position="top-center"
-        autoClose={10000}
+        autoClose={8000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
+        stacked
         pauseOnHover
+        toastClassName="toast-class"
       />
       <main className="jmiller-app">
         <Header />

@@ -65,21 +65,24 @@ export function Button({text, onClick}) {
 /*==============================================================
 # Login
 ==============================================================*/
-export function LoginButton() {
+export function LoginButton({onClick}) {
     const navigate = useNavigate();
 
     return (
         <button
             className="fa-solid fa-user header-icon"
-            onClick={() => navigate('/account/login')}
+            onClick={() => {
+                onClick && onClick();
+                navigate('/account/login')
+            }}
         >
         </button>
     );
 }
 
-export function DrawerLoginButton() {
+export function DrawerLoginButton({onClick}) {
     return (
-        <NavLink className="drawer-foot-nav-text" tabIndex={0} to="/account/login">
+        <NavLink className="drawer-foot-nav-text" tabIndex={0} to="/account/login" onClick={onClick}>
             <button className="fa-solid fa-user drawer-login-icon" tabIndex={-1} />
             Log In
         </NavLink>

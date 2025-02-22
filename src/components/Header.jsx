@@ -117,6 +117,11 @@ export default function Header() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    const handleLinkClick = () => {
+        setOpenDrawer(false);
+        setOpenDropdown(null);
+    };
+
     return (
         <header className="main-header sticky" ref={headerRef}>
             {openDrawer && <div className="overlay header-overlay" />}
@@ -134,8 +139,8 @@ export default function Header() {
                                 const { text, link, options } = navItem;
 
                                 return (
-                                    <li>
-                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown}/>
+                                    <li key={text}>
+                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown} onLinkClick={handleLinkClick}/>
                                     </li>
                                 );
                             })}
@@ -143,7 +148,7 @@ export default function Header() {
                     </nav>
                     {/* MENU DRAWER FOOTER*/}
                     <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
-                        <DrawerLoginButton />
+                        <DrawerLoginButton onClick={handleLinkClick} />
                         <div>
                             <button className="fa-brands fa-instagram header-icon" />
                             <button className="fa-brands fa-facebook header-icon" />
@@ -154,7 +159,7 @@ export default function Header() {
 
             {/* Main Heading */}
             <h1 className="header-heading">
-                <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" }>
+                <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" } onClick={handleLinkClick}>
                     <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
                 </NavLink>
             </h1>
@@ -166,8 +171,8 @@ export default function Header() {
                         const { text, link, options } = navItem;
 
                         return (
-                            <li>
-                                <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} />
+                            <li key={text}>
+                                <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} onLinkClick={handleLinkClick}/>
                             </li>
                         );
                     })}
@@ -177,14 +182,14 @@ export default function Header() {
             {/* Icons */}
             <div className="header-icons">
                 <button className="fa-solid fa-magnifying-glass header-icon" />
-                <LoginButton />
+                <LoginButton onClick={handleLinkClick} />
                 <button className="fa-solid fa-cart-shopping header-icon" />
             </div>
         </header>
     );
 }
 
-function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=false}) {
+function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=false, onLinkClick}) {
     const ref = useRef(null); // Create a ref for the dropdown container
 
     // Use the custom hook to handle outside clicks
@@ -205,7 +210,7 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
     return (
         <div className="header-nav-item" ref={isDropdown ? ref : null}>
             <NavLink 
-              onClick={isDropdown ? () => onToggle(text) : undefined}
+              onClick={isDropdown ? () => onToggle(text) : onLinkClick}
               onKeyDown={isDropdown ? handleKeyDown : undefined}
               tabIndex={0} 
               to={link}
@@ -230,8 +235,8 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
                         const {text, link} = option;
                         
                         return (
-                            <li>
-                                <NavLink to={link}>{text}</NavLink>
+                            <li key={text}>
+                                <NavLink to={link} onClick={onLinkClick}>{text}</NavLink>
                             </li>
                         );
                     })}
@@ -241,7 +246,7 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
     );
 }
 
-function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, options = false, link = false, isLeft=false }) {
+function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, options = false, link = false, isLeft=false, onLinkClick }) {
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             onToggle(text);
@@ -253,7 +258,7 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
     return (
         <div className="drawer-nav-item">
             <NavLink
-                onClick={isDropdown ? () => onToggle(text) : undefined}
+                onClick={isDropdown ? () => onToggle(text) : onLinkClick}
                 onKeyDown={isDropdown ? handleKeyDown : undefined}
                 tabIndex={0}
                 to={link}
@@ -284,8 +289,8 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
                             const subText = navItem.text;
 
                             return (
-                                <li>
-                                    <DrawerNavItem text={subText} link={link} onToggle={() => onToggle(text)} isDropdown={true} isLeft={isLeft}/>
+                                <li key={subText}>
+                                    <DrawerNavItem text={subText} link={link} onToggle={() => onToggle(text)} isDropdown={true} isLeft={isLeft} onLinkClick={onLinkClick}/>
                                 </li>
                             );
                         })}

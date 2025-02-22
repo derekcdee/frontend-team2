@@ -1,7 +1,7 @@
 import React from "react";
-import { FormField } from "../util/Inputs";
+import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
-import { Button } from "../util/Buttons";
+import { Button } from "../../util/Buttons";
 import { NavLink } from "react-router-dom";
 
 export default function CreateAccountPage () {

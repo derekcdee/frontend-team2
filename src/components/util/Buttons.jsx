@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 /*==============================================================
 # Defaults
@@ -78,9 +79,9 @@ export function LoginButton() {
 
 export function DrawerLoginButton() {
     return (
-        <a className="drawer-foot-nav-text" tabIndex={0} href="/account/login">
+        <NavLink className="drawer-foot-nav-text" tabIndex={0} to="/account/login">
             <button className="fa-solid fa-user drawer-login-icon" tabIndex={-1} />
             Log In
-        </a>
+        </NavLink>
     );
 }

@@ -3,6 +3,7 @@ import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 import { createFocusTrap } from "focus-trap";
 import { DrawerLoginButton, LoginButton } from "./util/Buttons";
+import { NavLink } from "react-router-dom";
 
 const options = {
     "Cues & Accessories": [
@@ -153,9 +154,9 @@ export default function Header() {
 
             {/* Main Heading */}
             <h1 className="header-heading">
-                <a href="/" className={hasScrolled ? "scrolled-past" : "" }>
+                <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" }>
                     <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
-                </a>
+                </NavLink>
             </h1>
 
             {/* Nav Section w/ Dropdown Menu*/}
@@ -203,11 +204,11 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
 
     return (
         <div className="header-nav-item" ref={isDropdown ? ref : null}>
-            <a 
+            <NavLink 
               onClick={isDropdown ? () => onToggle(text) : undefined}
               onKeyDown={isDropdown ? handleKeyDown : undefined}
               tabIndex={0} 
-              href={link}
+              to={link}
               className={isOpen ? "main-nav-text open" : "main-nav-text"}
               id={text}
             >
@@ -219,7 +220,7 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
                       id={text}
                     />
                 }
-            </a>
+            </NavLink>
             
             {/* DROPDOWN MENU */}
             <div className={isOpen ? "dropdown-menu open" : "dropdown-menu"}>
@@ -230,7 +231,7 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
                         
                         return (
                             <li>
-                                <a href={link}>{text}</a>
+                                <NavLink to={link}>{text}</NavLink>
                             </li>
                         );
                     })}
@@ -251,11 +252,11 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
 
     return (
         <div className="drawer-nav-item">
-            <a
+            <NavLink
                 onClick={isDropdown ? () => onToggle(text) : undefined}
                 onKeyDown={isDropdown ? handleKeyDown : undefined}
                 tabIndex={0}
-                href={link}
+                to={link}
                 id={text}
                 className={isLeft ? "drawer-nav-text left" : openDropdown ? "drawer-nav-text hidden" : "drawer-nav-text"}
             >
@@ -271,7 +272,7 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
                 </>
                 }
                 
-            </a>
+            </NavLink>
 
             {/* SUB DRAWER MENU */}
             <div className={isOpen ? "header-drawer-menu open sub-menu" : "header-drawer-menu sub-menu"}>

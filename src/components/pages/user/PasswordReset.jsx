@@ -47,7 +47,7 @@ export default function PasswordReset () {
                         <Button text="Submit"/>
                         <div>
                             <span className="form-action-row">
-                                Remember your password? <NavLink to="/account/login">Sign in</NavLink>
+                                Remember your password? <NavLink to="/login">Sign in</NavLink>
                             </span>
                         </div>
                     </div>

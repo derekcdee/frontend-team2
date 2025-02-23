@@ -59,10 +59,10 @@ export default function LoginPage () {
                         <Button text="Sign in"/>
                         <div>
                             <span className="form-action-row">
-                                New customer? <NavLink to="/account/create-account">Create account</NavLink>
+                                New customer? <NavLink to="/create-account">Create account</NavLink>
                             </span>
                             <span className="form-action-row">
-                                <NavLink to="/account/password-reset">Forgot your password?</NavLink>
+                                <NavLink to="/password-reset">Forgot your password?</NavLink>
                             </span>
                         </div>
                     </div>

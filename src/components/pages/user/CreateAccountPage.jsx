@@ -71,7 +71,7 @@ export default function CreateAccountPage () {
                         <Button text="Create"/>
                         <div>
                             <span className="form-action-row">
-                                Returning customer? <NavLink to="/account/login">Sign in</NavLink>
+                                Returning customer? <NavLink to="/login">Sign in</NavLink>
                             </span>
                         </div>
                     </div>

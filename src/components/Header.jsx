@@ -3,7 +3,7 @@ import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 import { createFocusTrap } from "focus-trap";
 import { DrawerLoginButton, LoginButton } from "./util/Buttons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const options = {
     "Cues & Accessories": [
@@ -32,6 +32,7 @@ export default function Header() {
     const [focusTrap, setFocusTrap] = useState(null);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const headerRef = useRef(null);
+    const location = useLocation();
 
     const handleDropdown = (item) => {
         if (openDropdown === item) {
@@ -121,6 +122,14 @@ export default function Header() {
         setOpenDrawer(false);
         setOpenDropdown(null);
     };
+
+    useEffect(() => {
+        if (location.pathname.startsWith('/account')) {
+            setHasScrolled(true);
+        } else {
+            setHasScrolled(false);
+        }
+    }, [location.pathname]);
 
     return (
         <header className="main-header sticky" ref={headerRef}>

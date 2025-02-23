@@ -1,5 +1,6 @@
 import React from "react";
 import { Card } from "../util/Card";
+import { Button } from "../util/Buttons";
 
 import cue from "../../images/cue.jpg"
 
@@ -33,15 +34,10 @@ export default function FeaturedSection () {
             </div>
 
             {/* View All */}
-            <div>
-                <button>
-                    View All
-                </button>
+            <div style={{alignItems: "center", display: "flex", justifyContent: "center"}}>
+                <Button text="View All" />
                 
             </div>
-            <button>
-                View All
-            </button>
         </section>
     );
 }

@@ -3,6 +3,7 @@ import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
 import { Button } from "../../util/Buttons";
 import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function LoginPage () {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
@@ -11,6 +12,9 @@ export default function LoginPage () {
             password: "",
         }
     });
+
+    const location = useLocation();
+    console.log(location)
 
     const onSubmit = data => {
         console.log(data);

@@ -73,7 +73,7 @@ export function LoginButton({onClick}) {
             className="fa-solid fa-user header-icon"
             onClick={() => {
                 onClick && onClick();
-                navigate('/account/login')
+                navigate('/login')
             }}
         >
         </button>
@@ -82,7 +82,7 @@ export function LoginButton({onClick}) {
 
 export function DrawerLoginButton({onClick}) {
     return (
-        <NavLink className="drawer-foot-nav-text" tabIndex={0} to="/account/login" onClick={onClick}>
+        <NavLink className="drawer-foot-nav-text" tabIndex={0} to="/login" onClick={onClick}>
             <button className="fa-solid fa-user drawer-login-icon" tabIndex={-1} />
             Log In
         </NavLink>

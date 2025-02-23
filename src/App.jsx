@@ -68,17 +68,17 @@ function App() {
                     {/* 
                         User Pages
                     */}
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/create-account" element={<CreateAccountPage />} />
+                    <Route path="/password-reset" element={<PasswordReset />} />
                     <Route path="/account">
                         <Route index element={<Navigate to="/" replace />} />
-                        <Route path="login" element={<LoginPage />} />
-                        <Route path="create-account" element={<CreateAccountPage />} />
-                        <Route path="password-reset" element={<PasswordReset />} />
-
                         <Route element={<UserLayout />}>
                             <Route path="profile" element={<ProfilePage />} />
                             <Route path="settings" element={<SettingsPage />} />
                             <Route path="orders" element={<OrdersPage />} />
                             <Route path="admin" element={<AdminPage />} />
+                            <Route path="*" element={<Navigate to="/" replace />} />
                         </Route>
                     </Route>
 

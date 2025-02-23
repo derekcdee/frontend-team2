@@ -13,7 +13,7 @@ const options = {
     ],
     "Materials": [
         { text: "Woods", link: "/collections/materials" },
-        { text: "Crystals", link: "/collections/materials" },
+        { text: "Stones & Crystals", link: "/collections/materials" },
         { text: "View All", link: "/collections/materials" }
     ]
 };
@@ -94,7 +94,7 @@ export default function Header() {
     useEffect(() => {
         const height = headerRef.current?.offsetHeight;
         document.documentElement.style.setProperty('--header-height', `${height}px`);
-    }, [hasScrolled])
+    }, [hasScrolled]);
 
     useEffect(() => {
         const handleScroll = () => {

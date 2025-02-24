@@ -285,7 +285,7 @@ p {
 }
 .header-logo {
   height: 76px;
-  margin: 5px 0px -5px 0px;
+  margin: 6px 0px -6px 0px;
 }
 .header-logo.scrolled-past {
   height: 50px;

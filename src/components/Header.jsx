@@ -94,7 +94,7 @@ export default function Header() {
     useEffect(() => {
         const height = headerRef.current?.offsetHeight;
         document.documentElement.style.setProperty('--header-height', `${height}px`);
-    }, [hasScrolled])
+    }, [hasScrolled, screenWidth])
 
     useEffect(() => {
         const handleScroll = () => {

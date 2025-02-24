@@ -19,7 +19,7 @@ const options = {
 };
 
 const navItems = [
-    { text: "Cues & Accessories", options: options["Cues & Accessories"] },
+    { text: "Cues n Accessories", options: options["Cues & Accessories"] },
     { text: "Coming Soon", link: "/collections/coming-soon" },
     { text: "Build-A-Que", link: "/build-a-que" },
     { text: "Materials", options: options["Materials"] }
@@ -167,11 +167,11 @@ export default function Header() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="header-heading">
+            <div className="header-heading">
                 <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" } onClick={handleLinkClick}>
                     <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
                 </NavLink>
-            </h1>
+            </div>
 
             {/* Nav Section w/ Dropdown Menu*/}
             <nav className="header-navigation">

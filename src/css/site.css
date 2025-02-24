@@ -3,42 +3,14 @@
 ==============================================================*/
 
 @font-face {
-  font-family: 'papyrus';
-  src: url('./webfonts/papyrus.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'american-uncial';
-  src: url('./webfonts/AMERICAN.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
   font-family: 'bouwsma-uncial';
   src: url('./webfonts/BouwsUnc.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'electr-uncial';
-  src: url('./webfonts/ElectrUnciale.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'deutch-uncial';
-  src: url('./webfonts/DeutscheUncialis.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
 :root {
-  font-family: 'American', system-ui, Helvetica, Arial, sans-serif;
+  font-family: system-ui, Helvetica, Arial, sans-serif;
   font-weight: 400;
   color-scheme: light dark;
   color: #444;
@@ -72,6 +44,10 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+h1, h2 {
+  font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif;
 }
 
 input {
@@ -120,11 +96,12 @@ p {
 # Header
 ==============================================================*/
 .main-header {
+  font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif;
   background-color: var(--miller-black);
   color: var(--miller-white);
   z-index: 10;
   align-items: center;
-  padding: 4px 30px 4px 30px;
+  padding: 0px 30px;
 
   display: grid;
   grid-template-areas: "drawer heading icons";
@@ -132,7 +109,7 @@ p {
   box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 6px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 
-@media (min-width: 990px) {
+@media (min-width: 1055px) {
   .header-overlay {
       display: none;
   }
@@ -240,7 +217,7 @@ p {
   display: none;
   grid-area: navigation;
   justify-self: center;
-  font-size: 17px;
+  font-size: 16px;
 }
 .header-list-menu {
   display: inline-flex;
@@ -307,13 +284,13 @@ p {
   cursor: pointer;
 }
 .header-logo {
-  height: 80px;
+  height: 76px;
   margin: 5px 0px -5px 0px;
 }
 .header-logo.scrolled-past {
   height: 50px;
   margin: 0;
-  margin: -20px 0px 20px 0px;
+  margin: 4px 0px -4px 0px;
 }
 .header-heading a {
   display: block;
@@ -321,7 +298,7 @@ p {
 .header-heading a.scrolled-past {
   height: 59px;
 }
-@media (min-width: 990px) {
+@media (min-width: 1055px) {
   .header-heading {
     justify-self: left;
   }
@@ -357,10 +334,10 @@ p {
   }
 }
 
-@media (min-width: 990px) {
+@media (min-width: 1055px) {
   .main-header {
     grid-template-areas: "heading navigation icons";
-    padding: 6px 50px 6px 50px;
+    padding: 0px 50px;
   }
 
   .header-drawer {

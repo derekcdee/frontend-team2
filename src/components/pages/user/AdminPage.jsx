@@ -2,7 +2,40 @@ import React from 'react';
 import { MaterialReactTable } from 'material-react-table';
 
 export default function AdminPage() {
+    const [adminPage, setAdminPage] = React.useState('Cues');
 
+    return (
+        <div>
+            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} />
+            <div className='user-content'>
+                <AdminContent adminPage={adminPage} />
+            </div>
+        </div>
+    );
+}
+
+function AdminHeader({ setAdminPage, adminPage }) {
+    const pages = ['Cues', 'Accessories', 'Materials', 'Users'];
+
+    return (
+        <div className="admin-header">
+            <ul className="admin-header-list">
+                {pages.map((page) => (
+                    <li key={page} className="admin-header-item">
+                        <button
+                            className={`admin-button ${adminPage === page ? 'active' : ''}`}
+                            onClick={() => setAdminPage(page)}
+                        >
+                            {page}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+function AdminContent({ adminPage }) {
     const data = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Smith', age: 25 },
@@ -23,11 +56,10 @@ export default function AdminPage() {
         { id: 17, firstName: 'Pamela', lastName: 'Clark', age: 38 },
     ];
 
-    // Define columns for Material React Table
     const columns = [
         {
-            accessorKey: 'firstName', // accessorKey is the key in the data
-            header: 'First Name', // displayed header text
+            accessorKey: 'firstName',
+            header: 'First Name',
         },
         {
             accessorKey: 'lastName',
@@ -40,38 +72,14 @@ export default function AdminPage() {
     ];
 
     return (
-        <div>
-            <AdminHeader /> {/* Include the AdminHeader component */}
-            <div className='user-content'>
-                <MaterialReactTable
-                    columns={columns}
-                    data={data}
-                    enableColumnOrdering
-                    enableColumnResizing
-                    enableSorting
-                />
-            </div>
+        <div className='user-content'>
+            <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnOrdering
+                enableColumnResizing
+                enableSorting
+            />
         </div>
-    )
-}
-
-function AdminHeader() {
-    return (
-        <div className="admin-header">
-            <ul className="admin-header-list">
-                <li className="admin-header-item">
-                    <button className="admin-button">Button 1</button>
-                </li>
-                <li className="admin-header-item">
-                    <button className="admin-button">Button 2</button>
-                </li>
-                <li className="admin-header-item">
-                    <button className="admin-button">Button 3</button>
-                </li>
-                <li className="admin-header-item">
-                    <button className="admin-button">Button 4</button>
-                </li>
-            </ul>
-        </div>
-    )
+    );
 }

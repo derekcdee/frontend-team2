@@ -6,25 +6,23 @@ export default function UserLayout() {
         <div className="user-layout">
             <div className="user-drawer-menu open">
                 <nav className="user-nav">
-                    <div className="float">
                     <ul className="user-nav-list">
                         <li className="user-nav-item">
-                            <NavLink to="/account/profile" activeClassName="active">Profile</NavLink>
+                            <NavLink to="/account/profile">Profile</NavLink>
                         </li>
                         <li className="user-nav-item">
-                            <NavLink to="/account/settings" activeClassName="active">Settings</NavLink>
+                            <NavLink to="/account/settings">Settings</NavLink>
                         </li>
                         <li className="user-nav-item">
-                            <NavLink to="/account/orders" activeClassName="active">Orders</NavLink>
+                            <NavLink to="/account/orders">Orders</NavLink>
                         </li>
                         <li className="user-nav-item">
-                            <NavLink to="/account/admin" activeClassName="active">Admin</NavLink>
+                            <NavLink to="/account/admin">Admin</NavLink>
                         </li>
                         <li className="user-nav-item">
-                            <NavLink to="/" activeClassName="active">Logout</NavLink>
+                            <NavLink to="/">Logout</NavLink>
                         </li>
                     </ul>
-                    </div>
                 </nav>
             </div>
             <Outlet />

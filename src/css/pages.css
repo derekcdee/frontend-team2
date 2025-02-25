@@ -99,6 +99,7 @@
 
 .user-nav-item {
     font-size: 20px;
+    margin-bottom: 10px;
 }
 
 .user-nav-item a {
@@ -108,7 +109,8 @@
     justify-content: space-between;
     color: var(--miller-white);
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
+    font-weight: 500;
 }
 
 .user-nav-item a:hover,
@@ -127,9 +129,9 @@
 
 .admin-header {
     background-color: var(--miller-dark-grey);
-    top: var(--header-height);
+    /* top: var(--header-height);
     z-index: 9;
-    position: sticky;
+    position: sticky; */
 }
 
 .admin-header-list {
@@ -139,8 +141,12 @@
     margin: 0;
 }
 
+.admin-header-item:first-child {
+    margin-left: 50px;
+}
+
 .admin-header-item {
-    margin-right: 15px;
+    margin-right: 10px;
 }
 
 .admin-button {
@@ -150,10 +156,14 @@
     color: white;
     cursor: pointer;
     border-radius: 0;
-    font-size: 16px;
+    font-size: 1.1rem;
     display: block;
 }
 
 .admin-button:hover {
+    background-color: rgb(143, 143, 143);
+}
+
+.admin-button.active {
     background-color: rgb(143, 143, 143);
 }

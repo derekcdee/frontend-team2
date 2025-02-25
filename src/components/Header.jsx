@@ -33,7 +33,7 @@ export default function Header() {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const headerRef = useRef(null);
     const location = useLocation();
-
+    
     const handleDropdown = (item) => {
         if (openDropdown === item) {
             setOpenDropdown(null);
@@ -94,14 +94,14 @@ export default function Header() {
     useEffect(() => {
         const height = headerRef.current?.offsetHeight;
         document.documentElement.style.setProperty('--header-height', `${height}px`);
-    }, [hasScrolled, screenWidth])
+    }, [hasScrolled, screenWidth]);
 
     useEffect(() => {
         const handleScroll = () => {
             const offset = 100;
             if (window.scrollY > offset) {
                 setHasScrolled(true);
-            } else if (window.scrollY === 0) {
+            } else if (!location.pathname.startsWith('/account') && window.scrollY === 0) {
                 setHasScrolled(false);
             }
         };

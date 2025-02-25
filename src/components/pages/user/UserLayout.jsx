@@ -6,6 +6,7 @@ export default function UserLayout() {
         <div className="user-layout">
             <div className="user-drawer-menu open">
                 <nav className="user-nav">
+                    <div className="float">
                     <ul className="user-nav-list">
                         <li className="user-nav-item">
                             <NavLink to="/account/profile" activeClassName="active">Profile</NavLink>
@@ -23,11 +24,10 @@ export default function UserLayout() {
                             <NavLink to="/" activeClassName="active">Logout</NavLink>
                         </li>
                     </ul>
+                    </div>
                 </nav>
             </div>
-            <div className="user-content">
-                <Outlet />
-            </div>
+            <Outlet />
         </div>
     );
 }

@@ -3,7 +3,7 @@ import AccountSection from "../../sections/AccountSection";
 
 export default function OrdersPage() {
     return (
-        <div>
+        <div className="user-content">
             <AccountSection title="Orders">
                 <p>order1</p>
                 <p>order2</p>

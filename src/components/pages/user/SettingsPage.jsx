@@ -3,7 +3,7 @@ import AccountSection from "../../sections/AccountSection";
 
 export default function SettingsPage() {
     return (
-        <div>
+        <div className="user-content">
             <AccountSection title="Password">
                 <p>password</p>
             </AccountSection>

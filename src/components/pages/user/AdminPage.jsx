@@ -5,6 +5,13 @@ export default function AdminPage() {
     const [adminPage, setAdminPage] = React.useState('Cues');
     const [loading, setLoading] = React.useState(true);
 
+    useEffect(() => {
+        // Simulate a data fetch
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    }, []);
+
     return (
         <div>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} />
@@ -33,7 +40,7 @@ function AdminHeader({ setAdminPage, adminPage, loading }) {
                 ))}
             </ul>
             <div className="admin-header-right">
-                <button className="admin-button" disabled={loading}>
+                <button className={`admin-icon-button ${loading ? 'disabled' : ''}`} disabled={loading}>
                     <i className="fas fa-plus"></i>
                 </button>
             </div>
@@ -49,10 +56,10 @@ function AdminContent({ adminPage, loading, setLoading }) {
 
     const getData = async () => { 
         setLoading(true);
-
+        
         setTimeout(() => {
             setLoading(false);
-        }, 200);
+        }, 2000);
 
         switch (adminPage) {
             case 'Cues':

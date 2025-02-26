@@ -36,6 +36,13 @@ function AdminHeader({ setAdminPage, adminPage }) {
 }
 
 function AdminContent({ adminPage }) {
+    const [ loading, setLoading ] = React.useState(true);
+
+    const [ cueData, setCueData ] = React.useState([]);
+    const [ accessoryData, setAccessoryData ] = React.useState([]);
+    const [ materialData, setMaterialData ] = React.useState([]);
+    const [ userData, setUserData ] = React.useState([]);
+
     const data = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Smith', age: 25 },
@@ -56,6 +63,25 @@ function AdminContent({ adminPage }) {
         { id: 17, firstName: 'Pamela', lastName: 'Clark', age: 38 },
     ];
 
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    switch (adminPage) {
+        case 'Cues':
+            return <Cues data={data} />;
+        case 'Accessories':
+            return <Accessories data={data} />;
+        case 'Materials':
+            return <Materials data={data} />;
+        case 'Users':
+            return <Users data={data} />;
+        default:
+            return null;
+    }
+}
+
+function Cues({ data }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -72,14 +98,81 @@ function AdminContent({ adminPage }) {
     ];
 
     return (
-        <div className='user-content'>
-            <MaterialReactTable
-                columns={columns}
-                data={data}
-                enableColumnOrdering
-                enableColumnResizing
-                enableSorting
-            />
+        <div>
+            <h2 className="admin-page-header">Cues</h2>
+            <MaterialReactTable columns={columns} data={data} />
+        </div>
+    );
+}
+
+function Accessories({ data }) {
+    const columns = [
+        {
+            accessorKey: 'firstName',
+            header: 'First Name',
+        },
+        {
+            accessorKey: 'lastName',
+            header: 'Last Name',
+        },
+        {
+            accessorKey: 'age',
+            header: 'Age',
+        },
+    ];
+
+    return (
+        <div>
+            <h2 className="admin-page-header">Accessories</h2>
+            <MaterialReactTable columns={columns} data={data} />
+        </div>
+    );
+}
+
+function Materials({ data }) {
+    const columns = [
+        {
+            accessorKey: 'firstName',
+            header: 'First Name',
+        },
+        {
+            accessorKey: 'lastName',
+            header: 'Last Name',
+        },
+        {
+            accessorKey: 'age',
+            header: 'Age',
+        },
+    ];
+
+    return (
+        <div>
+            <h2 className="admin-page-header">Materials</h2>
+            <MaterialReactTable columns={columns} data={data} />
+        </div>
+    );
+}
+
+function Users({ data }) {
+    const columns = [
+        {
+            accessorKey: 'firstName',
+            header: 'First Name',
+        },
+        {
+            accessorKey: 'lastName',
+            header: 'Last Name',
+        },
+        {
+            accessorKey: 'age',
+            header: 'Age',
+        },
+    ];
+
+    return (
+        <div>
+            <h2 className="admin-page-header">Users</h2>
+            <MaterialReactTable columns={columns} data={data} />
         </div>
     );
 }

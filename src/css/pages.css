@@ -123,6 +123,7 @@
     padding: 20px;
     background-color: #fafafa;
     overflow-y: auto;
+    height: 100%;
 }
 
 
@@ -166,4 +167,9 @@
 
 .admin-button.active {
     background-color: rgb(143, 143, 143);
+}
+
+.admin-page-header {
+    margin: 0;
+    text-align: center;
 }

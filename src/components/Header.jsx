@@ -99,9 +99,11 @@ export default function Header() {
     useEffect(() => {
         const handleScroll = () => {
             const offset = 100;
-            if (window.scrollY > offset) {
+            if (location.pathname.startsWith('/account')) {
                 setHasScrolled(true);
-            } else if (!location.pathname.startsWith('/account') && window.scrollY === 0) {
+            } else if (window.scrollY > offset) {
+                setHasScrolled(true);
+            } else if (window.scrollY === 0) {
                 setHasScrolled(false);
             }
         };
@@ -110,18 +112,13 @@ export default function Header() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleResize = () => setScreenWidth(window.innerWidth);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-    const handleLinkClick = () => {
-        setOpenDrawer(false);
-        setOpenDropdown(null);
-    };
 
     useEffect(() => {
         if (location.pathname.startsWith('/account')) {
@@ -130,6 +127,11 @@ export default function Header() {
             setHasScrolled(false);
         }
     }, [location.pathname]);
+
+    const handleLinkClick = () => {
+        setOpenDrawer(false);
+        setOpenDropdown(null);
+    };
 
     return (
         <header className="main-header sticky" ref={headerRef}>

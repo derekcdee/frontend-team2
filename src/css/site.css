@@ -9,6 +9,48 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'GAEL';
+  src: url('./webfonts/GAEL.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IrishUncialfabeta';
+  src: url('./webfonts/IrishuncialfabetaBold-2OEBd.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Martel';
+  src: url('./webfonts/martel.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Parchment';
+  src: url('./webfonts/ParchmentMf.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sherwood';
+  src: url('./webfonts/SHERWOOD.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'VTGoblinHand';
+  src: url('./webfonts/VTCGoblinHand.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   font-family: system-ui, Helvetica, Arial, sans-serif;
   font-weight: 400;

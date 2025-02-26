@@ -134,6 +134,14 @@ function SkeletonLoader() {
 }
 
 const tableProps = {
+    enableRowActions: true,
+    positionActionsColumn: 'last',
+    renderRowActions: ({ row }) => (
+        <div> 
+            <button>hey</button>
+            <button>hey</button>
+        </div>
+    ),
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,

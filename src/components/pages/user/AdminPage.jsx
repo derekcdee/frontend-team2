@@ -133,6 +133,30 @@ function SkeletonLoader() {
     );
 }
 
+const tableProps = {
+    enableColumnFilterModes: true,
+    enableColumnOrdering: true,
+    enableGrouping: true,
+    positionGlobalFilter: 'left',
+    initialState: {
+        showGlobalFilter: true,
+        pagination: {
+            pageSize: 10,
+        },
+    },
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    muiSearchTextFieldProps: {
+        size: 'small',
+        variant: 'outlined',
+    },
+    muiPaginationProps: {
+        rowsPerPageOptions: [5, 10, 20, 30, 40, 50],
+        shape: 'rounded',
+        variant: 'outlined',
+    },
+};
+
 function Cues({ data }) {
     const columns = [
         {
@@ -152,7 +176,7 @@ function Cues({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Cues</h2>
-            <MaterialReactTable columns={columns} data={data} />
+            <MaterialReactTable columns={columns} data={data} {...tableProps} />
         </div>
     );
 }
@@ -176,7 +200,7 @@ function Accessories({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Accessories</h2>
-            <MaterialReactTable columns={columns} data={data} />
+            <MaterialReactTable columns={columns} data={data} {...tableProps} />
         </div>
     );
 }
@@ -200,7 +224,7 @@ function Materials({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Materials</h2>
-            <MaterialReactTable columns={columns} data={data} />
+            <MaterialReactTable columns={columns} data={data} {...tableProps} />
         </div>
     );
 }
@@ -224,7 +248,7 @@ function Users({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Users</h2>
-            <MaterialReactTable columns={columns} data={data} />
+            <MaterialReactTable columns={columns} data={data} {...tableProps} />
         </div>
     );
 }

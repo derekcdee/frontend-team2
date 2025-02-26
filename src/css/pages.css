@@ -5,9 +5,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     background-color: transparent;
 }
+
 @media (min-width: 500px) {
     .form-content {
         background-color: #fafafa;
@@ -24,6 +24,7 @@
     max-width: 500px;
     width: 100%;
 }
+
 @media (min-width: 500px) {
     .login-area {
         border: 2px solid #f5f5f5;
@@ -44,7 +45,7 @@
     color: #666;
 }
 
-.login-form{
+.login-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -59,6 +60,7 @@
     grid-template-rows: auto 1fr;
     align-items: center;
 }
+
 @media (min-width: 500px) {
     .login-actions {
         grid-template-columns: auto 1fr;
@@ -126,13 +128,14 @@
     height: 100%;
 }
 
-
-
 .admin-header {
     background-color: var(--miller-dark-grey);
-    /* top: var(--header-height);
+    top: var(--header-height);
     z-index: 9;
-    position: sticky; */
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .admin-header-list {
@@ -150,7 +153,13 @@
     margin-right: 10px;
 }
 
-.admin-button {
+.admin-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.admin-button,
+.admin-icon-button {
     padding: 10px 20px;
     border: none;
     background-color: var(--miller-dark-grey);
@@ -161,15 +170,68 @@
     display: block;
 }
 
-.admin-button:hover {
-    background-color: rgb(143, 143, 143);
+.admin-icon-button {
+    padding: 10px;
+}
+.admin-icon-button i{
+    height: 18px;
+    width: 20px
+}
+
+.admin-button:hover,
+.admin-icon-button:hover {
+    background-color: rgb(109, 109, 109);
 }
 
 .admin-button.active {
-    background-color: rgb(143, 143, 143);
+    background-color: rgb(109, 109, 109);
 }
 
 .admin-page-header {
     margin: 0;
     text-align: center;
+}
+/* Skeleton Loader */
+.skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton-header,
+.skeleton-row {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-header {
+    height: 40px;
+    width: 100%;
+    margin-top: 18px;
+    margin-bottom: 8px;
+}
+
+.skeleton-row {
+    height: 20px;
+    width: 100%;
+}
+
+.skeleton-header::before,
+.skeleton-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    height: 100%;
+    width: 150%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 1s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        left: 150%;
+    }
 }

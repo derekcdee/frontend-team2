@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 
 export default function AdminPage() {
     const [adminPage, setAdminPage] = React.useState('Cues');
+    const [loading, setLoading] = React.useState(true);
 
     return (
         <div>
-            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} />
+            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} />
+                <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} />
             </div>
         </div>
     );
 }
 
-function AdminHeader({ setAdminPage, adminPage }) {
+function AdminHeader({ setAdminPage, adminPage, loading }) {
     const pages = ['Cues', 'Accessories', 'Materials', 'Users'];
 
     return (
@@ -31,17 +32,45 @@ function AdminHeader({ setAdminPage, adminPage }) {
                     </li>
                 ))}
             </ul>
+            <div className="admin-header-right">
+                <button className="admin-button" disabled={loading}>
+                    <i className="fas fa-plus"></i>
+                </button>
+            </div>
         </div>
     );
 }
 
-function AdminContent({ adminPage }) {
-    const [ loading, setLoading ] = React.useState(true);
+function AdminContent({ adminPage, loading, setLoading }) {
+    const [cueData, setCueData] = React.useState([]);
+    const [accessoryData, setAccessoryData] = React.useState([]);
+    const [materialData, setMaterialData] = React.useState([]);
+    const [userData, setUserData] = React.useState([]);
 
-    const [ cueData, setCueData ] = React.useState([]);
-    const [ accessoryData, setAccessoryData ] = React.useState([]);
-    const [ materialData, setMaterialData ] = React.useState([]);
-    const [ userData, setUserData ] = React.useState([]);
+    const getData = async () => { 
+        setLoading(true);
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 200);
+
+        switch (adminPage) {
+            case 'Cues':
+                break;
+            case 'Accessories':
+                break;
+            case 'Materials':
+                break;
+            case 'Users':
+                break;
+            default:
+                break;
+        }
+    };
+
+    useEffect(() => {
+        getData();
+    }, [adminPage]);
 
     const data = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
@@ -64,7 +93,7 @@ function AdminContent({ adminPage }) {
     ];
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <SkeletonLoader />;
     }
 
     switch (adminPage) {
@@ -79,6 +108,22 @@ function AdminContent({ adminPage }) {
         default:
             return null;
     }
+}
+
+function SkeletonLoader() {
+    return (
+        <div className="skeleton-loader">
+            <div className="skeleton-header"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+            <div className="skeleton-row"></div>
+        </div>
+    );
 }
 
 function Cues({ data }) {

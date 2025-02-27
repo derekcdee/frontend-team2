@@ -197,6 +197,34 @@
     margin: -20px 0 0 0;
     text-align: center;
 }
+
+.admin-actions {
+    display: flex;
+    justify-content: left;
+    gap: 10px;
+    margin-left: -5px;
+}
+
+.admin-action-button {
+    color: var(--miller-black);
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.admin-action-button.fa-pencil {
+    font-size: 1.3em;
+}
+
+.admin-action-button.fa-xmark {
+    font-size: 1.5em;
+}
+
+.admin-action-button.fa-pencil:hover,
+.admin-action-button.fa-xmark:hover {
+    transform: scale(1.25);
+}
+
+
 /* Skeleton Loader */
 .skeleton-loader {
     display: flex;

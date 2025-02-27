@@ -3,7 +3,7 @@ import { MaterialReactTable } from 'material-react-table';
 
 export default function AdminPage() {
     const [adminPage, setAdminPage] = React.useState('Cues');
-    const [loading, setLoading] = React.useState(true);
+    const [loading, setLoading] = React.useState(false);
 
     useEffect(() => {
         // Simulate a data fetch
@@ -55,7 +55,7 @@ function AdminContent({ adminPage, loading, setLoading }) {
     const [userData, setUserData] = React.useState([]);
 
     const getData = async () => { 
-        setLoading(true);
+        setLoading(false);
         
         setTimeout(() => {
             setLoading(false);
@@ -137,9 +137,9 @@ const tableProps = {
     enableRowActions: true,
     positionActionsColumn: 'last',
     renderRowActions: ({ row }) => (
-        <div> 
-            <button>hey</button>
-            <button>hey</button>
+        <div className='admin-actions'> 
+            <button className='fa-solid fa-pencil admin-action-button' />
+            <button className='fa-solid fa-xmark admin-action-button'></button>
         </div>
     ),
     enableColumnFilterModes: true,

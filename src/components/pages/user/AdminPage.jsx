@@ -29,9 +29,12 @@ export default function AdminPage() {
         <div>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={() => handleDialogOpen({ title: 'Simple Dialog', content: 'This is a simple dialog.' })} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} />
+                <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} onEditClick={handleDialogOpen} />
             </div>
-            <SimpleDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />
+            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
+            {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
+            {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
+            {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
         </div>
     );
 }
@@ -66,7 +69,7 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function SimpleDialog({ open, onClose, title, content }) {
+function CueDialog({ open, onClose, title, content }) {
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{title}</DialogTitle>
@@ -84,7 +87,61 @@ function SimpleDialog({ open, onClose, title, content }) {
     );
 }
 
-function AdminContent({ adminPage, loading, setLoading }) {
+function AccessoryDialog({ open, onClose, title, content }) {
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {content}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+function MaterialDialog({ open, onClose, title, content }) {
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {content}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+function UserDialog({ open, onClose, title, content }) {
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {content}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
     const [cueData, setCueData] = React.useState([]);
     const [accessoryData, setAccessoryData] = React.useState([]);
     const [materialData, setMaterialData] = React.useState([]);
@@ -141,13 +198,13 @@ function AdminContent({ adminPage, loading, setLoading }) {
 
     switch (adminPage) {
         case 'Cues':
-            return <Cues data={data} />;
+            return <Cues data={data} onEditClick={onEditClick} />;
         case 'Accessories':
-            return <Accessories data={data} />;
+            return <Accessories data={data} onEditClick={onEditClick} />;
         case 'Materials':
-            return <Materials data={data} />;
+            return <Materials data={data} onEditClick={onEditClick} />;
         case 'Users':
-            return <Users data={data} />;
+            return <Users data={data} onEditClick={onEditClick} />;
         default:
             return null;
     }
@@ -172,12 +229,6 @@ function SkeletonLoader() {
 const tableProps = {
     enableRowActions: true,
     positionActionsColumn: 'last',
-    renderRowActions: ({ row }) => (
-        <div className='admin-actions'> 
-            <button className='fa-solid fa-pencil admin-action-button' />
-            <button className='fa-solid fa-xmark admin-action-button'></button>
-        </div>
-    ),
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,
@@ -201,7 +252,7 @@ const tableProps = {
     },
 };
 
-function Cues({ data }) {
+function Cues({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -220,12 +271,25 @@ function Cues({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Cues</h2>
-            <MaterialReactTable columns={columns} data={data} {...tableProps} />
+            <MaterialReactTable
+                columns={columns}
+                data={data}
+                {...tableProps}
+                renderRowActions={({ row }) => (
+                    <div className='admin-actions'>
+                        <button
+                            className='fa-solid fa-pencil admin-action-button'
+                            onClick={() => onEditClick({ title: 'Edit Cue', content: `Editing cue: ${row.original.firstName} ${row.original.lastName}` })}
+                        />
+                        <button className='fa-solid fa-xmark admin-action-button' />
+                    </div>
+                )}
+            />
         </div>
     );
 }
 
-function Accessories({ data }) {
+function Accessories({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -244,12 +308,25 @@ function Accessories({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Accessories</h2>
-            <MaterialReactTable columns={columns} data={data} {...tableProps} />
+            <MaterialReactTable
+                columns={columns}
+                data={data}
+                {...tableProps}
+                renderRowActions={({ row }) => (
+                    <div className='admin-actions'>
+                        <button
+                            className='fa-solid fa-pencil admin-action-button'
+                            onClick={() => onEditClick({ title: 'Edit Accessory', content: `Editing accessory: ${row.original.firstName} ${row.original.lastName}` })}
+                        />
+                        <button className='fa-solid fa-xmark admin-action-button' />
+                    </div>
+                )}
+            />
         </div>
     );
 }
 
-function Materials({ data }) {
+function Materials({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -268,12 +345,25 @@ function Materials({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Materials</h2>
-            <MaterialReactTable columns={columns} data={data} {...tableProps} />
+            <MaterialReactTable
+                columns={columns}
+                data={data}
+                {...tableProps}
+                renderRowActions={({ row }) => (
+                    <div className='admin-actions'>
+                        <button
+                            className='fa-solid fa-pencil admin-action-button'
+                            onClick={() => onEditClick({ title: 'Edit Material', content: `Editing material: ${row.original.firstName} ${row.original.lastName}` })}
+                        />
+                        <button className='fa-solid fa-xmark admin-action-button' />
+                    </div>
+                )}
+            />
         </div>
     );
 }
 
-function Users({ data }) {
+function Users({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -292,7 +382,20 @@ function Users({ data }) {
     return (
         <div>
             <h2 className="admin-page-header">Users</h2>
-            <MaterialReactTable columns={columns} data={data} {...tableProps} />
+            <MaterialReactTable
+                columns={columns}
+                data={data}
+                {...tableProps}
+                renderRowActions={({ row }) => (
+                    <div className='admin-actions'>
+                        <button
+                            className='fa-solid fa-pencil admin-action-button'
+                            onClick={() => onEditClick({ title: 'Edit User', content: `Editing user: ${row.original.firstName} ${row.original.lastName}` })}
+                        />
+                        <button className='fa-solid fa-xmark admin-action-button' />
+                    </div>
+                )}
+            />
         </div>
     );
 }

@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 
 export default function AdminPage() {
     const [adminPage, setAdminPage] = React.useState('Cues');
     const [loading, setLoading] = React.useState(false);
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [dialogProps, setDialogProps] = React.useState({});
 
     useEffect(() => {
         // Simulate a data fetch
@@ -12,17 +15,28 @@ export default function AdminPage() {
         }, 2000);
     }, []);
 
+    const handleDialogOpen = (props) => {
+        setDialogProps(props);
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+        setDialogProps({});
+    };
+
     return (
         <div>
-            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} />
+            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={() => handleDialogOpen({ title: 'Simple Dialog', content: 'This is a simple dialog.' })} />
             <div className='user-content'>
                 <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} />
             </div>
+            <SimpleDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />
         </div>
     );
 }
 
-function AdminHeader({ setAdminPage, adminPage, loading }) {
+function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     const pages = ['Cues', 'Accessories', 'Materials', 'Users'];
 
     return (
@@ -40,11 +54,33 @@ function AdminHeader({ setAdminPage, adminPage, loading }) {
                 ))}
             </ul>
             <div className="admin-header-right">
-                <button className={`admin-icon-button ${loading ? 'disabled' : ''}`} disabled={loading}>
+                <button
+                    className={`admin-icon-button ${loading ? 'disabled' : ''}`}
+                    disabled={loading}
+                    onClick={onPlusClick}
+                >
                     <i className="fas fa-plus"></i>
                 </button>
             </div>
         </div>
+    );
+}
+
+function SimpleDialog({ open, onClose, title, content }) {
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {content}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 }
 

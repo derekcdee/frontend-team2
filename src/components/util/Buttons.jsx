@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 /*==============================================================
 # Defaults
 ==============================================================*/
-export function Button({text, onClick}) {
+export function DefaultButton({text, onClick}) {
     const [ripples, setRipples] = useState([]);
 
     const createRipple = (event) => {

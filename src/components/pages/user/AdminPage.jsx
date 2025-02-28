@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { FormField } from '../../util/Inputs';
+import { DefaultButton } from '../../util/Buttons';
 
 export default function AdminPage() {
     const [adminPage, setAdminPage] = React.useState('Cues');
@@ -95,66 +98,146 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title }) {
+function CueDialog({ open, onClose, title, element=false }) {
+    
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>
+                {title} 
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            
+                
+            <DialogContent>
+
+            </DialogContent>
+            <DialogActions>
+                <DefaultButton text={"Save"} />
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+function AccessoryDialog({ open, onClose, title, element=false }) {
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
             <DialogContent>
                 
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Close
-                </Button>
+                <DefaultButton text={"Save"} />
             </DialogActions>
         </Dialog>
     );
 }
 
-function AccessoryDialog({ open, onClose, title }) {
+function MaterialDialog({ open, onClose, title, element=false }) {
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
             <DialogContent>
-                
+
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Close
-                </Button>
+                <DefaultButton text={"Save"} />
             </DialogActions>
         </Dialog>
     );
 }
 
-function MaterialDialog({ open, onClose, title }) {
+function UserDialog({ open, onClose, title, element = { email: '', password: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    const onSubmit = (data) => {
+        console.log(data);
+        // onClose();
+    };
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const email = watch("email");
+    const password = watch("password");
+
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
             <DialogContent>
+                    <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
+                        <div className="form-column">
+                            <FormField 
+                                title="Email"
+                                type="text"
+                                value={email}
+                                onChange={(e) => console.log(e.target.value)}
+                                error={errors.email && errors.email.message}
+                                {...register("email", {
+                                    required: "Email is required",
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: "Invalid email address"
+                                    },
+                                    maxLength: {
+                                        value: 320,
+                                        message: "Email must be at most 320 characters long"
+                                    }
+                                })}
+                            />
 
+                            <FormField 
+                                title="Password"
+                                value={password}
+                                error={errors.password && errors.password.message}
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 8,
+                                        message: "Password must be at least 8 characters long"
+                                    },
+                                    maxLength: {
+                                        value: 64,
+                                        message: "Password must be at most 64 characters long"
+                                    }
+                                })}
+                            />
+                            <DialogActions>
+                                <DefaultButton text={"Save"} />
+                            </DialogActions>
+                        </div>
+                    </form>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Close
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
-}
-
-function UserDialog({ open, onClose, title }) {
-    return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
-
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Close
-                </Button>
-            </DialogActions>
+            
         </Dialog>
     );
 }

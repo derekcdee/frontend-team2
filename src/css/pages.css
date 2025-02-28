@@ -265,3 +265,18 @@
         left: 150%;
     }
 }
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user-form {
+    width: 300px;
+}

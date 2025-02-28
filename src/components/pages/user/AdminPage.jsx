@@ -98,31 +98,22 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, element=false }) {
-    
-    return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>
-                {title} 
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
-                    onClick={onClose}
-                />
-            </DialogTitle>
-            
-                
-            <DialogContent>
+function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
 
-            </DialogContent>
-            <DialogActions>
-                <DefaultButton text={"Save"} />
-            </DialogActions>
-        </Dialog>
-    );
-}
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
 
-function AccessoryDialog({ open, onClose, title, element=false }) {
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>
@@ -134,16 +125,106 @@ function AccessoryDialog({ open, onClose, title, element=false }) {
                 />
             </DialogTitle>
             <DialogContent>
-                
+                <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField 
+                            title="Cue Number"
+                            type="text"
+                            error={errors.cueNumber && errors.cueNumber.message}
+                            {...register("cueNumber", {
+                                required: "Cue Number is required",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Cue Number must be at most 50 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Name"
+                            type="text"
+                            error={errors.name && errors.name.message}
+                            {...register("name", {
+                                required: "Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Description"
+                            type="text"
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Price"
+                            type="number"
+                            error={errors.price && errors.price.message}
+                            {...register("price", {
+                                required: "Price is required",
+                                min: {
+                                    value: 0,
+                                    message: "Price must be a positive number"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Overall Weight"
+                            type="number"
+                            error={errors.overallWeight && errors.overallWeight.message}
+                            {...register("overallWeight", {
+                                required: "Overall Weight is required",
+                                min: {
+                                    value: 0,
+                                    message: "Overall Weight must be a positive number"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Overall Length"
+                            type="number"
+                            error={errors.overallLength && errors.overallLength.message}
+                            {...register("overallLength", {
+                                required: "Overall Length is required",
+                                min: {
+                                    value: 0,
+                                    message: "Overall Length must be a positive number"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
             </DialogContent>
-            <DialogActions>
-                <DefaultButton text={"Save"} />
-            </DialogActions>
         </Dialog>
     );
 }
 
-function MaterialDialog({ open, onClose, title, element=false }) {
+function AccessoryDialog({ open, onClose, title, element = { name: '', description: '', price: '', accessoryNumber: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>
@@ -155,12 +236,149 @@ function MaterialDialog({ open, onClose, title, element=false }) {
                 />
             </DialogTitle>
             <DialogContent>
-
+                <form className="accessory-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Name"
+                            type="text"
+                            error={errors.name && errors.name.message}
+                            {...register("name", {
+                                required: "Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Description"
+                            type="text"
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Accessory Number"
+                            type="text"
+                            error={errors.accessoryNumber && errors.accessoryNumber.message}
+                            {...register("accessoryNumber", {
+                                required: "Accessory Number is required",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Accessory Number must be at most 50 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Price"
+                            type="number"
+                            error={errors.price && errors.price.message}
+                            {...register("price", {
+                                required: "Price is required",
+                                min: {
+                                    value: 0,
+                                    message: "Price must be a positive number"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
             </DialogContent>
-            <DialogActions>
-                <DefaultButton text={"Save"} />
-            </DialogActions>
         </Dialog>
+    );
+}
+function MaterialDialog({ open, onClose, title, element = { type: '', name: '', description: '', tier: '' } }) {
+const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, element]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="material-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField 
+                            title="Type"
+                            type="text"
+                            error={errors.type && errors.type.message}
+                            {...register("type", {
+                                required: "Type is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Type must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Name"
+                            type="text"
+                            error={errors.name && errors.name.message}
+                            {...register("name", {
+                                required: "Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Description"
+                            type="text"
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Tier"
+                            type="text"
+                            error={errors.tier && errors.tier.message}
+                            {...register("tier", {
+                                required: "Tier is required",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Tier must be at most 50 characters long"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+                    </Dialog>
     );
 }
 

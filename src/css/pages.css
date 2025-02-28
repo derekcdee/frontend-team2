@@ -278,5 +278,17 @@
 }
 
 .user-form {
-    width: 300px;
+    width: 500px;
+}
+
+.accessory-form {
+    width: 500px;
+}
+
+.material-form {
+    width: 500px;
+}
+
+.cue-form {
+    width: 500px;
 }

@@ -16,7 +16,33 @@ export default function AdminPage() {
     }, []);
 
     const handleDialogOpen = (props) => {
-        setDialogProps(props);
+        let title = '';
+
+        switch (adminPage) {
+            case 'Cues':
+                title = 'Cue';
+                break;
+            case 'Accessories':
+                title = 'Accessory';
+                break;
+            case 'Materials':
+                title = 'Material';
+                break;
+            case 'Users':
+                title = 'User';
+                break;
+            default:
+                title = 'Item';
+                break;
+        }
+
+        if (props.element) {
+            title = `Edit ${title}`;
+        } else {
+            title = `New ${title}`;
+        }
+
+        setDialogProps({ ...props, title });
         setDialogOpen(true);
     };
 
@@ -27,7 +53,7 @@ export default function AdminPage() {
 
     return (
         <div>
-            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={() => handleDialogOpen({ title: 'Simple Dialog', content: 'This is a simple dialog.' })} />
+            <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={handleDialogOpen} />
             <div className='user-content'>
                 <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} onEditClick={handleDialogOpen} />
             </div>
@@ -69,14 +95,12 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, content }) {
+function CueDialog({ open, onClose, title }) {
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    {content}
-                </DialogContentText>
+                
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
@@ -87,14 +111,12 @@ function CueDialog({ open, onClose, title, content }) {
     );
 }
 
-function AccessoryDialog({ open, onClose, title, content }) {
+function AccessoryDialog({ open, onClose, title }) {
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    {content}
-                </DialogContentText>
+                
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
@@ -105,14 +127,12 @@ function AccessoryDialog({ open, onClose, title, content }) {
     );
 }
 
-function MaterialDialog({ open, onClose, title, content }) {
+function MaterialDialog({ open, onClose, title }) {
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    {content}
-                </DialogContentText>
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
@@ -123,14 +143,12 @@ function MaterialDialog({ open, onClose, title, content }) {
     );
 }
 
-function UserDialog({ open, onClose, title, content }) {
+function UserDialog({ open, onClose, title }) {
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    {content}
-                </DialogContentText>
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
@@ -279,7 +297,7 @@ function Cues({ data, onEditClick }) {
                     <div className='admin-actions'>
                         <button
                             className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ title: 'Edit Cue', content: `Editing cue: ${row.original.firstName} ${row.original.lastName}` })}
+                            onClick={() => onEditClick({ element: row.original })}
                         />
                         <button className='fa-solid fa-xmark admin-action-button' />
                     </div>
@@ -316,7 +334,7 @@ function Accessories({ data, onEditClick }) {
                     <div className='admin-actions'>
                         <button
                             className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ title: 'Edit Accessory', content: `Editing accessory: ${row.original.firstName} ${row.original.lastName}` })}
+                            onClick={() => onEditClick({ element: row.original })}
                         />
                         <button className='fa-solid fa-xmark admin-action-button' />
                     </div>
@@ -353,7 +371,7 @@ function Materials({ data, onEditClick }) {
                     <div className='admin-actions'>
                         <button
                             className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ title: 'Edit Material', content: `Editing material: ${row.original.firstName} ${row.original.lastName}` })}
+                            onClick={() => onEditClick({ element: row.original })}
                         />
                         <button className='fa-solid fa-xmark admin-action-button' />
                     </div>
@@ -390,7 +408,7 @@ function Users({ data, onEditClick }) {
                     <div className='admin-actions'>
                         <button
                             className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ title: 'Edit User', content: `Editing user: ${row.original.firstName} ${row.original.lastName}` })}
+                            onClick={() => onEditClick({ element: row.original })}
                         />
                         <button className='fa-solid fa-xmark admin-action-button' />
                     </div>

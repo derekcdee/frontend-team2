@@ -278,17 +278,21 @@
 }
 
 .user-form {
-    width: 500px;
+    justify-self: center;
+    width: 100%;
 }
 
 .accessory-form {
-    width: 500px;
+    justify-self: center;
+    width: 100%;
 }
 
 .material-form {
-    width: 500px;
+    justify-self: center;
+    width: 100%;
 }
 
 .cue-form {
-    width: 500px;
+    justify-self: center;
+    width: 100%;
 }

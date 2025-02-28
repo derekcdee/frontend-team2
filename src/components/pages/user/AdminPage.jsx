@@ -115,7 +115,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
                 <button
@@ -226,7 +226,7 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
                 <button
@@ -304,7 +304,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
         if (open) {
             reset(element);
         }
-    }, [open, element]);
+    }, [open, reset]);
 
     const onSubmit = (data) => {
         console.log(data);
@@ -312,7 +312,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
                 <button
@@ -402,7 +402,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
     const password = watch("password");
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
                 <button

@@ -522,7 +522,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
                 });
         } else {
             console.log("hit")
-            editUser(userData.email, userData.firstName, userData.lastName)
+            editUser(element.email, userData.email, userData.firstName, userData.lastName)
                 .then((res) => {
                     receiveResponse(res);
                     onClose();

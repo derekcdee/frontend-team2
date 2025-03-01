@@ -71,9 +71,9 @@ export function createUser(email, firstName, lastName, password) {
     });
 }
 
-export function editUser(email, firstName, lastName) {
+export function editUser(originalEmail, email, firstName, lastName) {
     return _ajax({
-        url: "/admin/users/" + email,
+        url: "/admin/users/" + originalEmail,
         method: "PUT",
         data: { email, firstName, lastName }
     });

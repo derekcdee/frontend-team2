@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers } from '../../../util/requests';
+import { getUsers, createUser } from '../../../util/requests';
 
 
 export default function AdminPage() {
@@ -491,8 +491,8 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
-    console.log(element)
-    const showPasswordField = !element.email;
+
+    const newUser = !element.email;
 
     useEffect(() => {
         if (open) {
@@ -501,8 +501,27 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     }, [open, reset]);
 
     const onSubmit = (data) => {
-        console.log(data);
-        onClose();
+        const newUser = {
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+        }
+        if (newUser) {
+            newUser.password = data.password;
+        }
+
+        if (newUser) {
+            createUser(newUser.email, newUser.firstName, newUser.lastName, newUser.password)
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+
+        }
+        // onClose();
     };
 
     const email = watch("email");
@@ -513,7 +532,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
-                {title}
+                {title} {!newUser && firstName && `'${firstName}'`}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
                     style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
@@ -566,7 +585,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
                                 }
                             })}
                         />
-                        {showPasswordField && (
+                        {newUser && (
                             <FormField
                                 title="Password"
                                 type="text"

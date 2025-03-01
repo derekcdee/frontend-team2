@@ -62,3 +62,11 @@ export function getUsers() {
         method: "GET",
     });
 }
+
+export function createUser(email, firstName, lastName, password) {
+    return _ajax({
+        url: "/admin/users",
+        method: "POST",
+        data: { email, firstName, lastName, password }
+    });
+}

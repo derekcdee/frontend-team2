@@ -4,6 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
+import { getUsers } from '../../../util/requests';
 
 export default function AdminPage() {
     const [adminPage, setAdminPage] = React.useState('Cues');
@@ -511,6 +512,7 @@ function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
             case 'Materials':
                 break;
             case 'Users':
+                getUsers()
                 break;
             default:
                 break;

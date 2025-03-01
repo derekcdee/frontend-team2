@@ -420,6 +420,8 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
         defaultValues: element
     });
 
+    const showPasswordField = !element.email;
+
     useEffect(() => {
         if (open) {
             reset(element);
@@ -467,23 +469,6 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
                             })}
                         />
                         <FormField
-                            title="Password"
-                            type="text"
-                            value={password}
-                            error={errors.password && errors.password.message}
-                            {...register("password", {
-                                required: "Password is required",
-                                minLength: {
-                                    value: 8,
-                                    message: "Password must be at least 8 characters long"
-                                },
-                                maxLength: {
-                                    value: 64,
-                                    message: "Password must be at most 64 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
                             title="First Name"
                             type="text"
                             value={firstName}
@@ -509,6 +494,25 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
                                 }
                             })}
                         />
+                        {showPasswordField && (
+                            <FormField
+                                title="Password"
+                                type="text"
+                                value={password}
+                                error={errors.password && errors.password.message}
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 8,
+                                        message: "Password must be at least 8 characters long"
+                                    },
+                                    maxLength: {
+                                        value: 64,
+                                        message: "Password must be at most 64 characters long"
+                                    }
+                                })}
+                            />
+                        )}
                         <DialogActions>
                             <DefaultButton text={"Save"} />
                         </DialogActions>
@@ -771,6 +775,17 @@ function Users({ data, onEditClick }) {
         {
             accessorKey: 'email', // ensure data objects have an 'email' property
             header: 'Email',
+        },
+        {
+            header: 'Password',
+            Cell: ({ row }) => (
+                <div className='admin-actions'>
+                    <button
+                        className='fa-solid fa-pencil admin-action-button'
+                        onClick={() => onEditClick({ element: row.original })}
+                    />
+                </div>
+            ),
         },
         {
             header: 'Actions',

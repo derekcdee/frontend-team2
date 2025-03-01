@@ -4,7 +4,8 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers, createUser } from '../../../util/requests';
+import { getUsers, createUser, editUser } from '../../../util/requests';
+import { receiveResponse } from '../../../util/notifications';
 
 
 export default function AdminPage() {
@@ -492,7 +493,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
         defaultValues: element
     });
 
-    const newUser = !element.email;
+    const existingUser = !!element.email;
 
     useEffect(() => {
         if (open) {
@@ -501,25 +502,34 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     }, [open, reset]);
 
     const onSubmit = (data) => {
-        const newUser = {
+        const userData = {
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
         }
-        if (newUser) {
-            newUser.password = data.password;
+        if (!existingUser) {
+            userData.password = data.password;
         }
 
-        if (newUser) {
-            createUser(newUser.email, newUser.firstName, newUser.lastName, newUser.password)
+        if (!existingUser) {
+            createUser(userData.email, userData.firstName, userData.lastName, userData.password)
                 .then((res) => {
-                    console.log(res);
+                    receiveResponse(res);
+                    onClose();
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
-
+            console.log("hit")
+            editUser(userData.email, userData.firstName, userData.lastName)
+                .then((res) => {
+                    receiveResponse(res);
+                    onClose();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
         // onClose();
     };
@@ -532,7 +542,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
-                {title} {!newUser && firstName && `'${firstName}'`}
+                {title} {existingUser && firstName && `'${firstName}'`}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
                     style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
@@ -585,7 +595,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
                                 }
                             })}
                         />
-                        {newUser && (
+                        {!existingUser && (
                             <FormField
                                 title="Password"
                                 type="text"

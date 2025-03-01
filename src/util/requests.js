@@ -70,3 +70,11 @@ export function createUser(email, firstName, lastName, password) {
         data: { email, firstName, lastName, password }
     });
 }
+
+export function editUser(email, firstName, lastName) {
+    return _ajax({
+        url: "/admin/users/" + email,
+        method: "POST",
+        data: { email, firstName, lastName }
+    });
+}

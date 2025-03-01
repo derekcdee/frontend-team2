@@ -513,6 +513,10 @@ function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
                 break;
             case 'Users':
                 getUsers()
+                .then((res) => {
+                    console.log(res)
+                })
+
                 break;
             default:
                 break;

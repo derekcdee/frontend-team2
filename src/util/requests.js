@@ -1,8 +1,8 @@
-import $, { data } from 'jquery';
-import { toast } from 'react-toastify';
+import $ from 'jquery';
+import { receiveResponse} from './notifications';
 
 
-export function _ajax(settings={}) {
+export function _ajax(settings = {}) {
     settings.url = `http://localhost:5000${settings.url}`;
     settings.contentType = "application/json"; // Set content type to JSON
     settings.dataType = "json"; // Expect JSON response
@@ -12,19 +12,26 @@ export function _ajax(settings={}) {
 
     return $.ajax(settings)
         .then((res) => {
-            console.log(res);
-            toast.success(`Operation successful: ${res}`);
-            return res; 
-        }).catch((err) => {
-            console.log(err);
-            toast.error(`Operation failed: ${err.status} ${err.statusText}`);
-            throw err;
+            const response = JSON.parse(res);
+
+            if (Array.isArray(response.errors)) {
+                return Promise.reject(response);
+            }
+
+            receiveResponse(response);
+            return response;
+        })
+        .catch((err) => {
+            const response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
+            receiveResponse(response);
+
+            return Promise.reject(response);
         });
 }
 
 // test backend call
 export function test() {
-    _ajax({
+    return _ajax({
         url: "/products",
         method: "GET",
     });
@@ -34,7 +41,7 @@ export function test() {
 # Users
 ==============================================================*/
 export function login(email, password) {
-    _ajax({
+    return _ajax({
         url: "/account/login",
         method: "POST",
         data: { email, password }
@@ -51,7 +58,7 @@ export function login(email, password) {
 # Users
 ==============================================================*/
 export function getUsers() {
-    _ajax({
+    return _ajax({
         url: "/admin/users",
         method: "GET",
     });

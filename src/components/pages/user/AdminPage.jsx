@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
@@ -6,11 +6,14 @@ import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getUsers } from '../../../util/requests';
 
+
 export default function AdminPage() {
-    const [adminPage, setAdminPage] = React.useState('Cues');
-    const [loading, setLoading] = React.useState(false);
-    const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [dialogProps, setDialogProps] = React.useState({});
+    const [adminPage, setAdminPage] = useState('Cues');
+    const [loading, setLoading] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+    const [dialogProps, setDialogProps] = useState({});
+    const [passwordDialogProps, setPasswordDialogProps] = useState({});
 
     useEffect(() => {
         // Simulate a data fetch
@@ -50,22 +53,91 @@ export default function AdminPage() {
         setDialogOpen(true);
     };
 
+    const handlePasswordDialogOpen = (props) => {
+        setPasswordDialogProps({ ...props, title: 'Change Password' });
+        setPasswordDialogOpen(true);
+    };
+
     const handleDialogClose = () => {
         setDialogOpen(false);
         setDialogProps({});
+    };
+
+    const handlePasswordDialogClose = () => {
+        setPasswordDialogOpen(false);
+        setPasswordDialogProps({});
     };
 
     return (
         <div>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={handleDialogOpen} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} onEditClick={handleDialogOpen} />
+                <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} />
             </div>
             {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
             {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
             {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
             {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
+            <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} {...passwordDialogProps} />
         </div>
+    );
+}
+
+function PasswordDialog({ open, onClose, title, element = { password: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
+    const password = watch("password");
+
+    return (
+        <Dialog open={open} onClose={onClose} fullScreen>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="password-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Password"
+                            type="password"
+                            value={password}
+                            error={errors.password && errors.password.message}
+                            {...register("password", {
+                                required: "Password is required",
+                                minLength: {
+                                    value: 8,
+                                    message: "Password must be at least 8 characters long"
+                                },
+                                maxLength: {
+                                    value: 64,
+                                    message: "Password must be at most 64 characters long"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
 
@@ -419,7 +491,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
-
+    console.log(element)
     const showPasswordField = !element.email;
 
     useEffect(() => {
@@ -523,32 +595,31 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     );
 }
 
-function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
-    const [cueData, setCueData] = React.useState([]);
-    const [accessoryData, setAccessoryData] = React.useState([]);
-    const [materialData, setMaterialData] = React.useState([]);
-    const [userData, setUserData] = React.useState([]);
+function AdminContent({ adminPage, loading, setLoading, onEditClick, onPasswordEditClick }) {
+    const [cueData, setCueData] = useState([]);
+    const [accessoryData, setAccessoryData] = useState([]);
+    const [materialData, setMaterialData] = useState([]);
+    const [userData, setUserData] = useState([]);
 
     const getData = async () => { 
-        setLoading(false);
-        
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+        setLoading(true);
 
         switch (adminPage) {
             case 'Cues':
+                setLoading(false);
                 break;
             case 'Accessories':
+                setLoading(false);
                 break;
             case 'Materials':
+                setLoading(false);
                 break;
             case 'Users':
                 getUsers()
-                .then((res) => {
-                    console.log(res);
-                    setUserData(res.data);
-                })
+                    .then((res) => {
+                        setLoading(false);
+                        setUserData(res.data);
+                    });
 
                 break;
             default:
@@ -592,7 +663,7 @@ function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
         case 'Materials':
             return <Materials data={data} onEditClick={onEditClick} />;
         case 'Users':
-            return <Users data={userData} onEditClick={onEditClick} />;
+            return <Users data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} />;
         default:
             return null;
     }
@@ -762,7 +833,7 @@ function Materials({ data, onEditClick }) {
     );
 }
 
-function Users({ data, onEditClick }) {
+function Users({ data, onEditClick, onPasswordEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName', // ensure data objects have a 'firstName' property
@@ -782,7 +853,7 @@ function Users({ data, onEditClick }) {
                 <div className='admin-actions'>
                     <button
                         className='fa-solid fa-pencil admin-action-button'
-                        onClick={() => onEditClick({ element: row.original })}
+                        onClick={() => onPasswordEditClick({ element: row.original })}
                     />
                 </div>
             ),

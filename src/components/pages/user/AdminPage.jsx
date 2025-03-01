@@ -114,6 +114,13 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
         onClose();
     };
 
+    const cueNumber = watch("cueNumber");
+    const name = watch("name");
+    const description = watch("description");
+    const price = watch("price");
+    const overallWeight = watch("overallWeight");
+    const overallLength = watch("overallLength");
+
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
@@ -130,6 +137,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
                         <FormField 
                             title="Cue Number"
                             type="text"
+                            value={cueNumber}
                             error={errors.cueNumber && errors.cueNumber.message}
                             {...register("cueNumber", {
                                 required: "Cue Number is required",
@@ -142,6 +150,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
                         <FormField 
                             title="Name"
                             type="text"
+                            value={name}
                             error={errors.name && errors.name.message}
                             {...register("name", {
                                 required: "Name is required",
@@ -154,6 +163,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
                         <FormField 
                             title="Description"
                             type="text"
+                            value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {
                                 required: "Description is required",
@@ -166,6 +176,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
                         <FormField 
                             title="Price"
                             type="number"
+                            value={price}
                             error={errors.price && errors.price.message}
                             {...register("price", {
                                 required: "Price is required",
@@ -178,6 +189,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
                         <FormField 
                             title="Overall Weight"
                             type="number"
+                            value={overallWeight}
                             error={errors.overallWeight && errors.overallWeight.message}
                             {...register("overallWeight", {
                                 required: "Overall Weight is required",
@@ -190,6 +202,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
                         <FormField 
                             title="Overall Length"
                             type="number"
+                            value={overallLength}
                             error={errors.overallLength && errors.overallLength.message}
                             {...register("overallLength", {
                                 required: "Overall Length is required",
@@ -225,6 +238,11 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
         onClose();
     };
 
+    const name = watch("name");
+    const description = watch("description");
+    const price = watch("price");
+    const accessoryNumber = watch("accessoryNumber");
+
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
@@ -241,6 +259,7 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
                         <FormField
                             title="Name"
                             type="text"
+                            value={name}
                             error={errors.name && errors.name.message}
                             {...register("name", {
                                 required: "Name is required",
@@ -253,6 +272,7 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
                         <FormField
                             title="Description"
                             type="text"
+                            value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {
                                 required: "Description is required",
@@ -265,6 +285,7 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
                         <FormField
                             title="Accessory Number"
                             type="text"
+                            value={accessoryNumber}
                             error={errors.accessoryNumber && errors.accessoryNumber.message}
                             {...register("accessoryNumber", {
                                 required: "Accessory Number is required",
@@ -277,6 +298,7 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
                         <FormField
                             title="Price"
                             type="number"
+                            value={price}
                             error={errors.price && errors.price.message}
                             {...register("price", {
                                 required: "Price is required",
@@ -295,8 +317,9 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
         </Dialog>
     );
 }
+
 function MaterialDialog({ open, onClose, title, element = { type: '', name: '', description: '', tier: '' } }) {
-const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
 
@@ -310,6 +333,11 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
         console.log(data);
         onClose();
     };
+
+    const type = watch("type");
+    const name = watch("name");
+    const description = watch("description");
+    const tier = watch("tier");
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
@@ -327,6 +355,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
                         <FormField 
                             title="Type"
                             type="text"
+                            value={type}
                             error={errors.type && errors.type.message}
                             {...register("type", {
                                 required: "Type is required",
@@ -339,6 +368,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
                         <FormField 
                             title="Name"
                             type="text"
+                            value={name}
                             error={errors.name && errors.name.message}
                             {...register("name", {
                                 required: "Name is required",
@@ -351,6 +381,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
                         <FormField 
                             title="Description"
                             type="text"
+                            value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {
                                 required: "Description is required",
@@ -363,6 +394,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
                         <FormField 
                             title="Tier"
                             type="text"
+                            value={tier}
                             error={errors.tier && errors.tier.message}
                             {...register("tier", {
                                 required: "Tier is required",
@@ -378,7 +410,7 @@ const { register, handleSubmit, watch, formState: { errors }, reset } = useForm(
                     </div>
                 </form>
             </DialogContent>
-                    </Dialog>
+        </Dialog>
     );
 }
 
@@ -387,16 +419,16 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
         defaultValues: element
     });
 
-    const onSubmit = (data) => {
-        console.log(data);
-        // onClose();
-    };
-
     useEffect(() => {
         if (open) {
             reset(element);
         }
     }, [open, reset]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
 
     const email = watch("email");
     const password = watch("password");
@@ -412,50 +444,48 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
                 />
             </DialogTitle>
             <DialogContent>
-                    <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
-                        <div className="form-column">
-                            <FormField 
-                                title="Email"
-                                type="text"
-                                value={email}
-                                onChange={(e) => console.log(e.target.value)}
-                                error={errors.email && errors.email.message}
-                                {...register("email", {
-                                    required: "Email is required",
-                                    pattern: {
-                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                        message: "Invalid email address"
-                                    },
-                                    maxLength: {
-                                        value: 320,
-                                        message: "Email must be at most 320 characters long"
-                                    }
-                                })}
-                            />
-
-                            <FormField 
-                                title="Password"
-                                value={password}
-                                error={errors.password && errors.password.message}
-                                {...register("password", {
-                                    required: "Password is required",
-                                    minLength: {
-                                        value: 8,
-                                        message: "Password must be at least 8 characters long"
-                                    },
-                                    maxLength: {
-                                        value: 64,
-                                        message: "Password must be at most 64 characters long"
-                                    }
-                                })}
-                            />
-                            <DialogActions>
-                                <DefaultButton text={"Save"} />
-                            </DialogActions>
-                        </div>
-                    </form>
+                <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField 
+                            title="Email"
+                            type="text"
+                            value={email}
+                            error={errors.email && errors.email.message}
+                            {...register("email", {
+                                required: "Email is required",
+                                pattern: {
+                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                    message: "Invalid email address"
+                                },
+                                maxLength: {
+                                    value: 320,
+                                    message: "Email must be at most 320 characters long"
+                                }
+                            })}
+                        />
+                        <FormField 
+                            title="Password"
+                            type="text"
+                            value={password}
+                            error={errors.password && errors.password.message}
+                            {...register("password", {
+                                required: "Password is required",
+                                minLength: {
+                                    value: 8,
+                                    message: "Password must be at least 8 characters long"
+                                },
+                                maxLength: {
+                                    value: 64,
+                                    message: "Password must be at most 64 characters long"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
             </DialogContent>
-            
         </Dialog>
     );
 }

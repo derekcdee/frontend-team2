@@ -415,7 +415,7 @@ function MaterialDialog({ open, onClose, title, element = { type: '', name: '', 
     );
 }
 
-function UserDialog({ open, onClose, title, element = { email: '', password: '' } }) {
+function UserDialog({ open, onClose, title, element = { email: '', password: '', firstName: '', lastName: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -433,6 +433,8 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
 
     const email = watch("email");
     const password = watch("password");
+    const firstName = watch("firstName");
+    const lastName = watch("lastName");
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
@@ -447,7 +449,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
             <DialogContent>
                 <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
-                        <FormField 
+                        <FormField
                             title="Email"
                             type="text"
                             value={email}
@@ -464,7 +466,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
                                 }
                             })}
                         />
-                        <FormField 
+                        <FormField
                             title="Password"
                             type="text"
                             value={password}
@@ -478,6 +480,32 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '' 
                                 maxLength: {
                                     value: 64,
                                     message: "Password must be at most 64 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="First Name"
+                            type="text"
+                            value={firstName}
+                            error={errors.firstName && errors.firstName.message}
+                            {...register("firstName", {
+                                required: "First Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "First Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Last Name"
+                            type="text"
+                            value={lastName}
+                            error={errors.lastName && errors.lastName.message}
+                            {...register("lastName", {
+                                required: "Last Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Last Name must be at most 100 characters long"
                                 }
                             })}
                         />
@@ -514,7 +542,8 @@ function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
             case 'Users':
                 getUsers()
                 .then((res) => {
-                    console.log(res)
+                    console.log(res);
+                    setUserData(res.data);
                 })
 
                 break;
@@ -559,7 +588,7 @@ function AdminContent({ adminPage, loading, setLoading, onEditClick }) {
         case 'Materials':
             return <Materials data={data} onEditClick={onEditClick} />;
         case 'Users':
-            return <Users data={data} onEditClick={onEditClick} />;
+            return <Users data={userData} onEditClick={onEditClick} />;
         default:
             return null;
     }
@@ -582,7 +611,6 @@ function SkeletonLoader() {
 }
 
 const tableProps = {
-    enableRowActions: true,
     positionActionsColumn: 'last',
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
@@ -621,6 +649,19 @@ function Cues({ data, onEditClick }) {
             accessorKey: 'age',
             header: 'Age',
         },
+        {
+            id: 'actions', // 'id' is used instead of 'accessorKey' because this column doesn't correspond directly to data
+            header: 'Actions',
+            Cell: ({ row }) => (
+                <div className='admin-actions'>
+                    <button
+                        className='fa-solid fa-pencil admin-action-button'
+                        onClick={() => onEditClick({ element: row.original })}
+                    />
+                    <button className='fa-solid fa-xmark admin-action-button' />
+                </div>
+            ),
+        },
     ];
 
     return (
@@ -630,15 +671,6 @@ function Cues({ data, onEditClick }) {
                 columns={columns}
                 data={data}
                 {...tableProps}
-                renderRowActions={({ row }) => (
-                    <div className='admin-actions'>
-                        <button
-                            className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ element: row.original })}
-                        />
-                        <button className='fa-solid fa-xmark admin-action-button' />
-                    </div>
-                )}
             />
         </div>
     );
@@ -658,6 +690,19 @@ function Accessories({ data, onEditClick }) {
             accessorKey: 'age',
             header: 'Age',
         },
+        {
+            id: 'actions', // 'id' is used instead of 'accessorKey' because this column doesn't correspond directly to data
+            header: 'Actions',
+            Cell: ({ row }) => (
+                <div className='admin-actions'>
+                    <button
+                        className='fa-solid fa-pencil admin-action-button'
+                        onClick={() => onEditClick({ element: row.original })}
+                    />
+                    <button className='fa-solid fa-xmark admin-action-button' />
+                </div>
+            ),
+        },
     ];
 
     return (
@@ -667,15 +712,6 @@ function Accessories({ data, onEditClick }) {
                 columns={columns}
                 data={data}
                 {...tableProps}
-                renderRowActions={({ row }) => (
-                    <div className='admin-actions'>
-                        <button
-                            className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ element: row.original })}
-                        />
-                        <button className='fa-solid fa-xmark admin-action-button' />
-                    </div>
-                )}
             />
         </div>
     );
@@ -695,6 +731,19 @@ function Materials({ data, onEditClick }) {
             accessorKey: 'age',
             header: 'Age',
         },
+        {
+            id: 'actions', // 'id' is used instead of 'accessorKey' because this column doesn't correspond directly to data
+            header: 'Actions',
+            Cell: ({ row }) => (
+                <div className='admin-actions'>
+                    <button
+                        className='fa-solid fa-pencil admin-action-button'
+                        onClick={() => onEditClick({ element: row.original })}
+                    />
+                    <button className='fa-solid fa-xmark admin-action-button' />
+                </div>
+            ),
+        },
     ];
 
     return (
@@ -704,15 +753,6 @@ function Materials({ data, onEditClick }) {
                 columns={columns}
                 data={data}
                 {...tableProps}
-                renderRowActions={({ row }) => (
-                    <div className='admin-actions'>
-                        <button
-                            className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ element: row.original })}
-                        />
-                        <button className='fa-solid fa-xmark admin-action-button' />
-                    </div>
-                )}
             />
         </div>
     );
@@ -721,16 +761,28 @@ function Materials({ data, onEditClick }) {
 function Users({ data, onEditClick }) {
     const columns = [
         {
-            accessorKey: 'firstName',
+            accessorKey: 'firstName', // ensure data objects have a 'firstName' property
             header: 'First Name',
         },
         {
-            accessorKey: 'lastName',
+            accessorKey: 'lastName', // ensure data objects have a 'lastName' property
             header: 'Last Name',
         },
         {
-            accessorKey: 'age',
-            header: 'Age',
+            accessorKey: 'email', // ensure data objects have an 'email' property
+            header: 'Email',
+        },
+        {
+            header: 'Actions',
+            Cell: ({ row }) => (
+                <div className='admin-actions'>
+                    <button
+                        className='fa-solid fa-pencil admin-action-button'
+                        onClick={() => onEditClick({ element: row.original })}
+                    />
+                    <button className='fa-solid fa-xmark admin-action-button' />
+                </div>
+            ),
         },
     ];
 
@@ -741,15 +793,6 @@ function Users({ data, onEditClick }) {
                 columns={columns}
                 data={data}
                 {...tableProps}
-                renderRowActions={({ row }) => (
-                    <div className='admin-actions'>
-                        <button
-                            className='fa-solid fa-pencil admin-action-button'
-                            onClick={() => onEditClick({ element: row.original })}
-                        />
-                        <button className='fa-solid fa-xmark admin-action-button' />
-                    </div>
-                )}
             />
         </div>
     );

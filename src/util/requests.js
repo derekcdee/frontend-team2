@@ -18,7 +18,6 @@ export function _ajax(settings = {}) {
                 return Promise.reject(response);
             }
 
-            receiveResponse(response);
             return response;
         })
         .catch((err) => {

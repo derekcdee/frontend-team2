@@ -6,6 +6,7 @@ import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
+import { AdminSkeletonLoader } from '../../util/Util';
 
 
 export default function AdminPage() {
@@ -101,68 +102,6 @@ export default function AdminPage() {
     );
 }
 
-function PasswordDialog({ open, onClose, title, element = { password: '', firstName: '' } }) {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
-        defaultValues: element
-    });
-
-    useEffect(() => {
-        if (open) {
-            reset(element);
-        }
-    }, [open, reset]);
-
-    const onSubmit = (data) => {
-        changePassword(element.email, data.password)
-            .then((res) => {
-                receiveResponse(res);
-            });
-        onClose();
-    };
-
-    const firstName = element.firstName;
-    const password = watch("password");
-
-    return (
-        <Dialog open={open} onClose={onClose} >
-            <DialogTitle>
-                {title} {firstName && `'${firstName}'`}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
-            </DialogTitle>
-            <DialogContent>
-                <form className="password-form" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="form-column">
-                        <FormField
-                            title="Password"
-                            type="text"
-                            value={password}
-                            error={errors.password && errors.password.message}
-                            {...register("password", {
-                                required: "Password is required",
-                                minLength: {
-                                    value: 8,
-                                    message: "Password must be at least 8 characters long"
-                                },
-                                maxLength: {
-                                    value: 64,
-                                    message: "Password must be at most 64 characters long"
-                                }
-                            })}
-                        />
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
 function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     const pages = ['Cues', 'Accessories', 'Materials', 'Users'];
 
@@ -214,452 +153,6 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '' } }) {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
-        defaultValues: element
-    });
-
-    useEffect(() => {
-        if (open) {
-            reset(element);
-        }
-    }, [open, reset]);
-
-    const onSubmit = (data) => {
-        console.log(data);
-        onClose();
-    };
-
-    const cueNumber = watch("cueNumber");
-    const name = watch("name");
-    const description = watch("description");
-    const price = watch("price");
-    const overallWeight = watch("overallWeight");
-    const overallLength = watch("overallLength");
-
-    return (
-        <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
-                {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
-            </DialogTitle>
-            <DialogContent>
-                <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="form-column">
-                        <FormField 
-                            title="Cue Number"
-                            type="text"
-                            value={cueNumber}
-                            error={errors.cueNumber && errors.cueNumber.message}
-                            {...register("cueNumber", {
-                                required: "Cue Number is required",
-                                maxLength: {
-                                    value: 50,
-                                    message: "Cue Number must be at most 50 characters long"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Name"
-                            type="text"
-                            value={name}
-                            error={errors.name && errors.name.message}
-                            {...register("name", {
-                                required: "Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Description"
-                            type="text"
-                            value={description}
-                            error={errors.description && errors.description.message}
-                            {...register("description", {
-                                required: "Description is required",
-                                maxLength: {
-                                    value: 500,
-                                    message: "Description must be at most 500 characters long"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Price"
-                            type="number"
-                            value={price}
-                            error={errors.price && errors.price.message}
-                            {...register("price", {
-                                required: "Price is required",
-                                min: {
-                                    value: 0,
-                                    message: "Price must be a positive number"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Overall Weight"
-                            type="number"
-                            value={overallWeight}
-                            error={errors.overallWeight && errors.overallWeight.message}
-                            {...register("overallWeight", {
-                                required: "Overall Weight is required",
-                                min: {
-                                    value: 0,
-                                    message: "Overall Weight must be a positive number"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Overall Length"
-                            type="number"
-                            value={overallLength}
-                            error={errors.overallLength && errors.overallLength.message}
-                            {...register("overallLength", {
-                                required: "Overall Length is required",
-                                min: {
-                                    value: 0,
-                                    message: "Overall Length must be a positive number"
-                                }
-                            })}
-                        />
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '' } }) {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
-        defaultValues: element
-    });
-
-    useEffect(() => {
-        if (open) {
-            reset(element);
-        }
-    }, [open, reset]);
-
-    const onSubmit = (data) => {
-        console.log(data);
-        onClose();
-    };
-
-    const name = watch("name");
-    const description = watch("description");
-    const price = watch("price");
-    const accessoryNumber = watch("accessoryNumber");
-
-    return (
-        <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
-                {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
-            </DialogTitle>
-            <DialogContent>
-                <form className="accessory-form" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="form-column">
-                        <FormField
-                            title="Name"
-                            type="text"
-                            value={name}
-                            error={errors.name && errors.name.message}
-                            {...register("name", {
-                                required: "Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Description"
-                            type="text"
-                            value={description}
-                            error={errors.description && errors.description.message}
-                            {...register("description", {
-                                required: "Description is required",
-                                maxLength: {
-                                    value: 500,
-                                    message: "Description must be at most 500 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Accessory Number"
-                            type="text"
-                            value={accessoryNumber}
-                            error={errors.accessoryNumber && errors.accessoryNumber.message}
-                            {...register("accessoryNumber", {
-                                required: "Accessory Number is required",
-                                maxLength: {
-                                    value: 50,
-                                    message: "Accessory Number must be at most 50 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Price"
-                            type="number"
-                            value={price}
-                            error={errors.price && errors.price.message}
-                            {...register("price", {
-                                required: "Price is required",
-                                min: {
-                                    value: 0,
-                                    message: "Price must be a positive number"
-                                }
-                            })}
-                        />
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '' } }) {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
-        defaultValues: element
-    });
-
-    useEffect(() => {
-        if (open) {
-            reset(element);
-        }
-    }, [open, reset]);
-
-    const onSubmit = (data) => {
-        console.log(data);
-        onClose();
-    };
-
-    const type = watch("type");
-    const name = watch("name");
-    const description = watch("description");
-    const tier = watch("tier");
-
-    return (
-        <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
-                {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
-            </DialogTitle>
-            <DialogContent>
-                <form className="material-form" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="form-column">
-                        <FormField 
-                            title="Type"
-                            type="text"
-                            value={type}
-                            error={errors.type && errors.type.message}
-                            {...register("type", {
-                                required: "Type is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Type must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Name"
-                            type="text"
-                            value={name}
-                            error={errors.name && errors.name.message}
-                            {...register("name", {
-                                required: "Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Description"
-                            type="text"
-                            value={description}
-                            error={errors.description && errors.description.message}
-                            {...register("description", {
-                                required: "Description is required",
-                                maxLength: {
-                                    value: 500,
-                                    message: "Description must be at most 500 characters long"
-                                }
-                            })}
-                        />
-                        <FormField 
-                            title="Tier"
-                            type="text"
-                            value={tier}
-                            error={errors.tier && errors.tier.message}
-                            {...register("tier", {
-                                required: "Tier is required",
-                                maxLength: {
-                                    value: 50,
-                                    message: "Tier must be at most 50 characters long"
-                                }
-                            })}
-                        />
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-function UserDialog({ open, onClose, title, getData, element = { email: '', password: '', firstName: '', lastName: '' } }) {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
-        defaultValues: element
-    });
-
-    const existingUser = !!element.email;
-
-    useEffect(() => {
-        if (open) {
-            reset(element);
-        }
-    }, [open, reset]);
-
-    const onSubmit = (data) => {
-        const userData = {
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-        }
-        if (!existingUser) {
-            userData.password = data.password;
-        }
-
-        if (!existingUser) {
-            createUser(userData.email, userData.firstName, userData.lastName, userData.password)
-                .then((res) => {
-                    receiveResponse(res);
-                    getData();
-                    onClose();
-                });
-        } else {
-            editUser(element.email, userData.email, userData.firstName, userData.lastName)
-                .then((res) => {
-                    receiveResponse(res);
-                    getData();
-                    onClose();
-                });
-        }
-    };
-
-    const email = watch("email");
-    const password = watch("password");
-    const firstName = watch("firstName");
-    const lastName = watch("lastName");
-
-    return (
-        <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
-                {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
-            </DialogTitle>
-            <DialogContent>
-                <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="form-column">
-                        <FormField
-                            title="Email"
-                            type="text"
-                            value={email}
-                            error={errors.email && errors.email.message}
-                            {...register("email", {
-                                required: "Email is required",
-                                pattern: {
-                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: "Invalid email address"
-                                },
-                                maxLength: {
-                                    value: 320,
-                                    message: "Email must be at most 320 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="First Name"
-                            type="text"
-                            value={firstName}
-                            error={errors.firstName && errors.firstName.message}
-                            {...register("firstName", {
-                                required: "First Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "First Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Last Name"
-                            type="text"
-                            value={lastName}
-                            error={errors.lastName && errors.lastName.message}
-                            {...register("lastName", {
-                                required: "Last Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Last Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        {!existingUser && (
-                            <FormField
-                                title="Password"
-                                type="text"
-                                value={password}
-                                error={errors.password && errors.password.message}
-                                {...register("password", {
-                                    required: "Password is required",
-                                    minLength: {
-                                        value: 8,
-                                        message: "Password must be at least 8 characters long"
-                                    },
-                                    maxLength: {
-                                        value: 64,
-                                        message: "Password must be at most 64 characters long"
-                                    }
-                                })}
-                            />
-                        )}
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
 function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, onDeleteClick, cueData, accessoryData, materialData, userData }) {
     const data = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
@@ -682,7 +175,7 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
     ];
 
     if (loading) {
-        return <SkeletonLoader />;
+        return <AdminSkeletonLoader />;
     }
 
     switch (adminPage) {
@@ -698,47 +191,6 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
             return null;
     }
 }
-
-function SkeletonLoader() {
-    return (
-        <div className="skeleton-loader">
-            <div className="skeleton-header"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-            <div className="skeleton-row"></div>
-        </div>
-    );
-}
-
-const tableProps = {
-    positionActionsColumn: 'last',
-    enableColumnFilterModes: true,
-    enableColumnOrdering: true,
-    enableGrouping: true,
-    positionGlobalFilter: 'left',
-    initialState: {
-        showGlobalFilter: true,
-        pagination: {
-            pageSize: 10,
-        },
-    },
-    paginationDisplayMode: 'pages',
-    positionToolbarAlertBanner: 'bottom',
-    muiSearchTextFieldProps: {
-        size: 'small',
-        variant: 'outlined',
-    },
-    muiPaginationProps: {
-        rowsPerPageOptions: [5, 10, 20, 30, 40, 50],
-        shape: 'rounded',
-        variant: 'outlined',
-    },
-};
 
 function Cues({ data, onEditClick }) {
     const columns = [
@@ -917,17 +369,463 @@ function Users({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
+    const cueNumber = watch("cueNumber");
+    const name = watch("name");
+    const description = watch("description");
+    const price = watch("price");
+    const overallWeight = watch("overallWeight");
+    const overallLength = watch("overallLength");
+
+    return (
+        <Dialog open={open} onClose={onClose} fullScreen>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Cue Number"
+                            type="text"
+                            value={cueNumber}
+                            error={errors.cueNumber && errors.cueNumber.message}
+                            {...register("cueNumber", {
+                                required: "Cue Number is required",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Cue Number must be at most 50 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Name"
+                            type="text"
+                            value={name}
+                            error={errors.name && errors.name.message}
+                            {...register("name", {
+                                required: "Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Description"
+                            type="text"
+                            value={description}
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Price"
+                            type="number"
+                            value={price}
+                            error={errors.price && errors.price.message}
+                            {...register("price", {
+                                required: "Price is required",
+                                min: {
+                                    value: 0,
+                                    message: "Price must be a positive number"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Overall Weight"
+                            type="number"
+                            value={overallWeight}
+                            error={errors.overallWeight && errors.overallWeight.message}
+                            {...register("overallWeight", {
+                                required: "Overall Weight is required",
+                                min: {
+                                    value: 0,
+                                    message: "Overall Weight must be a positive number"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Overall Length"
+                            type="number"
+                            value={overallLength}
+                            error={errors.overallLength && errors.overallLength.message}
+                            {...register("overallLength", {
+                                required: "Overall Length is required",
+                                min: {
+                                    value: 0,
+                                    message: "Overall Length must be a positive number"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
+    const name = watch("name");
+    const description = watch("description");
+    const price = watch("price");
+    const accessoryNumber = watch("accessoryNumber");
+
+    return (
+        <Dialog open={open} onClose={onClose} fullScreen>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="accessory-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Name"
+                            type="text"
+                            value={name}
+                            error={errors.name && errors.name.message}
+                            {...register("name", {
+                                required: "Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Description"
+                            type="text"
+                            value={description}
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Accessory Number"
+                            type="text"
+                            value={accessoryNumber}
+                            error={errors.accessoryNumber && errors.accessoryNumber.message}
+                            {...register("accessoryNumber", {
+                                required: "Accessory Number is required",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Accessory Number must be at most 50 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Price"
+                            type="number"
+                            value={price}
+                            error={errors.price && errors.price.message}
+                            {...register("price", {
+                                required: "Price is required",
+                                min: {
+                                    value: 0,
+                                    message: "Price must be a positive number"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        console.log(data);
+        onClose();
+    };
+
+    const type = watch("type");
+    const name = watch("name");
+    const description = watch("description");
+    const tier = watch("tier");
+
+    return (
+        <Dialog open={open} onClose={onClose} fullScreen>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="material-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Type"
+                            type="text"
+                            value={type}
+                            error={errors.type && errors.type.message}
+                            {...register("type", {
+                                required: "Type is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Type must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Name"
+                            type="text"
+                            value={name}
+                            error={errors.name && errors.name.message}
+                            {...register("name", {
+                                required: "Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Description"
+                            type="text"
+                            value={description}
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Tier"
+                            type="text"
+                            value={tier}
+                            error={errors.tier && errors.tier.message}
+                            {...register("tier", {
+                                required: "Tier is required",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Tier must be at most 50 characters long"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function UserDialog({ open, onClose, title, getData, element = { email: '', password: '', firstName: '', lastName: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    const existingUser = !!element.email;
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        const userData = {
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+        }
+        if (!existingUser) {
+            userData.password = data.password;
+        }
+
+        if (!existingUser) {
+            createUser(userData.email, userData.firstName, userData.lastName, userData.password)
+                .then((res) => {
+                    receiveResponse(res);
+                    getData();
+                    onClose();
+                });
+        } else {
+            editUser(element.email, userData.email, userData.firstName, userData.lastName)
+                .then((res) => {
+                    receiveResponse(res);
+                    getData();
+                    onClose();
+                });
+        }
+    };
+
+    const email = watch("email");
+    const password = watch("password");
+    const firstName = watch("firstName");
+    const lastName = watch("lastName");
+
+    return (
+        <Dialog open={open} onClose={onClose} fullScreen>
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Email"
+                            type="text"
+                            value={email}
+                            error={errors.email && errors.email.message}
+                            {...register("email", {
+                                required: "Email is required",
+                                pattern: {
+                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                    message: "Invalid email address"
+                                },
+                                maxLength: {
+                                    value: 320,
+                                    message: "Email must be at most 320 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="First Name"
+                            type="text"
+                            value={firstName}
+                            error={errors.firstName && errors.firstName.message}
+                            {...register("firstName", {
+                                required: "First Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "First Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        <FormField
+                            title="Last Name"
+                            type="text"
+                            value={lastName}
+                            error={errors.lastName && errors.lastName.message}
+                            {...register("lastName", {
+                                required: "Last Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Last Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                        {!existingUser && (
+                            <FormField
+                                title="Password"
+                                type="text"
+                                value={password}
+                                error={errors.password && errors.password.message}
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 8,
+                                        message: "Password must be at least 8 characters long"
+                                    },
+                                    maxLength: {
+                                        value: 64,
+                                        message: "Password must be at most 64 characters long"
+                                    }
+                                })}
+                            />
+                        )}
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
     const handleDelete = () => {
         switch (adminPage) {
             case 'Cues':
-                
+
                 break;
             case 'Accessories':
-                
+
                 break;
             case 'Materials':
-                
+
                 break;
             case 'Users':
                 deleteUser(element.email)
@@ -957,8 +855,8 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
                     </DialogContentText>
                     <DialogActions>
                         <div className='form-row'>
-                            <DefaultButton text={"Cancel"} onClick={onClose}/>
-                            <DefaultButton text={"Confirm"} onClick={handleDelete}/>
+                            <DefaultButton text={"Cancel"} onClick={onClose} />
+                            <DefaultButton text={"Confirm"} onClick={handleDelete} />
                         </div>
                     </DialogActions>
                 </div>
@@ -966,3 +864,90 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
         </Dialog>
     );
 }
+
+function PasswordDialog({ open, onClose, title, element = { password: '', firstName: '' } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+        defaultValues: element
+    });
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open, reset]);
+
+    const onSubmit = (data) => {
+        changePassword(element.email, data.password)
+            .then((res) => {
+                receiveResponse(res);
+            });
+        onClose();
+    };
+
+    const firstName = element.firstName;
+    const password = watch("password");
+
+    return (
+        <Dialog open={open} onClose={onClose} >
+            <DialogTitle>
+                {title} {firstName && `'${firstName}'`}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <form className="password-form" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="form-column">
+                        <FormField
+                            title="Password"
+                            type="text"
+                            value={password}
+                            error={errors.password && errors.password.message}
+                            {...register("password", {
+                                required: "Password is required",
+                                minLength: {
+                                    value: 8,
+                                    message: "Password must be at least 8 characters long"
+                                },
+                                maxLength: {
+                                    value: 64,
+                                    message: "Password must be at most 64 characters long"
+                                }
+                            })}
+                        />
+                        <DialogActions>
+                            <DefaultButton text={"Save"} />
+                        </DialogActions>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+const tableProps = {
+    positionActionsColumn: 'last',
+    enableColumnFilterModes: true,
+    enableColumnOrdering: true,
+    enableGrouping: true,
+    positionGlobalFilter: 'left',
+    initialState: {
+        showGlobalFilter: true,
+        pagination: {
+            pageSize: 10,
+        },
+    },
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    muiSearchTextFieldProps: {
+        size: 'small',
+        variant: 'outlined',
+    },
+    muiPaginationProps: {
+        rowsPerPageOptions: [5, 10, 20, 30, 40, 50],
+        shape: 'rounded',
+        variant: 'outlined',
+    },
+};

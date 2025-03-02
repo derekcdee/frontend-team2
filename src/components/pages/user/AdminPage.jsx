@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers, createUser, editUser, changePassword } from '../../../util/requests';
+import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 
 
@@ -96,7 +96,7 @@ export default function AdminPage() {
             {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {passwordDialogOpen && <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} getData={getData} {...passwordDialogProps} />}
-            {deleteDialogOpen && <DeleteDialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} getData={getData} {...deleteDialogProps} />}
+            {deleteDialogOpen && <DeleteDialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} getData={getData} adminPage={adminPage} {...deleteDialogProps} />}
         </div>
     );
 }
@@ -917,9 +917,27 @@ function Users({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function DeleteDialog({ open, onClose, title, getData, element = { email: '' } }) {
+function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
     const handleDelete = () => {
-        console.log('Delete:', element);
+        switch (adminPage) {
+            case 'Cues':
+                
+                break;
+            case 'Accessories':
+                
+                break;
+            case 'Materials':
+                
+                break;
+            case 'Users':
+                deleteUser(element.email)
+                    .then((res) => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    });
+                break;
+        }
     };
 
     return (
@@ -928,7 +946,7 @@ function DeleteDialog({ open, onClose, title, getData, element = { email: '' } }
                 {title}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
                     onClick={onClose}
                 />
             </DialogTitle>
@@ -938,8 +956,10 @@ function DeleteDialog({ open, onClose, title, getData, element = { email: '' } }
                         Are you sure you want to delete?
                     </DialogContentText>
                     <DialogActions>
-                        <DefaultButton text={"Cancel"} onClick={onClose}/>
-                        <DefaultButton text={"Confirm"} onClick={handleDelete}/>
+                        <div className='form-row'>
+                            <DefaultButton text={"Cancel"} onClick={onClose}/>
+                            <DefaultButton text={"Confirm"} onClick={handleDelete}/>
+                        </div>
                     </DialogActions>
                 </div>
             </DialogContent>

@@ -93,3 +93,10 @@ export function changePassword(email, password) {
         }
     });
 }
+
+export function deleteUser(email) {
+    return _ajax({
+        url: "/admin/users/" + email,
+        method: "DELETE",
+    });
+}

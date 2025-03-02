@@ -13,8 +13,10 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [dialogProps, setDialogProps] = useState({});
     const [passwordDialogProps, setPasswordDialogProps] = useState({});
+    const [deleteDialogProps, setDeleteDialogProps] = useState({});
 
     const [cueData, setCueData] = useState([]);
     const [accessoryData, setAccessoryData] = useState([]);
@@ -54,39 +56,18 @@ export default function AdminPage() {
     }, [adminPage]);
 
     const handleDialogOpen = (props) => {
-        let title = '';
-
-        switch (adminPage) {
-            case 'Cues':
-                title = 'Cue';
-                break;
-            case 'Accessories':
-                title = 'Accessory';
-                break;
-            case 'Materials':
-                title = 'Material';
-                break;
-            case 'Users':
-                title = 'User';
-                break;
-            default:
-                title = 'Item';
-                break;
-        }
-
-        if (props.element) {
-            title = `Edit ${title}`;
-        } else {
-            title = `New ${title}`;
-        }
-
-        setDialogProps({ ...props, title });
+        setDialogProps({ ...props });
         setDialogOpen(true);
     };
 
     const handlePasswordDialogOpen = (props) => {
         setPasswordDialogProps({ ...props, title: 'Change Password' });
         setPasswordDialogOpen(true);
+    };
+
+    const handleDeleteDialogOpen = (props) => {
+        setDeleteDialogProps({ ...props });
+        setDeleteDialogOpen(true);
     };
 
     const handleDialogClose = () => {
@@ -99,17 +80,23 @@ export default function AdminPage() {
         setPasswordDialogProps({});
     };
 
+    const handleDeleteDialogClose = () => {
+        setDeleteDialogOpen(false);
+        setDeleteDialogProps({});
+    };
+
     return (
         <div>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={handleDialogOpen} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} cueData={cueData} accessoryData={accessoryData} materialData={materialData} userData={userData}/>
+                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData} accessoryData={accessoryData} materialData={materialData} userData={userData}/>
             </div>
             {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {passwordDialogOpen && <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} getData={getData} {...passwordDialogProps} />}
+            {deleteDialogOpen && <DeleteDialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} getData={getData} {...deleteDialogProps} />}
         </div>
     );
 }
@@ -179,6 +166,27 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
 function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     const pages = ['Cues', 'Accessories', 'Materials', 'Users'];
 
+    const handlePlusClick = () => {
+        let title = '';
+
+        switch (adminPage) {
+            case 'Cues':
+                title = 'New Cue';
+                break;
+            case 'Accessories':
+                title = 'New Accessory';
+                break;
+            case 'Materials':
+                title = 'New Material';
+                break;
+            case 'Users':
+                title = 'New User';
+                break;
+        }
+
+        onPlusClick({ title: title });
+    }
+
     return (
         <div className="admin-header">
             <ul className="admin-header-list">
@@ -197,7 +205,7 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
                 <button
                     className={`admin-icon-button ${loading ? 'disabled' : ''}`}
                     disabled={loading}
-                    onClick={onPlusClick}
+                    onClick={handlePlusClick}
                 >
                     <i className="fas fa-plus"></i>
                 </button>
@@ -570,7 +578,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
-                {title} {existingUser && firstName && `'${firstName}'`}
+                {title}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
                     style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
@@ -652,7 +660,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
     );
 }
 
-function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, cueData, accessoryData, materialData, userData }) {
+function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, onDeleteClick, cueData, accessoryData, materialData, userData }) {
     const data = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Smith', age: 25 },
@@ -679,13 +687,13 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, cu
 
     switch (adminPage) {
         case 'Cues':
-            return <Cues data={data} onEditClick={onEditClick} />;
+            return <Cues data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Accessories':
-            return <Accessories data={data} onEditClick={onEditClick} />;
+            return <Accessories data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Materials':
-            return <Materials data={data} onEditClick={onEditClick} />;
+            return <Materials data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Users':
-            return <Users data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} />;
+            return <Users data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} onDeleteClick={onDeleteClick} />;
         default:
             return null;
     }
@@ -855,7 +863,7 @@ function Materials({ data, onEditClick }) {
     );
 }
 
-function Users({ data, onEditClick, onPasswordEditClick }) {
+function Users({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     const columns = [
         {
             accessorKey: 'firstName', // ensure data objects have a 'firstName' property
@@ -886,9 +894,12 @@ function Users({ data, onEditClick, onPasswordEditClick }) {
                 <div className='admin-actions'>
                     <button
                         className='fa-solid fa-pencil admin-action-button'
-                        onClick={() => onEditClick({ element: row.original })}
+                        onClick={() => onEditClick({ element: row.original, title: `Delete User '${row.original.firstName}'` })}
                     />
-                    <button className='fa-solid fa-xmark admin-action-button' />
+                    <button
+                        className='fa-solid fa-xmark admin-action-button'
+                        onClick={() => onDeleteClick({ element: row.original, title: `Delete User '${row.original.firstName}'` })}
+                    />
                 </div>
             ),
         },
@@ -903,5 +914,35 @@ function Users({ data, onEditClick, onPasswordEditClick }) {
                 {...tableProps}
             />
         </div>
+    );
+}
+
+function DeleteDialog({ open, onClose, title, getData, element = { email: '' } }) {
+    const handleDelete = () => {
+        console.log('Delete:', element);
+    };
+
+    return (
+        <Dialog open={open} onClose={onClose} >
+            <DialogTitle>
+                {title}
+                <button
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
+            </DialogTitle>
+            <DialogContent>
+                <div className="form-column">
+                    <DialogContentText>
+                        Are you sure you want to delete?
+                    </DialogContentText>
+                    <DialogActions>
+                        <DefaultButton text={"Cancel"} onClick={onClose}/>
+                        <DefaultButton text={"Confirm"} onClick={handleDelete}/>
+                    </DialogActions>
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }

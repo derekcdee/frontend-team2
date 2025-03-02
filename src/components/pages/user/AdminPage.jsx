@@ -894,7 +894,7 @@ function Users({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
                 <div className='admin-actions'>
                     <button
                         className='fa-solid fa-pencil admin-action-button'
-                        onClick={() => onEditClick({ element: row.original, title: `Delete User '${row.original.firstName}'` })}
+                        onClick={() => onEditClick({ element: row.original, title: `Edit User '${row.original.firstName}'` })}
                     />
                     <button
                         className='fa-solid fa-xmark admin-action-button'

@@ -21,6 +21,7 @@ export function _ajax(settings = {}) {
             return response;
         })
         .catch((err) => {
+            console.log(err);
             const response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
             receiveResponse(response);
 
@@ -75,6 +76,10 @@ export function editUser(originalEmail, email, firstName, lastName) {
     return _ajax({
         url: "/admin/users/" + originalEmail,
         method: "PUT",
-        data: { email, firstName, lastName }
+        data: { 
+            newEmail: email, 
+            newFirstName: firstName, 
+            newLastName: lastName 
+        }
     });
 }

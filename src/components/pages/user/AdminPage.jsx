@@ -16,12 +16,42 @@ export default function AdminPage() {
     const [dialogProps, setDialogProps] = useState({});
     const [passwordDialogProps, setPasswordDialogProps] = useState({});
 
+    const [cueData, setCueData] = useState([]);
+    const [accessoryData, setAccessoryData] = useState([]);
+    const [materialData, setMaterialData] = useState([]);
+    const [userData, setUserData] = useState([]);
+
+    const getData = async () => {
+        setLoading(true);
+
+        switch (adminPage) {
+            case 'Cues':
+                setLoading(false);
+                break;
+            case 'Accessories':
+                setLoading(false);
+                break;
+            case 'Materials':
+                setLoading(false);
+                break;
+            case 'Users':
+                getUsers()
+                    .then((res) => {
+                        setLoading(false);
+                        setUserData(res.data);
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                    });
+                break;
+            default:
+                break;
+        }
+    };
+
     useEffect(() => {
-        // Simulate a data fetch
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
-    }, []);
+        getData();
+    }, [adminPage]);
 
     const handleDialogOpen = (props) => {
         let title = '';
@@ -73,13 +103,13 @@ export default function AdminPage() {
         <div>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={handleDialogOpen} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} loading={loading} setLoading={setLoading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} />
+                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} cueData={cueData} accessoryData={accessoryData} materialData={materialData} userData={userData}/>
             </div>
-            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
-            {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
-            {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
-            {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} {...dialogProps} />}
-            <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} {...passwordDialogProps} />
+            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
+            {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
+            {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
+            {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
+            {passwordDialogOpen && <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} getData={getData} {...passwordDialogProps} />}
         </div>
     );
 }
@@ -172,7 +202,7 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '' } }) {
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -296,7 +326,7 @@ function CueDialog({ open, onClose, title, element = { cueNumber: '', name: '', 
     );
 }
 
-function AccessoryDialog({ open, onClose, title, element = { name: '', description: '', price: '', accessoryNumber: '' } }) {
+function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -392,7 +422,7 @@ function AccessoryDialog({ open, onClose, title, element = { name: '', descripti
     );
 }
 
-function MaterialDialog({ open, onClose, title, element = { type: '', name: '', description: '', tier: '' } }) {
+function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -488,7 +518,7 @@ function MaterialDialog({ open, onClose, title, element = { type: '', name: '', 
     );
 }
 
-function UserDialog({ open, onClose, title, element = { email: '', password: '', firstName: '', lastName: '' } }) {
+function UserDialog({ open, onClose, title, getData, element = { email: '', password: '', firstName: '', lastName: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -515,23 +545,17 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
             createUser(userData.email, userData.firstName, userData.lastName, userData.password)
                 .then((res) => {
                     receiveResponse(res);
+                    getData();
                     onClose();
-                })
-                .catch((err) => {
-                    console.log(err);
                 });
         } else {
-            console.log("hit")
             editUser(element.email, userData.email, userData.firstName, userData.lastName)
                 .then((res) => {
                     receiveResponse(res);
+                    getData();
                     onClose();
-                })
-                .catch((err) => {
-                    console.log(err);
                 });
         }
-        // onClose();
     };
 
     const email = watch("email");
@@ -624,42 +648,7 @@ function UserDialog({ open, onClose, title, element = { email: '', password: '',
     );
 }
 
-function AdminContent({ adminPage, loading, setLoading, onEditClick, onPasswordEditClick }) {
-    const [cueData, setCueData] = useState([]);
-    const [accessoryData, setAccessoryData] = useState([]);
-    const [materialData, setMaterialData] = useState([]);
-    const [userData, setUserData] = useState([]);
-
-    const getData = async () => { 
-        setLoading(true);
-
-        switch (adminPage) {
-            case 'Cues':
-                setLoading(false);
-                break;
-            case 'Accessories':
-                setLoading(false);
-                break;
-            case 'Materials':
-                setLoading(false);
-                break;
-            case 'Users':
-                getUsers()
-                    .then((res) => {
-                        setLoading(false);
-                        setUserData(res.data);
-                    });
-
-                break;
-            default:
-                break;
-        }
-    };
-
-    useEffect(() => {
-        getData();
-    }, [adminPage]);
-
+function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, cueData, accessoryData, materialData, userData }) {
     const data = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Smith', age: 25 },

@@ -124,12 +124,12 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
     const password = watch("password");
 
     return (
-        <Dialog open={open} onClose={onClose} fullScreen>
+        <Dialog open={open} onClose={onClose} >
             <DialogTitle>
                 {title} {firstName && `'${firstName}'`}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
                     onClick={onClose}
                 />
             </DialogTitle>
@@ -243,7 +243,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                 {title}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
                     onClick={onClose}
                 />
             </DialogTitle>
@@ -365,7 +365,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                 {title}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
                     onClick={onClose}
                 />
             </DialogTitle>
@@ -461,7 +461,7 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
                 {title}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
                     onClick={onClose}
                 />
             </DialogTitle>
@@ -581,7 +581,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                 {title}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
                     onClick={onClose}
                 />
             </DialogTitle>

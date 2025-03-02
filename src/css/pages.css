@@ -208,12 +208,9 @@
     transition: transform 0.3s ease;
 }
 
-.admin-action-button.fa-pencil {
+.admin-action-button.fa-pencil,
+.admin-action-button.fa-trash {
     font-size: 1.3em;
-}
-
-.admin-action-button.fa-xmark {
-    font-size: 1.5em;
 }
 
 .admin-action-button.fa-pencil:hover,

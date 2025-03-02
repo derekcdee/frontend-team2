@@ -180,19 +180,19 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
 
     switch (adminPage) {
         case 'Cues':
-            return <Cues data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
+            return <CuesTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Accessories':
-            return <Accessories data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
+            return <AccessoriesTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Materials':
-            return <Materials data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
+            return <MaterialsTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Users':
-            return <Users data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} onDeleteClick={onDeleteClick} />;
+            return <UsersTable data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} onDeleteClick={onDeleteClick} />;
         default:
             return null;
     }
 }
 
-function Cues({ data, onEditClick }) {
+function CuesTable({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -207,7 +207,7 @@ function Cues({ data, onEditClick }) {
             header: 'Age',
         },
         {
-            id: 'actions', // 'id' is used instead of 'accessorKey' because this column doesn't correspond directly to data
+            id: 'actions',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -233,7 +233,7 @@ function Cues({ data, onEditClick }) {
     );
 }
 
-function Accessories({ data, onEditClick }) {
+function AccessoriesTable({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -248,7 +248,7 @@ function Accessories({ data, onEditClick }) {
             header: 'Age',
         },
         {
-            id: 'actions', // 'id' is used instead of 'accessorKey' because this column doesn't correspond directly to data
+            id: 'actions',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -274,7 +274,7 @@ function Accessories({ data, onEditClick }) {
     );
 }
 
-function Materials({ data, onEditClick }) {
+function MaterialsTable({ data, onEditClick }) {
     const columns = [
         {
             accessorKey: 'firstName',
@@ -289,7 +289,7 @@ function Materials({ data, onEditClick }) {
             header: 'Age',
         },
         {
-            id: 'actions', // 'id' is used instead of 'accessorKey' because this column doesn't correspond directly to data
+            id: 'actions',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -315,18 +315,18 @@ function Materials({ data, onEditClick }) {
     );
 }
 
-function Users({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
+function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     const columns = [
         {
-            accessorKey: 'firstName', // ensure data objects have a 'firstName' property
+            accessorKey: 'firstName',
             header: 'First Name',
         },
         {
-            accessorKey: 'lastName', // ensure data objects have a 'lastName' property
+            accessorKey: 'lastName',
             header: 'Last Name',
         },
         {
-            accessorKey: 'email', // ensure data objects have an 'email' property
+            accessorKey: 'email',
             header: 'Email',
         },
         {

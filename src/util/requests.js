@@ -83,3 +83,13 @@ export function editUser(originalEmail, email, firstName, lastName) {
         }
     });
 }
+
+export function changePassword(email, password) {
+    return _ajax({
+        url: "/admin/users/resetPassword/" + email,
+        method: "PUT",
+        data: { 
+            newPassword: password 
+        }
+    });
+}

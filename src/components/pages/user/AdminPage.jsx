@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers, createUser, editUser } from '../../../util/requests';
+import { getUsers, createUser, editUser, changePassword } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 
 
@@ -114,7 +114,7 @@ export default function AdminPage() {
     );
 }
 
-function PasswordDialog({ open, onClose, title, element = { password: '' } }) {
+function PasswordDialog({ open, onClose, title, element = { password: '', firstName: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -126,16 +126,20 @@ function PasswordDialog({ open, onClose, title, element = { password: '' } }) {
     }, [open, reset]);
 
     const onSubmit = (data) => {
-        console.log(data);
+        changePassword(element.email, data.password)
+            .then((res) => {
+                receiveResponse(res);
+            });
         onClose();
     };
 
+    const firstName = element.firstName;
     const password = watch("password");
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
-                {title}
+                {title} {firstName && `'${firstName}'`}
                 <button
                     className='fa-solid fa-xmark admin-action-button'
                     style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
@@ -147,7 +151,7 @@ function PasswordDialog({ open, onClose, title, element = { password: '' } }) {
                     <div className="form-column">
                         <FormField
                             title="Password"
-                            type="password"
+                            type="text"
                             value={password}
                             error={errors.password && errors.password.message}
                             {...register("password", {

@@ -97,11 +97,12 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    z-index: 9;
+    position: sticky;
 }
 
 .user-nav-item {
     font-size: 20px;
-    margin-bottom: 10px;
 }
 
 .user-nav-item a {
@@ -131,8 +132,8 @@
 .admin-header {
     background-color: var(--miller-dark-grey);
     top: var(--header-height);
-    z-index: 9;
-    position: sticky;
+    /* z-index: 9;
+    position: sticky; */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -147,10 +148,6 @@
 
 .admin-header-item:first-child {
     margin-left: 50px;
-}
-
-.admin-header-item {
-    margin-right: 10px;
 }
 
 .admin-header-right {
@@ -194,9 +191,34 @@
 }
 
 .admin-page-header {
-    margin: 0;
+    margin: -20px 0 0 0;
     text-align: center;
 }
+
+.admin-actions {
+    display: flex;
+    justify-content: left;
+    gap: 10px;
+    margin-left: -5px;
+}
+
+.admin-action-button {
+    color: var(--miller-black);
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.admin-action-button.fa-pencil,
+.admin-action-button.fa-trash {
+    font-size: 1.3em;
+}
+
+.admin-action-button.fa-pencil:hover,
+.admin-action-button.fa-xmark:hover {
+    transform: scale(1.25);
+}
+
+
 /* Skeleton Loader */
 .skeleton-loader {
     display: flex;
@@ -215,7 +237,6 @@
 .skeleton-header {
     height: 40px;
     width: 100%;
-    margin-top: 18px;
     margin-bottom: 8px;
 }
 
@@ -240,4 +261,35 @@
     100% {
         left: 150%;
     }
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user-form {
+    justify-self: center;
+    width: 100%;
+}
+
+.accessory-form {
+    justify-self: center;
+    width: 100%;
+}
+
+.material-form {
+    justify-self: center;
+    width: 100%;
+}
+
+.cue-form {
+    justify-self: center;
+    width: 100%;
 }

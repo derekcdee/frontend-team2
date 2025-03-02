@@ -1,7 +1,7 @@
 import React from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
-import { Button } from "../../util/Buttons";
+import { DefaultButton } from "../../util/Buttons";
 import { NavLink } from "react-router-dom";
 
 export default function CreateAccountPage () {
@@ -68,7 +68,7 @@ export default function CreateAccountPage () {
 
                     {/* ACTIONS */}
                     <div className="login-actions">
-                        <Button text="Create"/>
+                        <DefaultButton text="Create"/>
                         <div>
                             <span className="form-action-row">
                                 Returning customer? <NavLink to="/login">Sign in</NavLink>

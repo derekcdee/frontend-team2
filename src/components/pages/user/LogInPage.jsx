@@ -1,9 +1,9 @@
 import React from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
-import { Button } from "../../util/Buttons";
+import { DefaultButton } from "../../util/Buttons";
 import { NavLink } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { login, test } from "../../../util/requests";
 
 export default function LoginPage () {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
@@ -13,11 +13,9 @@ export default function LoginPage () {
         }
     });
 
-    const location = useLocation();
-    console.log(location)
-
     const onSubmit = data => {
         console.log(data);
+        login(data.email, data.password);
     };
 
     const email = watch("email");
@@ -56,7 +54,7 @@ export default function LoginPage () {
 
                     {/* ACTIONS */}
                     <div className="login-actions">
-                        <Button text="Sign in"/>
+                        <DefaultButton text="Sign in"/>
                         <div>
                             <span className="form-action-row">
                                 New customer? <NavLink to="/create-account">Create account</NavLink>

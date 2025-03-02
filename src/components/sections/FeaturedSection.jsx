@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "../util/Card";
-import { Button } from "../util/Buttons";
+import { DefaultButton } from "../util/Buttons";
 
 import cue from "../../images/cue.jpg"
 
@@ -35,7 +35,7 @@ export default function FeaturedSection () {
 
             {/* View All */}
             <div style={{alignItems: "center", display: "flex", justifyContent: "center"}}>
-                <Button text="View All" />
+                <DefaultButton text="View All" />
                 
             </div>
         </section>

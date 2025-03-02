@@ -1,7 +1,7 @@
 import React from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
-import { Button } from "../../util/Buttons";
+import { DefaultButton } from "../../util/Buttons";
 import { NavLink } from "react-router-dom";
 
 export default function PasswordReset () {
@@ -44,7 +44,7 @@ export default function PasswordReset () {
 
                     {/* ACTIONS */}
                     <div className="login-actions">
-                        <Button text="Submit"/>
+                        <DefaultButton text="Submit"/>
                         <div>
                             <span className="form-action-row">
                                 Remember your password? <NavLink to="/login">Sign in</NavLink>

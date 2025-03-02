@@ -214,7 +214,7 @@
 }
 
 .admin-action-button.fa-pencil:hover,
-.admin-action-button.fa-xmark:hover {
+.admin-action-button.fa-trash:hover {
     transform: scale(1.25);
 }
 

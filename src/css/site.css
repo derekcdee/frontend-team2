@@ -92,7 +92,8 @@ h1, h2 {
   font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif;
 }
 
-input {
+input,
+textarea {
   border-radius: 3px;
   background-color: var(--miller-white);
 }

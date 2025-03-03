@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FormField } from '../../util/Inputs';
+import { FormField, FormTextArea } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
@@ -405,35 +405,40 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
             <DialogContent>
                 <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
-                        <FormField
-                            title="Cue Number"
-                            type="text"
-                            value={cueNumber}
-                            error={errors.cueNumber && errors.cueNumber.message}
-                            {...register("cueNumber", {
-                                required: "Cue Number is required",
-                                maxLength: {
-                                    value: 50,
-                                    message: "Cue Number must be at most 50 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Name"
-                            type="text"
-                            value={name}
-                            error={errors.name && errors.name.message}
-                            {...register("name", {
-                                required: "Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                            <FormField
+                                title="Cue Number"
+                                type="text"
+                                value={cueNumber}
+                                error={errors.cueNumber && errors.cueNumber.message}
+                                {...register("cueNumber", {
+                                    required: "Cue Number is required",
+                                    maxLength: {
+                                        value: 50,
+                                        message: "Cue Number must be at most 50 characters long"
+                                    }
+                                })}
+                            />
+                            </div>
+                            <div className='flex-2'>
+                            <FormField
+                                title="Name"
+                                type="text"
+                                value={name}
+                                error={errors.name && errors.name.message}
+                                {...register("name", {
+                                    required: "Name is required",
+                                    maxLength: {
+                                        value: 100,
+                                        message: "Name must be at most 100 characters long"
+                                    }
+                                })}
+                            />
+                            </div>
+                        </div>
+                        <FormTextArea
                             title="Description"
-                            type="text"
                             value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {

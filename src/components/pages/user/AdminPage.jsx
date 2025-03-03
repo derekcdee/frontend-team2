@@ -532,271 +532,269 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                             })}
                         />
                         <h3 className="dialog-header">Shaft</h3>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormField
-                                    title="Tip"
-                                    type="text"
-                                    value={tip}
-                                    error={errors.tip && errors.tip.message}
-                                    {...register("tip", {
-                                        required: "Tip is required",
-                                        maxLength: {
-                                            value: 50,
-                                            message: "Tip must be at most 50 characters long"
-                                        }
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Tip Size"
-                                    value={tipSize}
-                                    error={errors.tipSize && errors.tipSize.message}
-                                    options={sizeOptions}
-                                    displayKey="label"
-                                    {...register("tipSize", {
-                                        required: "Tip Size is required"
-                                    })}
-                                />
+                        <div>
+                            <h2 className="dialog-header2">Tip</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Tip Size"
+                                        value={tipSize}
+                                        error={errors.tipSize && errors.tipSize.message}
+                                        options={sizeOptions}
+                                        displayKey="label"
+                                        {...register("tipSize", {
+                                            required: "Tip Size is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormField
-                                    title="Ferrule"
-                                    type="text"
-                                    value={ferrule}
-                                    error={errors.ferrule && errors.ferrule.message}
-                                    {...register("ferrule", {
-                                        required: "Ferrule is required",
-                                        maxLength: {
-                                            value: 50,
-                                            message: "Ferrule must be at most 50 characters long"
-                                        }
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Ferrule Material"
-                                    value={ferruleMaterial}
-                                    error={errors.ferruleMaterial && errors.ferruleMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("ferruleMaterial", {
-                                        required: "Ferrule Material is required"
-                                    })}
-                                />
+                        <div>
+                        <h2 className="dialog-header2">Ferrule</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Ferrule Material"
+                                        value={ferruleMaterial}
+                                        error={errors.ferruleMaterial && errors.ferruleMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("ferruleMaterial", {
+                                            required: "Ferrule Material is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormField
-                                    title="Shaft Material"
-                                    type="text"
-                                    value={shaftMaterial}
-                                    error={errors.shaftMaterial && errors.shaftMaterial.message}
-                                    {...register("shaftMaterial", {
-                                        required: "Shaft Material is required",
-                                        maxLength: {
-                                            value: 100,
-                                            message: "Shaft Material must be at most 100 characters long"
-                                        }
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormField
-                                    title="Shaft Taper"
-                                    type="text"
-                                    value={shaftTaper}
-                                    error={errors.shaftTaper && errors.shaftTaper.message}
-                                    {...register("shaftTaper", {
-                                        required: "Shaft Taper is required",
-                                        maxLength: {
-                                            value: 50,
-                                            message: "Shaft Taper must be at most 50 characters long"
-                                        }
-                                    })}
-                                />
+                        <div>
+                        <h2 className="dialog-header2">Shaft</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Shaft Material"
+                                        value={shaftMaterial}
+                                        error={errors.shaftMaterial && errors.shaftMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("shaftMaterial", {
+                                            required: "Shaft Material is required"
+                                        })}
+                                    />
+                                </div>
+                                <div className='flex-2'>
+                                    <FormSelect
+                                        title="Shaft Taper"
+                                        value={shaftTaper}
+                                        error={errors.shaftTaper && errors.shaftTaper.message}
+                                        options={sizeOptions}
+                                        displayKey="label"
+                                        {...register("shaftTaper", {
+                                            required: "Shaft Taper is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <h3 className="dialog-header">Butt</h3>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormField
-                                    title="Collar Material"
-                                    type="text"
-                                    value={collarMaterial}
-                                    error={errors.collarMaterial && errors.collarMaterial.message}
-                                    {...register("collarMaterial", {
-                                        required: "Collar Material is required",
-                                        maxLength: {
-                                            value: 100,
-                                            message: "Collar Material must be at most 100 characters long"
-                                        }
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Joint Pin Size"
-                                    value={jointPinSize}
-                                    error={errors.jointPinSize && errors.jointPinSize.message}
-                                    options={sizeOptions}
-                                    displayKey="label"
-                                    {...register("jointPinSize", {
-                                        required: "Joint Pin Size is required"
-                                    })}
-                                />
+                        <div>
+                            <h2 className="dialog-header2">Collar</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Collar Material"
+                                        value={collarMaterial}
+                                        error={errors.collarMaterial && errors.collarMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("collarMaterial", {
+                                            required: "Collar Material is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormSelect
-                                    title="Joint Pin Material"
-                                    value={jointPinMaterial}
-                                    error={errors.jointPinMaterial && errors.jointPinMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("jointPinMaterial", {
-                                        required: "Joint Pin Material is required"
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormField
-                                    title="Joint Collar Material"
-                                    type="text"
-                                    value={jointCollarMaterial}
-                                    error={errors.jointCollarMaterial && errors.jointCollarMaterial.message}
-                                    {...register("jointCollarMaterial", {
-                                        required: "Joint Collar Material is required",
-                                        maxLength: {
-                                            value: 100,
-                                            message: "Joint Collar Material must be at most 100 characters long"
-                                        }
-                                    })}
-                                />
-                            </div>
-                        </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormSelect
-                                    title="Forearm Size"
-                                    value={forearmSize}
-                                    error={errors.forearmSize && errors.forearmSize.message}
-                                    options={sizeOptions}
-                                    displayKey="label"
-                                    {...register("forearmSize", {
-                                        required: "Forearm Size is required"
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Forearm Material"
-                                    value={forearmMaterial}
-                                    error={errors.forearmMaterial && errors.forearmMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("forearmMaterial", {
-                                        required: "Forearm Material is required"
-                                    })}
-                                />
+                        <div>
+                            <h2 className="dialog-header2">Joint Pin</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Joint Pin Size"
+                                        value={jointPinSize}
+                                        error={errors.jointPinSize && errors.jointPinSize.message}
+                                        options={sizeOptions}
+                                        displayKey="label"
+                                        {...register("jointPinSize", {
+                                            required: "Joint Pin Size is required"
+                                        })}
+                                    />
+                                </div>
+                                <div className='flex-2'>
+                                    <FormSelect
+                                        title="Joint Pin Material"
+                                        value={jointPinMaterial}
+                                        error={errors.jointPinMaterial && errors.jointPinMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("jointPinMaterial", {
+                                            required: "Joint Pin Material is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormSelect
-                                    title="Forearm Point Material"
-                                    value={forearmPointMaterial}
-                                    error={errors.forearmPointMaterial && errors.forearmPointMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("forearmPointMaterial", {
-                                        required: "Forearm Point Material is required"
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Veneer Material"
-                                    value={veneerMaterial}
-                                    error={errors.veneerMaterial && errors.veneerMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("veneerMaterial", {
-                                        required: "Veneer Material is required"
-                                    })}
-                                />
+                        <div>
+                            <h2 className="dialog-header2">Joint Collar</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Joint Collar Material"
+                                        value={jointCollarMaterial}
+                                        error={errors.jointCollarMaterial && errors.jointCollarMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("jointCollarMaterial", {
+                                            required: "Joint Collar Material is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormSelect
-                                    title="Handle Material"
-                                    value={handleMaterial}
-                                    error={errors.handleMaterial && errors.handleMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("handleMaterial", {
-                                        required: "Handle Material is required"
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Handle Size"
-                                    value={handleSize}
-                                    error={errors.handleSize && errors.handleSize.message}
-                                    options={sizeOptions}
-                                    displayKey="label"
-                                    {...register("handleSize", {
-                                        required: "Handle Size is required"
-                                    })}
-                                />
-                            </div>
-                        </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormSelect
-                                    title="Butt Sleeve Size"
-                                    value={buttSleeveSize}
-                                    error={errors.buttSleeveSize && errors.buttSleeveSize.message}
-                                    options={sizeOptions}
-                                    displayKey="label"
-                                    {...register("buttSleeveSize", {
-                                        required: "Butt Sleeve Size is required"
-                                    })}
-                                />
-                            </div>
-                            <div className='flex-2'>
-                                <FormSelect
-                                    title="Butt Sleeve Material"
-                                    value={buttSleeveMaterial}
-                                    error={errors.buttSleeveMaterial && errors.buttSleeveMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("buttSleeveMaterial", {
-                                        required: "Butt Sleeve Material is required"
-                                    })}
-                                />
+                        <div>
+                            <h2 className="dialog-header2">Forearm</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Forearm Size"
+                                        value={forearmSize}
+                                        error={errors.forearmSize && errors.forearmSize.message}
+                                        options={sizeOptions}
+                                        displayKey="label"
+                                        {...register("forearmSize", {
+                                            required: "Forearm Size is required"
+                                        })}
+                                    />
+                                </div>
+                                <div className='flex-2'>
+                                    <FormSelect
+                                        title="Forearm Material"
+                                        value={forearmMaterial}
+                                        error={errors.forearmMaterial && errors.forearmMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("forearmMaterial", {
+                                            required: "Forearm Material is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='flex-1'>
-                                <FormSelect
-                                    title="Butt Sleeve Veneer Material"
-                                    value={buttSleeveVeneerMaterial}
-                                    error={errors.buttSleeveVeneerMaterial && errors.buttSleeveVeneerMaterial.message}
-                                    options={materialOptions}
-                                    displayKey="label"
-                                    {...register("buttSleeveVeneerMaterial", {
-                                        required: "Butt Sleeve Veneer Material is required"
-                                    })}
-                                />
+                        <div>
+                        <h2 className="dialog-header2">Forearm Point</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Forearm Point Material"
+                                        value={forearmPointMaterial}
+                                        error={errors.forearmPointMaterial && errors.forearmPointMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("forearmPointMaterial", {
+                                            required: "Forearm Point Material is required"
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 className="dialog-header2">Veneer</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Veneer Material"
+                                        value={veneerMaterial}
+                                        error={errors.veneerMaterial && errors.veneerMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("veneerMaterial", {
+                                            required: "Veneer Material is required"
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 className="dialog-header2">Handle</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Handle Material"
+                                        value={handleMaterial}
+                                        error={errors.handleMaterial && errors.handleMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("handleMaterial", {
+                                            required: "Handle Material is required"
+                                        })}
+                                    />
+                                </div>
+                                <div className='flex-2'>
+                                    <FormSelect
+                                        title="Handle Size"
+                                        value={handleSize}
+                                        error={errors.handleSize && errors.handleSize.message}
+                                        options={sizeOptions}
+                                        displayKey="label"
+                                        {...register("handleSize", {
+                                            required: "Handle Size is required"
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 className="dialog-header2">Butt Sleeve</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Butt Sleeve Size"
+                                        value={buttSleeveSize}
+                                        error={errors.buttSleeveSize && errors.buttSleeveSize.message}
+                                        options={sizeOptions}
+                                        displayKey="label"
+                                        {...register("buttSleeveSize", {
+                                            required: "Butt Sleeve Size is required"
+                                        })}
+                                    />
+                                </div>
+                                <div className='flex-2'>
+                                    <FormSelect
+                                        title="Butt Sleeve Material"
+                                        value={buttSleeveMaterial}
+                                        error={errors.buttSleeveMaterial && errors.buttSleeveMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("buttSleeveMaterial", {
+                                            required: "Butt Sleeve Material is required"
+                                        })}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 className="dialog-header2">Butt Sleeve Veneer</h2>
+                            <div className='form-row'>
+                                <div className='flex-1'>
+                                    <FormSelect
+                                        title="Butt Sleeve Veneer Material"
+                                        value={buttSleeveVeneerMaterial}
+                                        error={errors.buttSleeveVeneerMaterial && errors.buttSleeveVeneerMaterial.message}
+                                        options={materialOptions}
+                                        displayKey="label"
+                                        {...register("buttSleeveVeneerMaterial", {
+                                            required: "Butt Sleeve Veneer Material is required"
+                                        })}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <h3 className="dialog-header">Rings</h3>

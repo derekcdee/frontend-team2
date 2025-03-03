@@ -308,4 +308,12 @@
     margin: 0;
     font-size: 1.75rem;
     font-weight: bold;
+    font-family: system-ui, Helvetica, Arial, sans-serif;
+}
+
+.dialog-header2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: system-ui, Helvetica, Arial, sans-serif;
 }

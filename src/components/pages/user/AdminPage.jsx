@@ -472,45 +472,53 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 />
                             </div>
                         </div>
-                        <FormField
-                            title="Price"
-                            type="number"
-                            value={price}
-                            error={errors.price && errors.price.message}
-                            {...register("price", {
-                                required: "Price is required",
-                                min: {
-                                    value: 0,
-                                    message: "Price must be a positive number"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Overall Weight"
-                            type="number"
-                            value={overallWeight}
-                            error={errors.overallWeight && errors.overallWeight.message}
-                            {...register("overallWeight", {
-                                required: "Overall Weight is required",
-                                min: {
-                                    value: 0,
-                                    message: "Overall Weight must be a positive number"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Overall Length"
-                            type="number"
-                            value={overallLength}
-                            error={errors.overallLength && errors.overallLength.message}
-                            {...register("overallLength", {
-                                required: "Overall Length is required",
-                                min: {
-                                    value: 0,
-                                    message: "Overall Length must be a positive number"
-                                }
-                            })}
-                        />
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Price"
+                                    type="number"
+                                    value={price}
+                                    error={errors.price && errors.price.message}
+                                    {...register("price", {
+                                        required: "Price is required",
+                                        min: {
+                                            value: 0,
+                                            message: "Price must be a positive number"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Overall Weight"
+                                    type="number"
+                                    value={overallWeight}
+                                    error={errors.overallWeight && errors.overallWeight.message}
+                                    {...register("overallWeight", {
+                                        required: "Overall Weight is required",
+                                        min: {
+                                            value: 0,
+                                            message: "Overall Weight must be a positive number"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Overall Length"
+                                    type="number"
+                                    value={overallLength}
+                                    error={errors.overallLength && errors.overallLength.message}
+                                    {...register("overallLength", {
+                                        required: "Overall Length is required",
+                                        min: {
+                                            value: 0,
+                                            message: "Overall Length must be a positive number"
+                                        }
+                                    })}
+                                />
+                            </div>
+                        </div>
                         <FormTextArea
                             title="Description"
                             value={description}

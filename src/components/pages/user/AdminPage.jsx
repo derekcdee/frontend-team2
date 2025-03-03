@@ -369,7 +369,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tip: '', tipSize: '', ferrule: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', collarMaterial: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmSize: '', forearmMaterial: '', forearmPointMaterial: '', veneerMaterial: '', handleMaterial: '', handleSize: '', buttSleeveSize: '', buttSleeveMaterial: '', buttSleeveVeneerMaterial: '', jointRings: '', handleRings: '', buttRings: '', status: '' } }) {
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', status: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -391,25 +391,16 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const price = watch("price");
     const overallWeight = watch("overallWeight");
     const overallLength = watch("overallLength");
-    const tip = watch("tip");
     const tipSize = watch("tipSize");
-    const ferrule = watch("ferrule");
     const ferruleMaterial = watch("ferruleMaterial");
     const shaftMaterial = watch("shaftMaterial");
     const shaftTaper = watch("shaftTaper");
-    const collarMaterial = watch("collarMaterial");
     const jointPinSize = watch("jointPinSize");
     const jointPinMaterial = watch("jointPinMaterial");
     const jointCollarMaterial = watch("jointCollarMaterial");
-    const forearmSize = watch("forearmSize");
     const forearmMaterial = watch("forearmMaterial");
-    const forearmPointMaterial = watch("forearmPointMaterial");
-    const veneerMaterial = watch("veneerMaterial");
     const handleMaterial = watch("handleMaterial");
-    const handleSize = watch("handleSize");
-    const buttSleeveSize = watch("buttSleeveSize");
     const buttSleeveMaterial = watch("buttSleeveMaterial");
-    const buttSleeveVeneerMaterial = watch("buttSleeveVeneerMaterial");
     const jointRings = watch("jointRings");
     const handleRings = watch("handleRings");
     const buttRings = watch("buttRings");

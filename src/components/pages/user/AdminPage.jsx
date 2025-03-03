@@ -584,7 +584,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                             })}
                                         />
                                     </div>
-                                    <div className='flex-2'>
+                                    <div className='flex-1'>
                                         <FormSelect
                                             title="Shaft Taper"
                                             value={shaftTaper}
@@ -633,7 +633,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                             })}
                                         />
                                     </div>
-                                    <div className='flex-2'>
+                                    <div className='flex-1'>
                                         <FormSelect
                                             title="Joint Pin Material"
                                             value={jointPinMaterial}
@@ -679,7 +679,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                             })}
                                         />
                                     </div>
-                                    <div className='flex-2'>
+                                    <div className='flex-1'>
                                         <FormSelect
                                             title="Forearm Material"
                                             value={forearmMaterial}
@@ -742,7 +742,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                             })}
                                         />
                                     </div>
-                                    <div className='flex-2'>
+                                    <div className='flex-1'>
                                         <FormSelect
                                             title="Handle Size"
                                             value={handleSize}
@@ -771,7 +771,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                             })}
                                         />
                                     </div>
-                                    <div className='flex-2'>
+                                    <div className='flex-1'>
                                         <FormSelect
                                             title="Butt Sleeve Material"
                                             value={buttSleeveMaterial}
@@ -816,7 +816,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                         })}
                                     />
                                 </div>
-                                <div className='flex-2'>
+                                <div className='flex-1'>
                                     <FormSelect
                                         title="Ring 2 Material"
                                         value={ring2}
@@ -828,7 +828,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                         })}
                                     />
                                 </div>
-                                <div className='flex-3'>
+                                <div className='flex-1'>
                                     <FormSelect
                                         title="Ring 3 Material"
                                         value={ring3}

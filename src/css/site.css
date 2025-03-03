@@ -93,7 +93,9 @@ h1, h2 {
 }
 
 input,
-textarea {
+textarea,
+select,
+option {
   border-radius: 3px;
   background-color: var(--miller-white);
 }

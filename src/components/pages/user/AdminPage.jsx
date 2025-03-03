@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FormField, FormTextArea } from '../../util/Inputs';
+import { FormField, FormTextArea, FormSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
@@ -437,6 +437,20 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                             />
                             </div>
                         </div>
+                        <FormSelect
+                            title="Category"
+                            // value={category}
+                            error={errors.category && errors.category.message}
+                            options={[
+                                { id: 1, name: 'Category 1' },
+                                { id: 2, name: 'Category 2' },
+                                { id: 3, name: 'Category 3' }
+                            ]}
+                            displayKey="name"
+                            {...register("category", {
+                                required: "Category is required"
+                            })}
+                        />
                         <FormTextArea
                             title="Description"
                             value={description}

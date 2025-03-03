@@ -439,7 +439,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
             <DialogContent>
                 <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
-                        <h3>General Attributes</h3>
+                        <h3 className="dialog-header">General Attributes</h3>
                         <div className='form-row'>
                             <div className='flex-1'>
                                 <FormField
@@ -531,7 +531,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 }
                             })}
                         />
-                        <h3>Shaft</h3>
+                        <h3 className="dialog-header">Shaft</h3>
                         <div className='form-row'>
                             <div className='flex-1'>
                                 <FormField
@@ -622,7 +622,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 />
                             </div>
                         </div>
-                        <h3>Butt</h3>
+                        <h3 className="dialog-header">Butt</h3>
                         <div className='form-row'>
                             <div className='flex-1'>
                                 <FormField
@@ -799,7 +799,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 />
                             </div>
                         </div>
-                        <h3>Rings</h3>
+                        <h3 className="dialog-header">Rings</h3>
                         <div className='form-row'>
                             <div className='flex-1'>
                                 <FormSelect

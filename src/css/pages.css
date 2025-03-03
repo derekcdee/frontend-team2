@@ -303,3 +303,10 @@
     justify-self: center;
     width: 100%;
 }
+
+.dialog-header {
+    margin: 0;
+    padding: 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+}

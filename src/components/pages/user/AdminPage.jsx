@@ -369,7 +369,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '' } }) {
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tip: '', tipSize: '', ferrule: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', collarMaterial: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmSize: '', forearmMaterial: '', forearmPointMaterial: '', veneerMaterial: '', handleMaterial: '', handleSize: '', buttSleeveSize: '', buttSleeveMaterial: '', buttSleeveVeneerMaterial: '', ring1: '', ring2: '', ring3: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -391,6 +391,40 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const price = watch("price");
     const overallWeight = watch("overallWeight");
     const overallLength = watch("overallLength");
+    const tip = watch("tip");
+    const tipSize = watch("tipSize");
+    const ferrule = watch("ferrule");
+    const ferruleMaterial = watch("ferruleMaterial");
+    const shaftMaterial = watch("shaftMaterial");
+    const shaftTaper = watch("shaftTaper");
+    const collarMaterial = watch("collarMaterial");
+    const jointPinSize = watch("jointPinSize");
+    const jointPinMaterial = watch("jointPinMaterial");
+    const jointCollarMaterial = watch("jointCollarMaterial");
+    const forearmSize = watch("forearmSize");
+    const forearmMaterial = watch("forearmMaterial");
+    const forearmPointMaterial = watch("forearmPointMaterial");
+    const veneerMaterial = watch("veneerMaterial");
+    const handleMaterial = watch("handleMaterial");
+    const handleSize = watch("handleSize");
+    const buttSleeveSize = watch("buttSleeveSize");
+    const buttSleeveMaterial = watch("buttSleeveMaterial");
+    const buttSleeveVeneerMaterial = watch("buttSleeveVeneerMaterial");
+    const ring1 = watch("ring1");
+    const ring2 = watch("ring2");
+    const ring3 = watch("ring3");
+
+    const sizeOptions = [
+        { value: 'small', label: 'Small' },
+        { value: 'medium', label: 'Medium' },
+        { value: 'large', label: 'Large' }
+    ];
+
+    const materialOptions = [
+        { value: 'juma', label: 'Juma' },
+        { value: 'rubber', label: 'Rubber' },
+        { value: 'wood', label: 'Wood' }
+    ];
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
@@ -405,64 +439,39 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
             <DialogContent>
                 <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
+                        <h3>General Attributes</h3>
                         <div className='form-row'>
                             <div className='flex-1'>
-                            <FormField
-                                title="Cue Number"
-                                type="text"
-                                value={cueNumber}
-                                error={errors.cueNumber && errors.cueNumber.message}
-                                {...register("cueNumber", {
-                                    required: "Cue Number is required",
-                                    maxLength: {
-                                        value: 50,
-                                        message: "Cue Number must be at most 50 characters long"
-                                    }
-                                })}
-                            />
+                                <FormField
+                                    title="Cue Number"
+                                    type="text"
+                                    value={cueNumber}
+                                    error={errors.cueNumber && errors.cueNumber.message}
+                                    {...register("cueNumber", {
+                                        required: "Cue Number is required",
+                                        maxLength: {
+                                            value: 50,
+                                            message: "Cue Number must be at most 50 characters long"
+                                        }
+                                    })}
+                                />
                             </div>
                             <div className='flex-2'>
-                            <FormField
-                                title="Name"
-                                type="text"
-                                value={name}
-                                error={errors.name && errors.name.message}
-                                {...register("name", {
-                                    required: "Name is required",
-                                    maxLength: {
-                                        value: 100,
-                                        message: "Name must be at most 100 characters long"
-                                    }
-                                })}
-                            />
+                                <FormField
+                                    title="Name"
+                                    type="text"
+                                    value={name}
+                                    error={errors.name && errors.name.message}
+                                    {...register("name", {
+                                        required: "Name is required",
+                                        maxLength: {
+                                            value: 100,
+                                            message: "Name must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
                             </div>
                         </div>
-                        <FormSelect
-                            title="Category"
-                            // value={category}
-                            error={errors.category && errors.category.message}
-                            options={[
-                                { id: 1, name: 'Category 1' },
-                                { id: 2, name: 'Category 2' },
-                                { id: 3, name: 'Category 3' }
-                            ]}
-                            displayKey="name"
-                            {...register("category", {
-                                required: "Category is required"
-                            })}
-                        />
-                        <FormTextArea
-                            title="Description"
-                            value={description}
-                            error={errors.description && errors.description.message}
-                            {...register("description", {
-                                required: "Description is required",
-                                maxLength: {
-                                    value: 500,
-                                    message: "Description must be at most 500 characters long"
-                                }
-                            })}
-                        />
                         <FormField
                             title="Price"
                             type="number"
@@ -502,6 +511,325 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 }
                             })}
                         />
+                        <FormTextArea
+                            title="Description"
+                            value={description}
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Description must be at most 500 characters long"
+                                }
+                            })}
+                        />
+                        <h3>Shaft</h3>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Tip"
+                                    type="text"
+                                    value={tip}
+                                    error={errors.tip && errors.tip.message}
+                                    {...register("tip", {
+                                        required: "Tip is required",
+                                        maxLength: {
+                                            value: 50,
+                                            message: "Tip must be at most 50 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Tip Size"
+                                    value={tipSize}
+                                    error={errors.tipSize && errors.tipSize.message}
+                                    options={sizeOptions}
+                                    displayKey="label"
+                                    {...register("tipSize", {
+                                        required: "Tip Size is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Ferrule"
+                                    type="text"
+                                    value={ferrule}
+                                    error={errors.ferrule && errors.ferrule.message}
+                                    {...register("ferrule", {
+                                        required: "Ferrule is required",
+                                        maxLength: {
+                                            value: 50,
+                                            message: "Ferrule must be at most 50 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Ferrule Material"
+                                    value={ferruleMaterial}
+                                    error={errors.ferruleMaterial && errors.ferruleMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("ferruleMaterial", {
+                                        required: "Ferrule Material is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Shaft Material"
+                                    type="text"
+                                    value={shaftMaterial}
+                                    error={errors.shaftMaterial && errors.shaftMaterial.message}
+                                    {...register("shaftMaterial", {
+                                        required: "Shaft Material is required",
+                                        maxLength: {
+                                            value: 100,
+                                            message: "Shaft Material must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormField
+                                    title="Shaft Taper"
+                                    type="text"
+                                    value={shaftTaper}
+                                    error={errors.shaftTaper && errors.shaftTaper.message}
+                                    {...register("shaftTaper", {
+                                        required: "Shaft Taper is required",
+                                        maxLength: {
+                                            value: 50,
+                                            message: "Shaft Taper must be at most 50 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <h3>Butt</h3>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Collar Material"
+                                    type="text"
+                                    value={collarMaterial}
+                                    error={errors.collarMaterial && errors.collarMaterial.message}
+                                    {...register("collarMaterial", {
+                                        required: "Collar Material is required",
+                                        maxLength: {
+                                            value: 100,
+                                            message: "Collar Material must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Joint Pin Size"
+                                    value={jointPinSize}
+                                    error={errors.jointPinSize && errors.jointPinSize.message}
+                                    options={sizeOptions}
+                                    displayKey="label"
+                                    {...register("jointPinSize", {
+                                        required: "Joint Pin Size is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Joint Pin Material"
+                                    value={jointPinMaterial}
+                                    error={errors.jointPinMaterial && errors.jointPinMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("jointPinMaterial", {
+                                        required: "Joint Pin Material is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormField
+                                    title="Joint Collar Material"
+                                    type="text"
+                                    value={jointCollarMaterial}
+                                    error={errors.jointCollarMaterial && errors.jointCollarMaterial.message}
+                                    {...register("jointCollarMaterial", {
+                                        required: "Joint Collar Material is required",
+                                        maxLength: {
+                                            value: 100,
+                                            message: "Joint Collar Material must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Forearm Size"
+                                    value={forearmSize}
+                                    error={errors.forearmSize && errors.forearmSize.message}
+                                    options={sizeOptions}
+                                    displayKey="label"
+                                    {...register("forearmSize", {
+                                        required: "Forearm Size is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Forearm Material"
+                                    value={forearmMaterial}
+                                    error={errors.forearmMaterial && errors.forearmMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("forearmMaterial", {
+                                        required: "Forearm Material is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Forearm Point Material"
+                                    value={forearmPointMaterial}
+                                    error={errors.forearmPointMaterial && errors.forearmPointMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("forearmPointMaterial", {
+                                        required: "Forearm Point Material is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Veneer Material"
+                                    value={veneerMaterial}
+                                    error={errors.veneerMaterial && errors.veneerMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("veneerMaterial", {
+                                        required: "Veneer Material is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Handle Material"
+                                    value={handleMaterial}
+                                    error={errors.handleMaterial && errors.handleMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("handleMaterial", {
+                                        required: "Handle Material is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Handle Size"
+                                    value={handleSize}
+                                    error={errors.handleSize && errors.handleSize.message}
+                                    options={sizeOptions}
+                                    displayKey="label"
+                                    {...register("handleSize", {
+                                        required: "Handle Size is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Butt Sleeve Size"
+                                    value={buttSleeveSize}
+                                    error={errors.buttSleeveSize && errors.buttSleeveSize.message}
+                                    options={sizeOptions}
+                                    displayKey="label"
+                                    {...register("buttSleeveSize", {
+                                        required: "Butt Sleeve Size is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Butt Sleeve Material"
+                                    value={buttSleeveMaterial}
+                                    error={errors.buttSleeveMaterial && errors.buttSleeveMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("buttSleeveMaterial", {
+                                        required: "Butt Sleeve Material is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Butt Sleeve Veneer Material"
+                                    value={buttSleeveVeneerMaterial}
+                                    error={errors.buttSleeveVeneerMaterial && errors.buttSleeveVeneerMaterial.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("buttSleeveVeneerMaterial", {
+                                        required: "Butt Sleeve Veneer Material is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        <h3>Rings</h3>
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormSelect
+                                    title="Ring 1 Material"
+                                    value={ring1}
+                                    error={errors.ring1 && errors.ring1.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("ring1", {
+                                        required: "Ring 1 Material is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormSelect
+                                    title="Ring 2 Material"
+                                    value={ring2}
+                                    error={errors.ring2 && errors.ring2.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("ring2", {
+                                        required: "Ring 2 Material is required"
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-3'>
+                                <FormSelect
+                                    title="Ring 3 Material"
+                                    value={ring3}
+                                    error={errors.ring3 && errors.ring3.message}
+                                    options={materialOptions}
+                                    displayKey="label"
+                                    {...register("ring3", {
+                                        required: "Ring 3 Material is required"
+                                    })}
+                                />
+                            </div>
+                        </div>
                         <DialogActions>
                             <DefaultButton text={"Save"} />
                         </DialogActions>

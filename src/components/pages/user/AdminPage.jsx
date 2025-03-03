@@ -369,7 +369,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', status: '' } }) {
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', buttWeight: '', buttLength: '', buttCapMaterial: '', status: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -404,7 +404,10 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const jointRings = watch("jointRings");
     const handleRings = watch("handleRings");
     const buttRings = watch("buttRings");
-    const status = watch("buttRings");
+    const buttWeight = watch("buttWeight");
+    const buttLength = watch("buttLength");
+    const buttCapMaterial = watch("buttCapMaterial");
+    const status = watch("status");
 
     const sizeOptions = [
         { value: 'small', label: 'Small' },
@@ -538,24 +541,6 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                         <div>
                             <h3 className="dialog-header">Shaft</h3>
                             <div>
-                            <h2 className="dialog-header2">Ferrule</h2>
-                                <div className='form-row'>
-                                    <div className='flex-1'>
-                                        <FormSelect
-                                            title="Ferrule Material"
-                                            value={ferruleMaterial}
-                                            error={errors.ferruleMaterial && errors.ferruleMaterial.message}
-                                            options={materialOptions}
-                                            displayKey="label"
-                                            {...register("ferruleMaterial", {
-                                                required: "Ferrule Material is required"
-                                            })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                            <h2 className="dialog-header2">Shaft</h2>
                                 <div className='form-row'>
                                     <div className='flex-1'>
                                         <FormSelect
@@ -595,9 +580,60 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <h2 className="dialog-header2">Ferrule</h2>
+                                <div className='form-row'>
+                                    <div className='flex-1'>
+                                        <FormSelect
+                                            title="Ferrule Material"
+                                            value={ferruleMaterial}
+                                            error={errors.ferruleMaterial && errors.ferruleMaterial.message}
+                                            options={materialOptions}
+                                            displayKey="label"
+                                            {...register("ferruleMaterial", {
+                                                required: "Ferrule Material is required"
+                                            })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <h3 className="dialog-header">Butt</h3>
+                            <div>
+                                <div className='form-row'>
+                                    <div className='flex-1'>
+                                        <FormField
+                                            title="Butt Weight"
+                                            type="number"
+                                            value={buttWeight}
+                                            error={errors.buttWeight && errors.buttWeight.message}
+                                            {...register("buttWeight", {
+                                                required: "Butt Weight is required",
+                                                min: {
+                                                    value: 0,
+                                                    message: "Butt Weight must be a positive number"
+                                                }
+                                            })}
+                                        />
+                                    </div>
+                                    <div className='flex-1'>
+                                        <FormField
+                                            title="Butt Length"
+                                            type="number"
+                                            value={buttLength}
+                                            error={errors.buttLength && errors.buttLength.message}
+                                            {...register("buttLength", {
+                                                required: "Butt Length is required",
+                                                min: {
+                                                    value: 0,
+                                                    message: "Butt Length must be a positive number"
+                                                }
+                                            })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             <div>
                                 <h2 className="dialog-header2">Joint Pin</h2>
                                 <div className='form-row'>
@@ -695,46 +731,65 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                     </div>
                                 </div>
                             </div>
-                            <h3 className="dialog-header">Rings</h3>
-                            <div className='form-row'>
-                                <div className='flex-1'>
-                                    <FormSelect
-                                        title="Joint Rings Material"
-                                        value={jointRings}
-                                        error={errors.jointRings && errors.jointRings.message}
-                                        options={materialOptions}
-                                        displayKey="label"
-                                        {...register("jointRings", {
-                                            required: "Ring 1 Material is required"
-                                        })}
-                                    />
-                                </div>
-                                <div className='flex-1'>
-                                    <FormSelect
-                                        title="Handle Rings Material"
-                                        value={handleRings}
-                                        error={errors.handleRings && errors.handleRings.message}
-                                        options={materialOptions}
-                                        displayKey="label"
-                                        {...register("handleRings", {
-                                            required: "Ring 2 Material is required"
-                                        })}
-                                    />
-                                </div>
-                                <div className='flex-1'>
-                                    <FormSelect
-                                        title="Butt Rings Material"
-                                        value={buttRings}
-                                        error={errors.buttRings && errors.buttRings.message}
-                                        options={materialOptions}
-                                        displayKey="label"
-                                        {...register("buttRings", {
-                                            required: "Ring 3 Material is required"
-                                        })}
-                                    />
+                            <div>
+                                <h2 className="dialog-header2">Butt Cap</h2>
+                                <div className='form-row'>
+                                    <div className='flex-1'>
+                                        <FormSelect
+                                            title="Butt Cap Material"
+                                            value={buttCapMaterial}
+                                            error={errors.buttCapMaterial && errors.buttCapMaterial.message}
+                                            options={materialOptions}
+                                            displayKey="label"
+                                            {...register("buttCapMaterial", {
+                                                required: "Butt Cap Material is required"
+                                            })}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            </div>
+                            <div>
+                                <h3 className="dialog-header">Rings</h3>
+                                <div className='form-row'>
+                                    <div className='flex-1'>
+                                        <FormSelect
+                                            title="Joint Rings Material"
+                                            value={jointRings}
+                                            error={errors.jointRings && errors.jointRings.message}
+                                            options={materialOptions}
+                                            displayKey="label"
+                                            {...register("jointRings", {
+                                                required: "Ring 1 Material is required"
+                                            })}
+                                        />
+                                    </div>
+                                    <div className='flex-1'>
+                                        <FormSelect
+                                            title="Handle Rings Material"
+                                            value={handleRings}
+                                            error={errors.handleRings && errors.handleRings.message}
+                                            options={materialOptions}
+                                            displayKey="label"
+                                            {...register("handleRings", {
+                                                required: "Ring 2 Material is required"
+                                            })}
+                                        />
+                                    </div>
+                                    <div className='flex-1'>
+                                        <FormSelect
+                                            title="Butt Rings Material"
+                                            value={buttRings}
+                                            error={errors.buttRings && errors.buttRings.message}
+                                            options={materialOptions}
+                                            displayKey="label"
+                                            {...register("buttRings", {
+                                                required: "Ring 3 Material is required"
+                                            })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         <DialogActions>
                             <DefaultButton text={"Save"} />
                         </DialogActions>

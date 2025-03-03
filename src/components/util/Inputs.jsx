@@ -29,6 +29,7 @@ export const FormField = forwardRef(({ type = "text", title, value, onChange, er
 export const FormTextArea = forwardRef(({ title, value, onChange, error, ...restProps }, ref) => {
     const classes = ["form-field"];
     if (error) classes.push("input-error");
+    if (value?.length) classes.push("text-within");
 
     return (
         <div>

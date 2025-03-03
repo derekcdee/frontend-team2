@@ -62,9 +62,13 @@
     border: 1px solid #a0a0a0;
 }
 
-.form-field-textarea-title {
+.form-field.text-within .form-field-textarea-title,
+.form-field:focus-within .form-field-textarea-title {
     font-size: 13px;
-    top: 15px;
+    top: 14px;
+}
+.form-field-textarea-title {
+    top: 23px;
 }
 
 .form-field-input:focus,

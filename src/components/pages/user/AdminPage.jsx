@@ -213,7 +213,7 @@ function CuesTable({ data, onEditClick }) {
                 <div className='admin-actions'>
                     <button
                         className='fa-solid fa-pencil admin-action-button'
-                        onClick={() => onEditClick({ element: row.original })}
+                        onClick={() => onEditClick({ element: row.original, title: `Edit Cue '${row.original.name}'` })}
                     />
                     <button className='fa-solid fa-trash admin-action-button' />
                 </div>

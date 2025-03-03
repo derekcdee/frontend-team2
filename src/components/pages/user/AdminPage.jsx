@@ -369,7 +369,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tip: '', tipSize: '', ferrule: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', collarMaterial: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmSize: '', forearmMaterial: '', forearmPointMaterial: '', veneerMaterial: '', handleMaterial: '', handleSize: '', buttSleeveSize: '', buttSleeveMaterial: '', buttSleeveVeneerMaterial: '', ring1: '', ring2: '', ring3: '' } }) {
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tip: '', tipSize: '', ferrule: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', collarMaterial: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmSize: '', forearmMaterial: '', forearmPointMaterial: '', veneerMaterial: '', handleMaterial: '', handleSize: '', buttSleeveSize: '', buttSleeveMaterial: '', buttSleeveVeneerMaterial: '', ring1: '', ring2: '', ring3: '', status: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -413,6 +413,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const ring1 = watch("ring1");
     const ring2 = watch("ring2");
     const ring3 = watch("ring3");
+    const status = watch("ring3");
 
     const sizeOptions = [
         { value: 'small', label: 'Small' },
@@ -530,6 +531,16 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                         value: 500,
                                         message: "Description must be at most 500 characters long"
                                     }
+                                })}
+                            />
+                            <FormSelect
+                                title="Status"
+                                value={status}
+                                error={errors.status && errors.status.message}
+                                options={sizeOptions}
+                                displayKey="label"
+                                {...register("status", {
+                                    required: "Status is required"
                                 })}
                             />
                         </div>
@@ -852,7 +863,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     );
 }
 
-function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '' } }) {
+function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '', status: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -872,6 +883,12 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     const description = watch("description");
     const price = watch("price");
     const accessoryNumber = watch("accessoryNumber");
+    const status = watch("status");
+
+    const statusOptions = [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
+    ];
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
@@ -899,9 +916,8 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                                 }
                             })}
                         />
-                        <FormField
+                        <FormTextArea
                             title="Description"
-                            type="text"
                             value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {
@@ -938,6 +954,16 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                                 }
                             })}
                         />
+                        <FormSelect
+                            title="Status"
+                            value={status}
+                            error={errors.status && errors.status.message}
+                            options={statusOptions}
+                            displayKey="label"
+                            {...register("status", {
+                                required: "Status is required"
+                            })}
+                        />
                         <DialogActions>
                             <DefaultButton text={"Save"} />
                         </DialogActions>
@@ -948,7 +974,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     );
 }
 
-function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '' } }) {
+function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '', status: '' } }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -968,6 +994,12 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
     const name = watch("name");
     const description = watch("description");
     const tier = watch("tier");
+    const status = watch("status");
+
+    const statusOptions = [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
+    ];
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
@@ -1008,9 +1040,8 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
                                 }
                             })}
                         />
-                        <FormField
+                        <FormTextArea
                             title="Description"
-                            type="text"
                             value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {
@@ -1032,6 +1063,16 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
                                     value: 50,
                                     message: "Tier must be at most 50 characters long"
                                 }
+                            })}
+                        />
+                        <FormSelect
+                            title="Status"
+                            value={status}
+                            error={errors.status && errors.status.message}
+                            options={statusOptions}
+                            displayKey="label"
+                            {...register("status", {
+                                required: "Status is required"
                             })}
                         />
                         <DialogActions>

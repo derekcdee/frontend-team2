@@ -370,6 +370,8 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
 }
 
 function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', handleWrap: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', buttWeight: '', buttLength: '', buttCapMaterial: '', status: '', forearmInlayQuantity: '', forearmInlaySize: '', buttsleeveInlayQuantity: '', buttsleeveInlaySize: '', ringsInlayQuantity: '', ringsInlaySize: '' }}) {
+    const [includeInlays, setIncludeInlays] = useState(false);
+    
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -886,105 +888,106 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                             <div>
                             <div className='form-row'>
                                 <h3 className="dialog-header">Inlays</h3>
-                                <DefaultToggle titleOn={"Include Inlays"} titleOff={"Exclude Inlays"} />
+                                <DefaultToggle titleOn={"Include Inlays"} titleOff={"Exclude Inlays"} onChange={setIncludeInlays}/>
                             </div>
-                            
-                            <div>
-                                <h2 className="dialog-header2">Forearm Inlay</h2>
-                                <div className='form-row'>
-                                    <div className='flex-1'>
-                                        <FormField
-                                            title="Quantity"
-                                            type="number"
-                                            value={forearmInlayQuantity}
-                                            error={errors.forearmInlayQuantity && errors.forearmInlayQuantity.message}
-                                            {...register("forearmInlayQuantity", {
-                                                required: "Quantity is required",
-                                                min: {
-                                                    value: 0,
-                                                    message: "Quantity must be a positive number"
-                                                }
-                                            })}
-                                        />
-                                    </div>
-                                    <div className='flex-1'>
-                                        <FormSelect
-                                            title="Size"
-                                            value={forearmInlaySize}
-                                            error={errors.forearmInlaySize && errors.forearmInlaySize.message}
-                                            options={sizeOptions}
-                                            displayKey="label"
-                                            {...register("forearmInlaySize", {
-                                                required: "Size is required"
-                                            })}
-                                        />
+                            {includeInlays && <>
+                                <div>
+                                    <h2 className="dialog-header2">Forearm Inlay</h2>
+                                    <div className='form-row'>
+                                        <div className='flex-1'>
+                                            <FormField
+                                                title="Quantity"
+                                                type="number"
+                                                value={forearmInlayQuantity}
+                                                error={errors.forearmInlayQuantity && errors.forearmInlayQuantity.message}
+                                                {...register("forearmInlayQuantity", {
+                                                    required: "Quantity is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message: "Quantity must be a positive number"
+                                                    }
+                                                })}
+                                            />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <FormSelect
+                                                title="Size"
+                                                value={forearmInlaySize}
+                                                error={errors.forearmInlaySize && errors.forearmInlaySize.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("forearmInlaySize", {
+                                                    required: "Size is required"
+                                                })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <h2 className="dialog-header2">Buttsleeve Inlay</h2>
-                                <div className='form-row'>
-                                    <div className='flex-1'>
-                                        <FormField
-                                            title="Quantity"
-                                            type="number"
-                                            value={buttsleeveInlayQuantity}
-                                            error={errors.buttsleeveInlayQuantity && errors.buttsleeveInlayQuantity.message}
-                                            {...register("buttsleeveInlayQuantity", {
-                                                required: "Quantity is required",
-                                                min: {
-                                                    value: 0,
-                                                    message: "Quantity must be a positive number"
-                                                }
-                                            })}
-                                        />
-                                    </div>
-                                    <div className='flex-1'>
-                                        <FormSelect
-                                            title="Size"
-                                            value={buttsleeveInlaySize}
-                                            error={errors.buttsleeveInlaySize && errors.buttsleeveInlaySize.message}
-                                            options={sizeOptions}
-                                            displayKey="label"
-                                            {...register("buttsleeveInlaySize", {
-                                                required: "Size is required"
-                                            })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h2 className="dialog-header2">Rings Inlay</h2>
-                                <div className='form-row'>
-                                    <div className='flex-1'>
-                                        <FormField
-                                            title="Quantity"
-                                            type="number"
-                                            value={ringsInlayQuantity}
-                                            error={errors.ringsInlayQuantity && errors.ringsInlayQuantity.message}
-                                            {...register("ringsInlayQuantity", {
-                                                required: "Quantity is required",
-                                                min: {
-                                                    value: 0,
-                                                    message: "Quantity must be a positive number"
-                                                }
-                                            })}
-                                        />
-                                    </div>
-                                    <div className='flex-1'>
-                                        <FormSelect
-                                            title="Size"
-                                            value={ringsInlaySize}
-                                            error={errors.ringsInlaySize && errors.ringsInlaySize.message}
-                                            options={sizeOptions}
-                                            displayKey="label"
-                                            {...register("ringsInlaySize", {
-                                                required: "Size is required"
-                                            })}
-                                        />
+                                <div>
+                                    <h2 className="dialog-header2">Buttsleeve Inlay</h2>
+                                    <div className='form-row'>
+                                        <div className='flex-1'>
+                                            <FormField
+                                                title="Quantity"
+                                                type="number"
+                                                value={buttsleeveInlayQuantity}
+                                                error={errors.buttsleeveInlayQuantity && errors.buttsleeveInlayQuantity.message}
+                                                {...register("buttsleeveInlayQuantity", {
+                                                    required: "Quantity is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message: "Quantity must be a positive number"
+                                                    }
+                                                })}
+                                            />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <FormSelect
+                                                title="Size"
+                                                value={buttsleeveInlaySize}
+                                                error={errors.buttsleeveInlaySize && errors.buttsleeveInlaySize.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("buttsleeveInlaySize", {
+                                                    required: "Size is required"
+                                                })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                <div>
+                                    <h2 className="dialog-header2">Rings Inlay</h2>
+                                    <div className='form-row'>
+                                        <div className='flex-1'>
+                                            <FormField
+                                                title="Quantity"
+                                                type="number"
+                                                value={ringsInlayQuantity}
+                                                error={errors.ringsInlayQuantity && errors.ringsInlayQuantity.message}
+                                                {...register("ringsInlayQuantity", {
+                                                    required: "Quantity is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message: "Quantity must be a positive number"
+                                                    }
+                                                })}
+                                            />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <FormSelect
+                                                title="Size"
+                                                value={ringsInlaySize}
+                                                error={errors.ringsInlaySize && errors.ringsInlaySize.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("ringsInlaySize", {
+                                                    required: "Size is required"
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div> 
+                            </>}
                         </div>
                         <DialogActions>
                             <DefaultButton text={"Save"} />

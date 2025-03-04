@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FormField, FormTextArea, FormSelect } from '../../util/Inputs';
+import { FormField, FormTextArea, FormSelect, DefaultToggle } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
@@ -846,6 +846,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                                 })}
                                             />
                                         </div>
+                                        <DefaultToggle titleOn={"Include Veneers"} titleOff={"Exclude Veneers"} />
                                     </div>
                                 </div>
                                 <div>
@@ -878,11 +879,16 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                                 })}
                                             />
                                         </div>
+                                        <DefaultToggle titleOn={"Include Veneers"} titleOff={"Exclude Veneers"} />
                                     </div>
                                 </div>
                             </div>
                             <div>
-                            <h3 className="dialog-header">Inlays</h3>
+                            <div className='form-row'>
+                                <h3 className="dialog-header">Inlays</h3>
+                                <DefaultToggle titleOn={"Include Inlays"} titleOff={"Exclude Inlays"} />
+                            </div>
+                            
                             <div>
                                 <h2 className="dialog-header2">Forearm Inlay</h2>
                                 <div className='form-row'>

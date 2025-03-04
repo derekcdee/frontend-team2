@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 
 export const FormField = forwardRef(({ type = "text", title, value, onChange, error, ...restProps }, ref) => {
     const classes = ["form-field"];
@@ -80,3 +80,26 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
         </div>
     );
 });
+
+export function DefaultToggle({ titleOn, titleOff, onChange }) {
+    const [isOn, setIsOn] = useState(false);
+
+    const handleToggle = () => {
+        const newIsOn = !isOn;
+        setIsOn(newIsOn);
+        if (onChange) {
+            onChange(newIsOn);
+        }
+    };
+
+    return (
+        <div className="toggle-container" onClick={handleToggle}>
+            <div className={`toggle-switch ${isOn ? 'on' : 'off'}`}>
+                <div className="toggle-circle"></div>
+            </div>
+            <div className="toggle-title">
+                {isOn ? titleOn : titleOff}
+            </div>
+        </div>
+    );
+};

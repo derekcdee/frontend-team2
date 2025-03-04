@@ -391,6 +391,8 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const price = watch("price");
     const overallWeight = watch("overallWeight");
     const overallLength = watch("overallLength");
+    const status = watch("status");
+    
     const tipSize = watch("tipSize");
     const ferruleMaterial = watch("ferruleMaterial");
     const shaftMaterial = watch("shaftMaterial");
@@ -407,13 +409,18 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const buttWeight = watch("buttWeight");
     const buttLength = watch("buttLength");
     const buttCapMaterial = watch("buttCapMaterial");
-    const status = watch("status");
+
     const forearmInlayQuantity = watch("forearmInlayQuantity");
     const forearmInlaySize = watch("forearmInlaySize");
     const buttsleeveInlayQuantity = watch("buttsleeveInlayQuantity");
     const buttsleeveInlaySize = watch("buttsleeveInlaySize");
     const ringsInlayQuantity = watch("ringsInlayQuantity");
     const ringsInlaySize = watch("ringsInlaySize");
+
+    const forearmPointQuantity = watch("forearmPointQuantity");
+    const forearmPointSize = watch("forearmPointSize");
+    const buttSleevePointQuantity = watch("buttSleevePointQuantity");
+    const buttSleevePointSize = watch("buttSleevePointSize");
 
     const sizeOptions = [
         { value: 'small', label: 'Small' },
@@ -793,6 +800,73 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                                 required: "Ring 3 Material is required"
                                             })}
                                         />
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="dialog-header">Points</h3>
+                                <div>
+                                    <h2 className="dialog-header2">Forearm Point</h2>
+                                    <div className='form-row'>
+                                        <div className='flex-1'>
+                                            <FormField
+                                                title="Quantity"
+                                                type="number"
+                                                value={forearmPointQuantity}
+                                                error={errors.forearmPointQuantity && errors.forearmPointQuantity.message}
+                                                {...register("forearmPointQuantity", {
+                                                    required: "Quantity is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message: "Quantity must be a positive number"
+                                                    }
+                                                })}
+                                            />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <FormSelect
+                                                title="Size"
+                                                value={forearmPointSize}
+                                                error={errors.forearmPointSize && errors.forearmPointSize.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("forearmPointSize", {
+                                                    required: "Size is required"
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h2 className="dialog-header2">Butt Sleeve Point</h2>
+                                    <div className='form-row'>
+                                        <div className='flex-1'>
+                                            <FormField
+                                                title="Quantity"
+                                                type="number"
+                                                value={buttSleevePointQuantity}
+                                                error={errors.buttSleevePointQuantity && errors.buttSleevePointQuantity.message}
+                                                {...register("buttSleevePointQuantity", {
+                                                    required: "Quantity is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message: "Quantity must be a positive number"
+                                                    }
+                                                })}
+                                            />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <FormSelect
+                                                title="Size"
+                                                value={buttSleevePointSize}
+                                                error={errors.buttSleevePointSize && errors.buttSleevePointSize.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("buttSleevePointSize", {
+                                                    required: "Size is required"
+                                                })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

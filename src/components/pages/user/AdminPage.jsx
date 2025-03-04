@@ -369,7 +369,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', buttWeight: '', buttLength: '', buttCapMaterial: '', status: '', forearmInlayQuantity: '', forearmInlaySize: '', buttsleeveInlayQuantity: '', buttsleeveInlaySize: '', ringsInlayQuantity: '', ringsInlaySize: '' }}) {
+function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', handleWrap: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', buttWeight: '', buttLength: '', buttCapMaterial: '', status: '', forearmInlayQuantity: '', forearmInlaySize: '', buttsleeveInlayQuantity: '', buttsleeveInlaySize: '', ringsInlayQuantity: '', ringsInlaySize: '' }}) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -402,6 +402,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const jointCollarMaterial = watch("jointCollarMaterial");
     const forearmMaterial = watch("forearmMaterial");
     const handleMaterial = watch("handleMaterial");
+    const handleWrap = watch("handleWrap");
     const buttSleeveMaterial = watch("buttSleeveMaterial");
     const jointRings = watch("jointRings");
     const handleRings = watch("handleRings");
@@ -722,6 +723,16 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                             displayKey="label"
                                             {...register("handleMaterial", {
                                                 required: "Handle Material is required"
+                                            })}
+                                        />
+                                        <FormSelect
+                                            title="Handle Wrap"
+                                            value={handleWrap}
+                                            error={errors.handleMaterial && errors.handleMaterial.message}
+                                            options={materialOptions}
+                                            displayKey="label"
+                                            {...register("handleWrap", {
+                                                required: "Handle Wrap is required"
                                             })}
                                         />
                                     </div>

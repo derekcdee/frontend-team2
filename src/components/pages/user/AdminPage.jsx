@@ -499,7 +499,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 </div>
                                 <div className='flex-1'>
                                     <FormField
-                                        title="Overall Weight"
+                                        title="Overall Weight (oz)"
                                         type="number"
                                         value={overallWeight}
                                         error={errors.overallWeight && errors.overallWeight.message}
@@ -514,7 +514,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 </div>
                                 <div className='flex-1'>
                                     <FormField
-                                        title="Overall Length"
+                                        title="Overall Length (in)"
                                         type="number"
                                         value={overallLength}
                                         error={errors.overallLength && errors.overallLength.message}
@@ -581,7 +581,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                     </div>
                                     <div className='flex-1'>
                                         <FormSelect
-                                            title="Tip Size"
+                                            title="Tip Size (mm)"
                                             value={tipSize}
                                             error={errors.tipSize && errors.tipSize.message}
                                             options={sizeOptions}
@@ -617,7 +617,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 <div className='form-row'>
                                     <div className='flex-1'>
                                         <FormField
-                                            title="Butt Weight"
+                                            title="Butt Weight (oz)"
                                             type="number"
                                             value={buttWeight}
                                             error={errors.buttWeight && errors.buttWeight.message}
@@ -632,7 +632,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                     </div>
                                     <div className='flex-1'>
                                         <FormField
-                                            title="Butt Length"
+                                            title="Butt Length (in)"
                                             type="number"
                                             value={buttLength}
                                             error={errors.buttLength && errors.buttLength.message}
@@ -652,7 +652,7 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                 <div className='form-row'>
                                     <div className='flex-1'>
                                         <FormSelect
-                                            title="Joint Pin Size"
+                                            title="Joint Pin Size (in)"
                                             value={jointPinSize}
                                             error={errors.jointPinSize && errors.jointPinSize.message}
                                             options={sizeOptions}

@@ -369,7 +369,44 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
     );
 }
 
-function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', name: '', description: '', price: '', overallWeight: '', overallLength: '', tipSize: '', ferruleMaterial: '', shaftMaterial: '', shaftTaper: '', jointPinSize: '', jointPinMaterial: '', jointCollarMaterial: '', forearmMaterial: '', handleMaterial: '', handleWrapMaterial: '', buttSleeveMaterial: '', jointRings: '', handleRings: '', buttRings: '', buttWeight: '', buttLength: '', buttCapMaterial: '', status: '', forearmInlayQuantity: '', forearmInlaySize: '', buttsleeveInlayQuantity: '', buttsleeveInlaySize: '', ringsInlayQuantity: '', ringsInlaySize: '' }}) {
+function CueDialog({ open, onClose, title, getData, element = {
+    cueNumber: '',
+    name: '',
+    description: '',
+    price: '',
+    overallWeight: '',
+    overallLength: '',
+    tipSize: '',
+    ferruleMaterial: '',
+    shaftMaterial: '',
+    shaftTaper: '',
+    jointPinSize: '',
+    jointPinMaterial: '',
+    jointCollarMaterial: '',
+    forearmMaterial: '',
+    handleMaterial: '',
+    handleWrapMaterial: '',
+    buttSleeveMaterial: '',
+    jointRings: '',
+    handleRings: '',
+    buttRings: '',
+    buttWeight: '',
+    buttLength: '',
+    buttCapMaterial: '',
+    status: '',
+    forearmInlayQuantity: '',
+    forearmInlaySize: '',
+    buttsleeveInlayQuantity: '',
+    buttsleeveInlaySize: '',
+    ringsInlayQuantity: '',
+    ringsInlaySize: '',
+    forearmPointQuantity: '',
+    forearmPointSize: '',
+    forearmPointVeneerColor: '',
+    buttSleevePointQuantity: '',
+    buttSleevePointSize: '',
+    buttSleevePointVeneerColor: ''
+  }}) {
     const [includeWrap, setIncludeWrap] = useState(false);
 
     const [includeForearmPointVeneers, setIncludeForearmPointVeneers] = useState(false);
@@ -420,6 +457,13 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const buttLength = watch("buttLength");
     const buttCapMaterial = watch("buttCapMaterial");
 
+    const forearmPointQuantity = watch("forearmPointQuantity");
+    const forearmPointSize = watch("forearmPointSize");
+    const forearmPointVeneerColor = watch("forearmPointVeneerColor");
+    const buttSleevePointQuantity = watch("buttSleevePointQuantity");
+    const buttSleevePointSize = watch("buttSleevePointSize");
+    const buttSleevePointVeneerColor = watch("buttSleevePointVeneerColor")
+
     const forearmInlayQuantity = watch("forearmInlayQuantity");
     const forearmInlaySize = watch("forearmInlaySize");
     const buttsleeveInlayQuantity = watch("buttsleeveInlayQuantity");
@@ -427,10 +471,6 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
     const ringsInlayQuantity = watch("ringsInlayQuantity");
     const ringsInlaySize = watch("ringsInlaySize");
 
-    const forearmPointQuantity = watch("forearmPointQuantity");
-    const forearmPointSize = watch("forearmPointSize");
-    const buttSleevePointQuantity = watch("buttSleevePointQuantity");
-    const buttSleevePointSize = watch("buttSleevePointSize");
 
     const sizeOptions = [
         { value: 'small', label: 'Small' },
@@ -832,7 +872,10 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                             <div>
                                 <h3 className="dialog-header">Points</h3>
                                 <div>
-                                    <h2 className="dialog-header2">Forearm Point</h2>
+                                    <div className='form-row'>
+                                        <h2 className="dialog-header2">Forearm Point</h2>
+                                        <DefaultToggle titleOn={"Include Veneers"} titleOff={"Exclude Veneers"} onChange={setIncludeForearmPointVeneers}/>
+                                    </div>
                                     <div className='form-row'>
                                         <div className='flex-1'>
                                             <FormField
@@ -861,11 +904,27 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                                 })}
                                             />
                                         </div>
-                                        <DefaultToggle titleOn={"Include Veneers"} titleOff={"Exclude Veneers"} />
+                                        {includeForearmPointVeneers &&
+                                            <div className='flex-1'>
+                                            <FormSelect
+                                                title="Point Veneer Color"
+                                                value={forearmPointVeneerColor}
+                                                error={errors.forearmPointVeneerColor && errors.forearmPointVeneerColor.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("forearmPointVeneerColor", {
+                                                    required: "Forearm point veneer color is required"
+                                                })}
+                                            />
+                                        </div>}
                                     </div>
                                 </div>
                                 <div>
-                                    <h2 className="dialog-header2">Butt Sleeve Point</h2>
+                                    <div className='form-row'>
+                                        <h2 className="dialog-header2">Butt Sleeve Point</h2>
+                                        <DefaultToggle titleOn={"Include Veneers"} titleOff={"Exclude Veneers"} onChange={setIncludeButtSleevePointVeneers}/>
+                                    </div>
+                                    
                                     <div className='form-row'>
                                         <div className='flex-1'>
                                             <FormField
@@ -894,7 +953,19 @@ function CueDialog({ open, onClose, title, getData, element = { cueNumber: '', n
                                                 })}
                                             />
                                         </div>
-                                        <DefaultToggle titleOn={"Include Veneers"} titleOff={"Exclude Veneers"} />
+                                        {includeButtSleevePointVeneers &&
+                                            <div className='flex-1'>
+                                            <FormSelect
+                                                title="Point Veneer Color"
+                                                value={buttSleevePointVeneerColor}
+                                                error={errors.buttSleevePointVeneerColor && errors.buttSleevePointVeneerColor.message}
+                                                options={sizeOptions}
+                                                displayKey="label"
+                                                {...register("buttSleevePointVeneerColor", {
+                                                    required: "Butt sleeve point veneer color is required"
+                                                })}
+                                            />
+                                        </div>}
                                     </div>
                                 </div>
                             </div>

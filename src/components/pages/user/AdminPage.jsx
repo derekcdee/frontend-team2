@@ -524,6 +524,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         />
                                     </div>
                                 </div>
+                                <div>
                                 <div className="form-row">
                                     <div className="flex-1">
                                         <FormField
@@ -562,6 +563,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     displayKey="label"
                                     {...register("status")}
                                 />
+                            </div>
                             </div>
                         </div>
                         <div>

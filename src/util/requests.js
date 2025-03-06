@@ -9,6 +9,9 @@ export function _ajax(settings = {}) {
     if (settings.data) {
         settings.data = JSON.stringify(settings.data); // Send data as JSON string
     }
+    settings.xhrFields = {
+        withCredentials: true,
+    };
 
     return $.ajax(settings)
         .then((res) => {
@@ -44,10 +47,17 @@ export function login(email, password) {
     return _ajax({
         url: "/account/login",
         method: "POST",
-        data: { email, password }
+        data: { email, password },
     });
 }
 
+export function registerUser(email, password, fName, lName){
+    return _ajax({
+        url: "/account/register",
+        method: "POST",
+        data: {email, password, fName, lName}    
+    });
+}
 
 /*==============================================================
 # Products
@@ -55,7 +65,7 @@ export function login(email, password) {
 
 
 /*==============================================================
-# Users
+# Admin
 ==============================================================*/
 export function getUsers() {
     return _ajax({

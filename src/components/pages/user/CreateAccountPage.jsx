@@ -2,22 +2,33 @@ import React from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { registerUser } from "../../../util/requests";
+import { receiveResponse } from "../../../util/notifications";
 
 export default function CreateAccountPage () {
+    const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
             email: "",
             password: "",
+            firstName: "",
+            lastName: ""
         }
     });
 
     const onSubmit = data => {
-        console.log(data);
+        registerUser(data.email, data.password, data.firstName, data.lastName)
+            .then((res) => {
+                receiveResponse(res);
+                navigate("/login");
+            });
     };
 
     const email = watch("email");
     const password = watch("password");
+    const firstName = watch("firstName");
+    const lastName = watch("lastName");
 
     return (
         <section className="form-content">
@@ -33,7 +44,6 @@ export default function CreateAccountPage () {
                         title="Email"
                         type="text"
                         value={email}
-                        onChange={(e) => console.log(e.target.value)}
                         error={errors.email && errors.email.message}
                         {...register("email", {
                             required: "Email is required",
@@ -47,6 +57,37 @@ export default function CreateAccountPage () {
                             }
                         })}
                     />
+
+                    <div className="form-row">
+                        <div className="flex-1">
+                            <FormField
+                                title="First Name"
+                                type="text"
+                                value={firstName}
+                                error={errors.firstName && errors.firstName.message}
+                                {...register("firstName", {
+                                    maxLength: {
+                                        value: 30,
+                                        message: "30 characters maximum"
+                                    }
+                                })}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <FormField
+                                title="Last Name"
+                                type="text"
+                                value={lastName}
+                                error={errors.lastName && errors.lastName.message}
+                                {...register("lastName", {
+                                    maxLength: {
+                                        value: 30,
+                                        message: "30 characters maximum"
+                                    }
+                                })}
+                            />
+                        </div>
+                    </div>
 
                     <FormField 
                         title="Password"

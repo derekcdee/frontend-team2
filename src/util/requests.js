@@ -9,6 +9,9 @@ export function _ajax(settings = {}) {
     if (settings.data) {
         settings.data = JSON.stringify(settings.data); // Send data as JSON string
     }
+    settings.xhrFields = {
+        withCredentials: true,
+    };
 
     return $.ajax(settings)
         .then((res) => {
@@ -45,7 +48,6 @@ export function login(email, password) {
         url: "/account/login",
         method: "POST",
         data: { email, password },
-        xhrFields: {withCredentials: true}
     });
 }
 

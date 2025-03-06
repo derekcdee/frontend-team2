@@ -3,7 +3,7 @@ import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
 import { NavLink, useNavigate } from "react-router-dom";
-import { registerUser, test } from "../../../util/requests";
+import { registerUser } from "../../../util/requests";
 
 export default function CreateAccountPage () {
     const navigate = useNavigate();
@@ -17,8 +17,10 @@ export default function CreateAccountPage () {
     });
 
     const onSubmit = data => {
-        console.log(data);
-        registerUser(data.email, data.password, data.firstName, data.lastName).then(navigate("/login"));
+        registerUser(data.email, data.password, data.firstName, data.lastName)
+            .then((res) => {
+                navigate("/");
+            });
     };
 
     const email = watch("email");

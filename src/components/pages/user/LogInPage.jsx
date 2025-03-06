@@ -16,7 +16,10 @@ export default function LoginPage () {
 
     const onSubmit = data => {
         console.log(data);
-        login(data.email, data.password).then(navigate("/"));
+        login(data.email, data.password)
+            .then((res) => {         
+                navigate("/");
+            });
     };
 
     const email = watch("email");

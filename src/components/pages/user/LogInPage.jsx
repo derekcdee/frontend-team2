@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
 import { NavLink, useNavigate } from "react-router-dom";
 import { login, test } from "../../../util/requests";
+import { receiveResponse } from "../../../util/notifications";
 
 export default function LoginPage () {
     const navigate = useNavigate();
@@ -17,7 +18,8 @@ export default function LoginPage () {
     const onSubmit = data => {
         console.log(data);
         login(data.email, data.password)
-            .then((res) => {         
+            .then((res) => {
+                receiveResponse(res);
                 navigate("/");
             });
     };

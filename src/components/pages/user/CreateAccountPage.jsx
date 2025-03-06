@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
 import { NavLink, useNavigate } from "react-router-dom";
 import { registerUser } from "../../../util/requests";
+import { receiveResponse } from "../../../util/notifications";
 
 export default function CreateAccountPage () {
     const navigate = useNavigate();
@@ -19,7 +20,8 @@ export default function CreateAccountPage () {
     const onSubmit = data => {
         registerUser(data.email, data.password, data.firstName, data.lastName)
             .then((res) => {
-                navigate("/");
+                receiveResponse(res);
+                navigate("/login");
             });
     };
 
@@ -42,7 +44,6 @@ export default function CreateAccountPage () {
                         title="Email"
                         type="text"
                         value={email}
-                        onChange={(e) => console.log(e.target.value)}
                         error={errors.email && errors.email.message}
                         {...register("email", {
                             required: "Email is required",
@@ -57,20 +58,34 @@ export default function CreateAccountPage () {
                         })}
                     />
 
-                    <div className="nameFields">
-                    <div className="nameField">
-                        <FormField 
-                            title="First Name"
-                            type="firstName"
-                            value={firstName}
-                            {...register("firstName")}/>
+                    <div className="form-row">
+                        <div className="flex-1">
+                            <FormField
+                                title="First Name"
+                                type="text"
+                                value={firstName}
+                                error={errors.firstName && errors.firstName.message}
+                                {...register("firstName", {
+                                    maxLength: {
+                                        value: 30,
+                                        message: "30 characters maximum"
+                                    }
+                                })}
+                            />
                         </div>
-                        <div className="nameField">
-                        <FormField 
-                            title="Last Name"
-                            type="lastName"
-                            value={lastName}
-                            {...register("lastName")}/>
+                        <div className="flex-1">
+                            <FormField
+                                title="Last Name"
+                                type="text"
+                                value={lastName}
+                                error={errors.lastName && errors.lastName.message}
+                                {...register("lastName", {
+                                    maxLength: {
+                                        value: 30,
+                                        message: "30 characters maximum"
+                                    }
+                                })}
+                            />
                         </div>
                     </div>
 

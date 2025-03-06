@@ -44,10 +44,18 @@ export function login(email, password) {
     return _ajax({
         url: "/account/login",
         method: "POST",
-        data: { email, password }
+        data: { email, password },
+        xhrFields: {withCredentials: true}
     });
 }
 
+export function registerUser(email, password, fName, lName){
+    return _ajax({
+        url: "/account/register",
+        method: "POST",
+        data: {email, password, fName, lName}    
+    });
+}
 
 /*==============================================================
 # Products

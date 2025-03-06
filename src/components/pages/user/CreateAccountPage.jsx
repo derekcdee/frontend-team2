@@ -2,22 +2,29 @@ import React from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { registerUser, test } from "../../../util/requests";
 
 export default function CreateAccountPage () {
+    const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
             email: "",
             password: "",
+            firstName: "",
+            lastName: ""
         }
     });
 
     const onSubmit = data => {
         console.log(data);
+        registerUser(data.email, data.password, data.firstName, data.lastName).then(navigate("/login"));
     };
 
     const email = watch("email");
     const password = watch("password");
+    const firstName = watch("firstName");
+    const lastName = watch("lastName");
 
     return (
         <section className="form-content">
@@ -47,6 +54,23 @@ export default function CreateAccountPage () {
                             }
                         })}
                     />
+
+                    <div className="nameFields">
+                    <div className="nameField">
+                        <FormField 
+                            title="First Name"
+                            type="firstName"
+                            value={firstName}
+                            {...register("firstName")}/>
+                        </div>
+                        <div className="nameField">
+                        <FormField 
+                            title="Last Name"
+                            type="lastName"
+                            value={lastName}
+                            {...register("lastName")}/>
+                        </div>
+                    </div>
 
                     <FormField 
                         title="Password"

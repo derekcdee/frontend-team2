@@ -2,10 +2,11 @@ import React from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { login, test } from "../../../util/requests";
 
 export default function LoginPage () {
+    const navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
             email: "",
@@ -15,7 +16,7 @@ export default function LoginPage () {
 
     const onSubmit = data => {
         console.log(data);
-        login(data.email, data.password);
+        login(data.email, data.password).then(navigate("/"));
     };
 
     const email = watch("email");

@@ -71,6 +71,16 @@
     display: block;
 }
 
+.nameFields {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.nameFields .nameField {
+    width: 50%
+}
+
 /*==============================================================
 # User details page
 ==============================================================*/

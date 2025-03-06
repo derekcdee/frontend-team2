@@ -65,7 +65,7 @@ export function registerUser(email, password, fName, lName){
 
 
 /*==============================================================
-# Users
+# Admin
 ==============================================================*/
 export function getUsers() {
     return _ajax({

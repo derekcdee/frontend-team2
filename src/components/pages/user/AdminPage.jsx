@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FormField, FormTextArea, FormSelect, DefaultToggle } from '../../util/Inputs';
+import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
@@ -1076,6 +1076,15 @@ function MaterialDialog({ open, onClose, title, getData, element = false}) {
         { value: 'crystal', label: 'Stone/Crystal' }
     ];
 
+    const materialOptions = [
+        { value: 'juma', label: 'Juma' },
+        { value: 'rubber', label: 'Rubber' },
+        { value: 'wood', label: 'Wood' }
+    ];
+
+    const [selectedValues, setSelectedValues] = useState([]);
+
+
     const renderWoodAttributes = () => (
         <>
             <div className='form-row'>
@@ -1159,18 +1168,16 @@ function MaterialDialog({ open, onClose, title, getData, element = false}) {
             </div>
             <div className='form-row'>
                 <div className='flex-1'>
-                    <FormField
-                        title="Color 1"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField
-                        title="Color 2"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField
-                        title="Color 3"
+                    <FormMultiSelect
+                        title="Select Options"
+                        value={selectedValues}
+                        onChange={(e) => setSelectedValues(e.target.value)}
+                        options={[
+                            { value: 'option1', label: 'Option 1' },
+                            { value: 'option2', label: 'Option 2' },
+                            { value: 'option3', label: 'Option 3' }
+                        ]}
+                        displayKey="label"
                     />
                 </div>
             </div>

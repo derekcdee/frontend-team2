@@ -128,3 +128,68 @@
 .toggle-title {
     font-size: 16px;
 }
+
+.multi-select-input {
+    position: relative;
+    min-height: 38px;
+    padding: 4px 8px;
+    cursor: pointer;
+    flex: 1;
+    border: 1px solid #c9c9c9;
+    transition: all 125ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.multi-select-input:hover {
+    border: 1px solid #a0a0a0;
+}
+
+.selected-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    height: 30px;
+    align-self: end;
+}
+
+.selected-option {
+    background-color: var(--miller-dark-grey);
+    color: var(--miller-white);
+    padding: 0px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin: 0;
+    height: 20px;
+    align-self: flex-end;
+}
+
+.selected-option-button {
+    padding: 0px 0px 0px 6px;
+    align-self: center;
+}
+
+.multi-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.multi-select-option {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.multi-select-option:hover {
+    background-color: var(--hover-color);
+}
+
+.multi-select-option.selected {
+    background-color: var(--primary-color-light);
+}

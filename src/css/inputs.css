@@ -147,7 +147,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    height: 30px;
+    height: 28px;
     align-self: end;
 }
 
@@ -160,11 +160,7 @@
     margin: 0;
     height: 20px;
     align-self: flex-end;
-}
-
-.selected-option-button {
-    padding: 0px 0px 0px 6px;
-    align-self: center;
+    font-weight: 500;
 }
 
 .multi-select-dropdown {

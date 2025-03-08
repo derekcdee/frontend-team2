@@ -85,7 +85,7 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
 export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error, options, displayKey, ...restProps }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const classes = ["form-field"];
-    if (value?.length) classes.push("text-within");
+    if (value?.length || isOpen) classes.push("text-within");
     if (error) classes.push("error");
 
     const handleChange = (e) => {
@@ -116,7 +116,7 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                             const option = options?.find(opt => opt.value === selectedValue);
                             return (
                                 <div key={index} className="selected-option">
-                                    {option?.[displayKey]}<i className='selected-option-button fa-solid fa-xmark'/>
+                                    {option?.[displayKey]}
                                 </div>
                             );
                         })}

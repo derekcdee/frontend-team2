@@ -1045,6 +1045,8 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 }
 
 function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '', status: '' } }) {
+    const [materialType, setMaterialType] = useState(false);
+    
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
@@ -1060,15 +1062,9 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
         onClose();
     };
 
-    const type = watch("type");
-    const name = watch("name");
-    const description = watch("description");
-    const tier = watch("tier");
-    const status = watch("status");
-
-    const statusOptions = [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
+    const materialTypeOptions = [
+        { value: 'wood', label: 'Wood' },
+        { value: 'crystal', label: 'Stone/Crystal' }
     ];
 
     return (
@@ -1084,67 +1080,14 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
             <DialogContent>
                 <form className="material-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
-                        <FormField
-                            title="Type"
-                            type="text"
-                            value={type}
-                            error={errors.type && errors.type.message}
-                            {...register("type", {
-                                required: "Type is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Type must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Name"
-                            type="text"
-                            value={name}
-                            error={errors.name && errors.name.message}
-                            {...register("name", {
-                                required: "Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormTextArea
-                            title="Description"
-                            value={description}
-                            error={errors.description && errors.description.message}
-                            {...register("description", {
-                                required: "Description is required",
-                                maxLength: {
-                                    value: 500,
-                                    message: "Description must be at most 500 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Tier"
-                            type="text"
-                            value={tier}
-                            error={errors.tier && errors.tier.message}
-                            {...register("tier", {
-                                required: "Tier is required",
-                                maxLength: {
-                                    value: 50,
-                                    message: "Tier must be at most 50 characters long"
-                                }
-                            })}
-                        />
                         <FormSelect
-                            title="Status"
-                            value={status}
-                            error={errors.status && errors.status.message}
-                            options={statusOptions}
+                            title="Material Type"
+                            value={materialType}
+                            onChange={(e) => setMaterialType(e.target.value)}
+                            options={materialTypeOptions}
                             displayKey="label"
-                            {...register("status", {
-                                required: "Status is required"
-                            })}
                         />
+                        {materialType && materialType}
                         <DialogActions>
                             <DefaultButton text={"Save"} />
                         </DialogActions>

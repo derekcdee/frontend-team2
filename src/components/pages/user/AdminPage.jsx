@@ -1169,13 +1169,19 @@ function MaterialDialog({ open, onClose, title, getData, element = false}) {
             <div className='form-row'>
                 <div className='flex-1'>
                     <FormMultiSelect
-                        title="Select Options"
+                        title="Colors"
                         value={selectedValues}
                         onChange={(e) => setSelectedValues(e.target.value)}
                         options={[
                             { value: 'option1', label: 'Option 1' },
                             { value: 'option2', label: 'Option 2' },
-                            { value: 'option3', label: 'Option 3' }
+                            { value: 'option3', label: 'Option 3' },
+                            { value: 'option4', label: 'Option 4' },
+                            { value: 'option5', label: 'Option 5' },
+                            { value: 'option6', label: 'Option 6' },
+                            { value: 'option7', label: 'Option 7' },
+                            { value: 'option8', label: 'Option 8' },
+                            { value: 'option9', label: 'Option 9' }
                         ]}
                         displayKey="label"
                     />

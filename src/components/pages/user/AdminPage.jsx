@@ -495,7 +495,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                 <div className="form-row">
                                     <div className="flex-1">
                                         <FormField
-                                            title="Cue Number"
+                                            title="Cue Number*"
                                             type="text"
                                             value={cueNumber}
                                             error={errors.cueNumber && errors.cueNumber.message}
@@ -510,7 +510,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     <div className="flex-2">
                                         <FormField
-                                            title="Name"
+                                            title="Name*"
                                             type="text"
                                             value={name}
                                             error={errors.name && errors.name.message}
@@ -557,11 +557,14 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     {...register("description")}
                                 />
                                 <FormSelect
-                                    title="Status"
+                                    title="Status*"
                                     value={status}
+                                    error={errors.status && errors.status.message}
                                     options={sizeOptions}
                                     displayKey="label"
-                                    {...register("status")}
+                                    {...register("status", {
+                                        required: "Status is required"
+                                    })}
                                 />
                             </div>
                         </div>
@@ -972,46 +975,53 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
             <DialogContent>
                 <form className="accessory-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
-                        <FormField
-                            title="Name"
-                            type="text"
-                            value={name}
-                            error={errors.name && errors.name.message}
-                            {...register("name", {
-                                required: "Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Accessory Number*"
+                                    type="text"
+                                    value={accessoryNumber}
+                                    error={errors.accessoryNumber && errors.accessoryNumber.message}
+                                    {...register("accessoryNumber", {
+                                        required: "Accessory Number is required",
+                                        maxLength: {
+                                            value: 50,
+                                            message: "Accessory Number must be at most 50 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-2'>
+                                <FormField
+                                    title="Name*"
+                                    type="text"
+                                    value={name}
+                                    error={errors.name && errors.name.message}
+                                    {...register("name", {
+                                        required: "Name is required",
+                                        maxLength: {
+                                            value: 100,
+                                            message: "Name must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                        </div>
+                        
                         <FormTextArea
-                            title="Description"
+                            title="Description*"
                             value={description}
                             error={errors.description && errors.description.message}
                             {...register("description", {
                                 required: "Description is required",
                                 maxLength: {
-                                    value: 500,
-                                    message: "Description must be at most 500 characters long"
+                                    value: 1500,
+                                    message: "Description must be at most 1500 characters long"
                                 }
                             })}
                         />
                         <FormField
-                            title="Accessory Number"
-                            type="text"
-                            value={accessoryNumber}
-                            error={errors.accessoryNumber && errors.accessoryNumber.message}
-                            {...register("accessoryNumber", {
-                                required: "Accessory Number is required",
-                                maxLength: {
-                                    value: 50,
-                                    message: "Accessory Number must be at most 50 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Price"
+                            title="Price*"
                             type="number"
                             value={price}
                             error={errors.price && errors.price.message}
@@ -1024,7 +1034,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                             })}
                         />
                         <FormSelect
-                            title="Status"
+                            title="Status*"
                             value={status}
                             error={errors.status && errors.status.message}
                             options={statusOptions}
@@ -1068,7 +1078,136 @@ function MaterialDialog({ open, onClose, title, getData, element = false}) {
 
     const renderWoodAttributes = () => (
         <>
-
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormField 
+                        title="Common Name*"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField 
+                        title="Alternate Name 1"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField 
+                        title="Alternate Name 2"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField 
+                        title="Scientific Name"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormTextArea
+                        title="Description"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormTextArea
+                        title="Brief"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormSelect
+                        title="Status*"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormSelect
+                        title="Tier*"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormField
+                        title="Janka Hardness (lbf)"
+                        type="number"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormField
+                        title="Tree height (ft)"
+                        type="number"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField
+                        title="Trunk Diameter (ft)"
+                        type="number"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormField
+                        title="Geographic origin"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormField
+                        title="Color 1"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField
+                        title="Color 2"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField
+                        title="Color 3"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormField
+                        title="Streaks & Veins"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField
+                        title="Texture"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormField
+                        title="Grain Pattern"
+                    />
+                </div>
+            </div>
+            <div className='form-row'>
+                <div className='flex-1'>
+                    <FormSelect
+                        title="Metaphysical Tag 1"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormSelect
+                        title="Metaphysical Tag 2"
+                    />
+                </div>
+                <div className='flex-1'>
+                    <FormSelect
+                        title="Metaphysical Tag 3"
+                    />
+                </div>
+            </div>
         </>
     )
 
@@ -1164,7 +1303,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                 <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
                         <FormField
-                            title="Email"
+                            title="Email*"
                             type="text"
                             value={email}
                             error={errors.email && errors.email.message}
@@ -1180,35 +1319,9 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                                 }
                             })}
                         />
-                        <FormField
-                            title="First Name"
-                            type="text"
-                            value={firstName}
-                            error={errors.firstName && errors.firstName.message}
-                            {...register("firstName", {
-                                required: "First Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "First Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
-                        <FormField
-                            title="Last Name"
-                            type="text"
-                            value={lastName}
-                            error={errors.lastName && errors.lastName.message}
-                            {...register("lastName", {
-                                required: "Last Name is required",
-                                maxLength: {
-                                    value: 100,
-                                    message: "Last Name must be at most 100 characters long"
-                                }
-                            })}
-                        />
                         {!existingUser && (
                             <FormField
-                                title="Password"
+                                title="Password*"
                                 type="text"
                                 value={password}
                                 error={errors.password && errors.password.message}
@@ -1225,6 +1338,36 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                                 })}
                             />
                         )}
+                        <div className='form-row'>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="First Name"
+                                    type="text"
+                                    value={firstName}
+                                    error={errors.firstName && errors.firstName.message}
+                                    {...register("firstName", {
+                                        maxLength: {
+                                            value: 100,
+                                            message: "First Name must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                            <div className='flex-1'>
+                                <FormField
+                                    title="Last Name"
+                                    type="text"
+                                    value={lastName}
+                                    error={errors.lastName && errors.lastName.message}
+                                    {...register("lastName", {
+                                        maxLength: {
+                                            value: 100,
+                                            message: "Last Name must be at most 100 characters long"
+                                        }
+                                    })}
+                                />
+                            </div>
+                        </div>
                         <DialogActions>
                             <DefaultButton text={"Save"} />
                         </DialogActions>

@@ -67,7 +67,7 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
                     {...restProps}
                 >
                     <option value={""}/>
-                    {options.map((option, index) => (
+                    {options?.map((option, index) => (
                         <option key={index} value={option.value}>
                             {option[displayKey]}
                         </option>

@@ -1045,7 +1045,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 }
 
 function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '', status: '' } }) {
-    const [materialType, setMaterialType] = useState(false);
+    const [materialType, setMaterialType] = useState("");
     
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
@@ -1087,10 +1087,10 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
                             options={materialTypeOptions}
                             displayKey="label"
                         />
-                        {materialType && materialType}
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
+                        {materialType &&
+                            <DialogActions>
+                                <DefaultButton text={"Save"} />
+                            </DialogActions>}
                     </div>
                 </form>
             </DialogContent>

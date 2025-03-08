@@ -524,7 +524,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         />
                                     </div>
                                 </div>
-                                <div>
+
                                 <div className="form-row">
                                     <div className="flex-1">
                                         <FormField
@@ -563,7 +563,6 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     displayKey="label"
                                     {...register("status")}
                                 />
-                            </div>
                             </div>
                         </div>
                         <div>
@@ -1044,7 +1043,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     );
 }
 
-function MaterialDialog({ open, onClose, title, getData, element = { type: '', name: '', description: '', tier: '', status: '' } }) {
+function MaterialDialog({ open, onClose, title, getData, element = false}) {
     const [materialType, setMaterialType] = useState("");
     
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
@@ -1067,6 +1066,12 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
         { value: 'crystal', label: 'Stone/Crystal' }
     ];
 
+    const renderWoodAttributes = () => (
+        <>
+
+        </>
+    )
+
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
@@ -1087,6 +1092,8 @@ function MaterialDialog({ open, onClose, title, getData, element = { type: '', n
                             options={materialTypeOptions}
                             displayKey="label"
                         />
+                        {materialType === 'wood' && renderWoodAttributes()}
+                        {materialType === 'crystal' && renderCrystalAttributes()}
                         {materialType &&
                             <DialogActions>
                                 <DefaultButton text={"Save"} />

@@ -1,4 +1,5 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useRef } from 'react';
+import { useOutsideClick } from '../../util/hooks';
 
 export const FormField = forwardRef(({ type = "text", title, value, onChange, error, ...restProps }, ref) => {
     const classes = ["form-field"];
@@ -84,16 +85,21 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
 
 export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error, options, displayKey, ...restProps }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef(null);
     const classes = ["form-field"];
     if (value?.length || isOpen) classes.push("text-within");
     if (error) classes.push("error");
 
+    useOutsideClick(selectRef, () => {
+        setIsOpen(false);
+    });
+
     const handleChange = (e) => {
         const selectedValue = e.target.value;
-        const newValue = value.includes(selectedValue) 
+        const newValue = value.includes(selectedValue)
             ? value.filter(v => v !== selectedValue)
             : [...value, selectedValue];
-        
+
         if (onChange) {
             const event = {
                 target: {
@@ -107,7 +113,8 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
     return (
         <div>
             <div className={classes.join(" ")}>
-                <div 
+                <div
+                    ref={selectRef}
                     className="form-field-input multi-select-input"
                     onClick={() => setIsOpen(!isOpen)}
                 >
@@ -123,8 +130,8 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                     </div>
                     <div className="multi-select-dropdown" style={{ display: isOpen ? 'block' : 'none' }}>
                         {options?.map((option, index) => (
-                            <div 
-                                key={index} 
+                            <div
+                                key={index}
                                 className={`multi-select-option ${value.includes(option.value) ? 'selected' : ''}`}
                                 onClick={(e) => {
                                     e.stopPropagation();

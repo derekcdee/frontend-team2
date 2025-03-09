@@ -171,6 +171,17 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
         }
     };
 
+    const handleClear = (e) => {
+        e.stopPropagation(); // Prevent dropdown from opening
+        if (onChange) {
+            onChange({
+                target: {
+                    value: []
+                }
+            });
+        }
+    };
+
     return (
         <div>
             <div className={classes.join(" ")}>
@@ -203,7 +214,15 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                             </div>
                         ))}
                     </div>
-                    <i className={'fa-solid form-select-chevron fa-chevron-down'}></i>
+                    <div className="multi-select-icon-container">
+                        {value.length > 0 && (
+                            <i 
+                                className="fa-solid fa-xmark clear-icon"
+                                onClick={handleClear}
+                            />
+                        )}
+                        <i className="fa-solid fa-chevron-down form-select-chevron" />
+                    </div>
                 </div>
                 <label className="form-field-title">
                     {title}

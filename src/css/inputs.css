@@ -212,3 +212,23 @@
     /* Adding padding to account for the chevron */
     padding-right: 30px;
 }
+
+.multi-select-icon-container {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.clear-icon {
+    font-size: 22px;
+    cursor: pointer;
+    margin-right: 35px;
+    color: #747474;
+}
+
+.clear-icon:hover {
+    color: var(--miller-red);
+}

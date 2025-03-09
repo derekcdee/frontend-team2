@@ -180,6 +180,8 @@
     padding: 8px 8px;
     height: 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .multi-select-chevron {
@@ -191,20 +193,16 @@
 }
 
 .multi-select-option:hover {
-    background-color: blue;
+    background-color: rgb(237, 237, 237);
 }
 
 .multi-select-option.selected {
+    background-color: rgb(229, 247, 250);
     font-weight: 500;
-    text-decoration: underline;
 }
 
-.multi-select-option:hover {
-    background-color: var(--hover-color);
-}
-
-.multi-select-option.selected {
-    background-color: var(--primary-color-light);
+.multi-select-option.selected:hover {
+    background-color: rgb(199, 237, 244);
 }
 
 .form-field select.form-field-input {

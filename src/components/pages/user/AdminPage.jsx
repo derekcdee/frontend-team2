@@ -481,10 +481,10 @@ function CueDialog({ open, onClose, title, getData, element = {
     ringsInlaySize: '',
     forearmPointQuantity: '',
     forearmPointSize: '',
-    forearmPointVeneerColor: '',
+    forearmPointVeneerColors: [], // Changed to plural and array
     buttSleevePointQuantity: '',
     buttSleevePointSize: '',
-    buttSleevePointVeneerColor: ''
+    buttSleevePointVeneerColors: [], // Changed to plural and array
   }}) {
     const [includeWrap, setIncludeWrap] = useState(false);
     const [includeForearmPointVeneers, setIncludeForearmPointVeneers] = useState(false);
@@ -532,10 +532,10 @@ function CueDialog({ open, onClose, title, getData, element = {
     const buttCapMaterial = watch("buttCapMaterial");
     const forearmPointQuantity = watch("forearmPointQuantity");
     const forearmPointSize = watch("forearmPointSize");
-    const forearmPointVeneerColor = watch("forearmPointVeneerColor");
+    const forearmPointVeneerColors = watch("forearmPointVeneerColors");
     const buttSleevePointQuantity = watch("buttSleevePointQuantity");
     const buttSleevePointSize = watch("buttSleevePointSize");
-    const buttSleevePointVeneerColor = watch("buttSleevePointVeneerColor");
+    const buttSleevePointVeneerColors = watch("buttSleevePointVeneerColors");
     const forearmInlayQuantity = watch("forearmInlayQuantity");
     const forearmInlaySize = watch("forearmInlaySize");
     const buttsleeveInlayQuantity = watch("buttsleeveInlayQuantity");
@@ -883,12 +883,12 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     {includeForearmPointVeneers &&
                                         <div className='flex-1'>
-                                        <FormSelect
-                                            title="Point Veneer Color"
-                                            value={forearmPointVeneerColor}
-                                            options={sizeOptions}
+                                        <FormMultiSelect
+                                            title="Point Veneer Colors"
+                                            value={forearmPointVeneerColors || []}
+                                            options={COLOR_OPTIONS}
                                             displayKey="label"
-                                            {...register("forearmPointVeneerColor")}
+                                            {...register("forearmPointVeneerColors")}
                                         />
                                     </div>}
                                 </div>
@@ -919,12 +919,12 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     {includeButtSleevePointVeneers &&
                                         <div className='flex-1'>
-                                        <FormSelect
-                                            title="Point Veneer Color"
-                                            value={buttSleevePointVeneerColor}
-                                            options={sizeOptions}
+                                        <FormMultiSelect
+                                            title="Point Veneer Colors"
+                                            value={buttSleevePointVeneerColors || []}
+                                            options={COLOR_OPTIONS}
                                             displayKey="label"
-                                            {...register("buttSleevePointVeneerColor")}
+                                            {...register("buttSleevePointVeneerColors")}
                                         />
                                     </div>}
                                 </div>

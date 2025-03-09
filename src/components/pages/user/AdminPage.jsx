@@ -8,7 +8,6 @@ import { getUsers, createUser, editUser, changePassword, deleteUser } from '../.
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 
-// Global constants
 const COLOR_OPTIONS = [
     { value: 'black', label: 'Black' },
     { value: 'blue', label: 'Blue' },
@@ -33,6 +32,18 @@ const COLOR_OPTIONS = [
     { value: 'yellow_light', label: 'Yellow - Light' },
     { value: 'yellow_med', label: 'Yellow - Med' },
     { value: 'yellow_bright', label: 'Yellow - Bright' }
+];
+
+const STATUS_OPTIONS = [
+    { value: 'available', label: 'Available' },
+    { value: 'not_available', label: 'Not Available' },
+    { value: 'sold', label: 'Sold' },
+    { value: 'coming_soon', label: 'Coming Soon' }
+];
+
+const STATUS_OPTIONS_MATERIALS = [
+    { value: 'available', label: 'Available' },
+    { value: 'not_available', label: 'Not Available' }
 ];
 
 export default function AdminPage() {
@@ -428,10 +439,10 @@ function CueDialog({ open, onClose, title, getData, element = {
     ringsInlaySize: '',
     forearmPointQuantity: '',
     forearmPointSize: '',
-    forearmPointVeneerColors: [], // Changed from forearmPointVeneerColor to forearmPointVeneerColors and made array
+    forearmPointVeneerColor: '',
     buttSleevePointQuantity: '',
     buttSleevePointSize: '',
-    buttSleevePointVeneerColors: [], // Changed from buttSleevePointVeneerColor to buttSleevePointVeneerColors and made array
+    buttSleevePointVeneerColor: ''
   }}) {
     const [includeWrap, setIncludeWrap] = useState(false);
     const [includeForearmPointVeneers, setIncludeForearmPointVeneers] = useState(false);
@@ -479,10 +490,10 @@ function CueDialog({ open, onClose, title, getData, element = {
     const buttCapMaterial = watch("buttCapMaterial");
     const forearmPointQuantity = watch("forearmPointQuantity");
     const forearmPointSize = watch("forearmPointSize");
-    const forearmPointVeneerColors = watch("forearmPointVeneerColors");
+    const forearmPointVeneerColor = watch("forearmPointVeneerColor");
     const buttSleevePointQuantity = watch("buttSleevePointQuantity");
     const buttSleevePointSize = watch("buttSleevePointSize");
-    const buttSleevePointVeneerColors = watch("buttSleevePointVeneerColors");
+    const buttSleevePointVeneerColor = watch("buttSleevePointVeneerColor");
     const forearmInlayQuantity = watch("forearmInlayQuantity");
     const forearmInlaySize = watch("forearmInlaySize");
     const buttsleeveInlayQuantity = watch("buttsleeveInlayQuantity");
@@ -586,7 +597,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     title="Status*"
                                     value={status}
                                     error={errors.status && errors.status.message}
-                                    options={sizeOptions}
+                                    options={STATUS_OPTIONS}
                                     displayKey="label"
                                     {...register("status", {
                                         required: "Status is required"
@@ -830,12 +841,12 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     {includeForearmPointVeneers &&
                                         <div className='flex-1'>
-                                        <FormMultiSelect
-                                            title="Point Veneer Colors"
-                                            value={forearmPointVeneerColors || []}
-                                            options={COLOR_OPTIONS}
+                                        <FormSelect
+                                            title="Point Veneer Color"
+                                            value={forearmPointVeneerColor}
+                                            options={sizeOptions}
                                             displayKey="label"
-                                            {...register("forearmPointVeneerColors")}
+                                            {...register("forearmPointVeneerColor")}
                                         />
                                     </div>}
                                 </div>
@@ -866,12 +877,12 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     {includeButtSleevePointVeneers &&
                                         <div className='flex-1'>
-                                        <FormMultiSelect
-                                            title="Point Veneer Colors"
-                                            value={buttSleevePointVeneerColors || []}
-                                            options={COLOR_OPTIONS}
+                                        <FormSelect
+                                            title="Point Veneer Color"
+                                            value={buttSleevePointVeneerColor}
+                                            options={sizeOptions}
                                             displayKey="label"
-                                            {...register("buttSleevePointVeneerColors")}
+                                            {...register("buttSleevePointVeneerColor")}
                                         />
                                     </div>}
                                 </div>
@@ -1063,7 +1074,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                             title="Status*"
                             value={status}
                             error={errors.status && errors.status.message}
-                            options={statusOptions}
+                            options={STATUS_OPTIONS}
                             displayKey="label"
                             {...register("status", {
                                 required: "Status is required"
@@ -1290,7 +1301,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormSelect
                             title="Status*"
                             value={status}
-                            options={statusOptions}
+                            options={STATUS_OPTIONS_MATERIALS}
                             displayKey="label"
                             error={errors.status && errors.status.message}
                             {...register("status", {

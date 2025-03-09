@@ -164,7 +164,8 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
         if (onChange) {
             const event = {
                 target: {
-                    value: newValue
+                    value: newValue,
+                    name: restProps.name // This is passed from register
                 }
             };
             onChange(event);
@@ -176,7 +177,8 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
         if (onChange) {
             onChange({
                 target: {
-                    value: []
+                    value: [],
+                    name: restProps.name
                 }
             });
         }

@@ -88,6 +88,43 @@ const STATUS_OPTIONS_MATERIALS = [
     { value: 'not_available', label: 'Not Available' }
 ];
 
+const TIP_SIZE_OPTIONS = [
+    { value: '11.75', label: '11.75' },
+    { value: '12.0', label: '12.0' },
+    { value: '12.25', label: '12.25' },
+    { value: '12.4', label: '12.4' },
+    { value: '12.5', label: '12.5' },
+    { value: '12.75', label: '12.75' },
+    { value: '13.0', label: '13.0' }
+];
+
+const SHAFT_TAPER_OPTIONS = [
+    { value: 'pro_taper', label: 'Pro-Taper' },
+    { value: 'break_jump', label: 'Break / Jump' },
+    { value: 'carom', label: 'Carom' }
+];
+
+const JOINT_PIN_SIZE_OPTIONS = [
+    { value: '5_16_14', label: '5/16-14 (Std.)' },
+    { value: '5_16_18', label: '5/16-18' },
+    { value: '3_8_10', label: '3/8-10' },
+    { value: '3_8_10_mod', label: '3/8-10 Modified' },
+    { value: 'american_ball', label: 'American Ball Thd / Radial' },
+    { value: 'wavy', label: 'Wavy' },
+    { value: 'quick_release', label: 'Quick Release' },
+    { value: 'uni_loc', label: 'Uni-Loc' },
+    { value: 'special', label: 'Special' }
+];
+
+const BASIC_SIZE_OPTIONS = [
+    { value: 'small', label: 'Small / Extra-Small' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'large', label: 'Large' },
+    { value: 'extra_large', label: 'Extra Large' },
+    { value: 'complex', label: 'Complex' },
+    { value: 'multi', label: 'Multi-color/-mat\'l' }
+];
+
 export default function AdminPage() {
     const [adminPage, setAdminPage] = useState('Cues');
     const [loading, setLoading] = useState(false);
@@ -455,13 +492,13 @@ function CueDialog({ open, onClose, title, getData, element = {
     price: '',
     overallWeight: '',
     overallLength: '',
-    tipSize: '',
-    ferruleMaterial: '',
+    tipSize: '12.4', // Default to 12.4
+    ferruleMaterial: 'juma',
     shaftMaterial: '',
     shaftTaper: '',
-    jointPinSize: '',
+    jointPinSize: '3_8_10',
     jointPinMaterial: '',
-    jointCollarMaterial: '',
+    jointCollarMaterial: 'black_juma',
     forearmMaterial: '',
     handleMaterial: '',
     handleWrapMaterial: '',
@@ -471,7 +508,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     buttRings: '',
     buttWeight: '',
     buttLength: '',
-    buttCapMaterial: '',
+    buttCapMaterial: 'juma',
     status: '',
     forearmInlayQuantity: '',
     forearmInlaySize: '',
@@ -543,14 +580,9 @@ function CueDialog({ open, onClose, title, getData, element = {
     const ringsInlayQuantity = watch("ringsInlayQuantity");
     const ringsInlaySize = watch("ringsInlaySize");
 
-    const sizeOptions = [
-        { value: 'small', label: 'Small' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'large', label: 'Large' }
-    ];
-
     const materialOptions = [
         { value: 'juma', label: 'Juma' },
+        { value: 'black_juma', label: 'Black Juma' },
         { value: 'rubber', label: 'Rubber' },
         { value: 'wood', label: 'Wood' }
     ];
@@ -664,7 +696,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         <FormSelect
                                             title="Shaft Taper"
                                             value={shaftTaper}
-                                            options={sizeOptions}
+                                            options={SHAFT_TAPER_OPTIONS} // Use the global constant instead of sizeOptions
                                             displayKey="label"
                                             {...register("shaftTaper")}
                                         />
@@ -673,7 +705,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         <FormSelect
                                             title="Tip Size (mm)"
                                             value={tipSize}
-                                            options={sizeOptions}
+                                            options={TIP_SIZE_OPTIONS} // Use the global constant here
                                             displayKey="label"
                                             {...register("tipSize")}
                                         />
@@ -724,7 +756,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         <FormSelect
                                             title="Joint Pin Size (in)"
                                             value={jointPinSize}
-                                            options={sizeOptions}
+                                            options={JOINT_PIN_SIZE_OPTIONS}
                                             displayKey="label"
                                             {...register("jointPinSize")}
                                         />
@@ -876,7 +908,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         <FormSelect
                                             title="Size"
                                             value={forearmPointSize}
-                                            options={sizeOptions}
+                                            options={BASIC_SIZE_OPTIONS}
                                             displayKey="label"
                                             {...register("forearmPointSize")}
                                         />
@@ -912,7 +944,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         <FormSelect
                                             title="Size"
                                             value={buttSleevePointSize}
-                                            options={sizeOptions}
+                                            options={BASIC_SIZE_OPTIONS}
                                             displayKey="label"
                                             {...register("buttSleevePointSize")}
                                         />
@@ -951,7 +983,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             <FormSelect
                                                 title="Size"
                                                 value={forearmInlaySize}
-                                                options={sizeOptions}
+                                                options={BASIC_SIZE_OPTIONS}
                                                 displayKey="label"
                                                 {...register("forearmInlaySize")}
                                             />
@@ -973,7 +1005,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             <FormSelect
                                                 title="Size"
                                                 value={buttsleeveInlaySize}
-                                                options={sizeOptions}
+                                                options={BASIC_SIZE_OPTIONS}
                                                 displayKey="label"
                                                 {...register("buttsleeveInlaySize")}
                                             />
@@ -995,7 +1027,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             <FormSelect
                                                 title="Size"
                                                 value={ringsInlaySize}
-                                                options={sizeOptions}
+                                                options={BASIC_SIZE_OPTIONS}
                                                 displayKey="label"
                                                 {...register("ringsInlaySize")}
                                             />

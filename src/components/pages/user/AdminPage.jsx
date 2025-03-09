@@ -1053,16 +1053,79 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     );
 }
 
-function MaterialDialog({ open, onClose, title, getData, element = false}) {
-    const [materialType, setMaterialType] = useState("");
-    
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
-        defaultValues: element
+function MaterialDialog({ open, onClose, title, getData, element = false }) {
+    // Initialize with proper defaults based on element or empty
+    const getDefaultValues = (type) => {
+        // Common fields for both types
+        const commonDefaults = {
+            materialType: type || '',
+            commonName: '',
+            alternateName1: '',
+            alternateName2: '',
+            description: '',
+            brief: '',
+            status: '',
+            tier: '',
+            colors: []
+        };
+        
+        // Type-specific defaults
+        if (type === 'wood') {
+            return {
+                ...commonDefaults,
+                scientificName: '',
+                jankaHardness: '',
+                treeHeight: '',
+                trunkDiameter: '',
+                geographicOrigin: '',
+                streaksVeins: '',
+                texture: '',
+                grainPattern: '',
+                metaphysicalTag1: '',
+                metaphysicalTag2: '',
+                metaphysicalTag3: ''
+            };
+        } else if (type === 'crystal') {
+            return {
+                ...commonDefaults,
+                mineralClass: '',
+                mohs: '',
+                density: '',
+                chakra: '',
+                formation: '',
+                transparency: '',
+                cleavage: ''
+            };
+        }
+        
+        return commonDefaults;
+    };
+
+    // Initialize form with empty values since materialType is initially empty
+    const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
+        defaultValues: element || getDefaultValues('')
     });
 
+    // Watch material type to know which form to render
+    const materialType = watch("materialType");
+    
+    // When materialType changes, reset the form with appropriate defaults
+    useEffect(() => {
+        if (materialType && materialType !== '') {
+            // Keep current materialType when resetting
+            reset({...getDefaultValues(materialType), materialType});
+        }
+    }, [materialType]);
+    
     useEffect(() => {
         if (open) {
-            reset(element);
+            // If editing existing material, use its data
+            if (element && element.materialType) {
+                reset(element);
+            } else {
+                // For new material, start with empty form
+                reset(getDefaultValues(''));
+            }
         }
     }, [open, reset]);
 
@@ -1076,154 +1139,456 @@ function MaterialDialog({ open, onClose, title, getData, element = false}) {
         { value: 'crystal', label: 'Stone/Crystal' }
     ];
 
-    const materialOptions = [
-        { value: 'juma', label: 'Juma' },
-        { value: 'rubber', label: 'Rubber' },
-        { value: 'wood', label: 'Wood' }
+    const statusOptions = [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
     ];
 
-    const [selectedValues, setSelectedValues] = useState([]);
+    const tierOptions = [
+        { value: 'tier1', label: 'Tier 1' },
+        { value: 'tier2', label: 'Tier 2' },
+        { value: 'tier3', label: 'Tier 3' }
+    ];
 
+    const metaphysicalOptions = [
+        { value: 'prosperity', label: 'Prosperity' },
+        { value: 'health', label: 'Health' },
+        { value: 'wisdom', label: 'Wisdom' },
+        { value: 'clarity', label: 'Clarity' },
+        { value: 'strength', label: 'Strength' }
+    ];
 
-    const renderWoodAttributes = () => (
-        <>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormField 
-                        title="Common Name*"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField 
-                        title="Alternate Name 1"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField 
-                        title="Alternate Name 2"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField 
-                        title="Scientific Name"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormTextArea
-                        title="Description"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormTextArea
-                        title="Brief"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormSelect
-                        title="Status*"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormSelect
-                        title="Tier*"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormField
-                        title="Janka Hardness (lbf)"
-                        type="number"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormField
-                        title="Tree height (ft)"
-                        type="number"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField
-                        title="Trunk Diameter (ft)"
-                        type="number"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormField
-                        title="Geographic origin"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormMultiSelect
-                        title="Colors"
-                        value={selectedValues}
-                        onChange={(e) => setSelectedValues(e.target.value)}
-                        options={[
-                            { value: 'option1', label: 'Option 1' },
-                            { value: 'option2', label: 'Option 2' },
-                            { value: 'option3', label: 'Option 3' },
-                            { value: 'option4', label: 'Option 4' },
-                            { value: 'option5', label: 'Option 5' },
-                            { value: 'option6', label: 'Option 6' },
-                            { value: 'option7', label: 'Option 7' },
-                            { value: 'option8', label: 'Option 8' },
-                            { value: 'option9', label: 'Option 9' }
-                        ]}
-                        displayKey="label"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormField
-                        title="Streaks & Veins"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField
-                        title="Texture"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormField
-                        title="Grain Pattern"
-                    />
-                </div>
-            </div>
-            <div className='form-row'>
-                <div className='flex-1'>
-                    <FormSelect
-                        title="Metaphysical Tag 1"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormSelect
-                        title="Metaphysical Tag 2"
-                    />
-                </div>
-                <div className='flex-1'>
-                    <FormSelect
-                        title="Metaphysical Tag 3"
-                    />
-                </div>
-            </div>
-        </>
-    )
+    const colorOptions = [
+        { value: 'red', label: 'Red' },
+        { value: 'orange', label: 'Orange' },
+        { value: 'yellow', label: 'Yellow' },
+        { value: 'green', label: 'Green' },
+        { value: 'blue', label: 'Blue' },
+        { value: 'purple', label: 'Purple' },
+        { value: 'black', label: 'Black' },
+        { value: 'white', label: 'White' },
+        { value: 'brown', label: 'Brown' }
+    ];
 
+    const chakraOptions = [
+        { value: 'root', label: 'Root' },
+        { value: 'sacral', label: 'Sacral' },
+        { value: 'solar', label: 'Solar Plexus' },
+        { value: 'heart', label: 'Heart' },
+        { value: 'throat', label: 'Throat' },
+        { value: 'third_eye', label: 'Third Eye' },
+        { value: 'crown', label: 'Crown' }
+    ];
+
+    const renderWoodAttributes = () => {
+        // Watch all wood-specific values
+        const commonName = watch("commonName");
+        const alternateName1 = watch("alternateName1");
+        const alternateName2 = watch("alternateName2");
+        const scientificName = watch("scientificName");
+        const description = watch("description");
+        const brief = watch("brief");
+        const status = watch("status");
+        const tier = watch("tier");
+        const jankaHardness = watch("jankaHardness");
+        const treeHeight = watch("treeHeight");
+        const trunkDiameter = watch("trunkDiameter");
+        const geographicOrigin = watch("geographicOrigin");
+        const colors = watch("colors");
+        const streaksVeins = watch("streaksVeins");
+        const texture = watch("texture");
+        const grainPattern = watch("grainPattern");
+        const metaphysicalTag1 = watch("metaphysicalTag1");
+        const metaphysicalTag2 = watch("metaphysicalTag2");
+        const metaphysicalTag3 = watch("metaphysicalTag3");
+        
+        return (
+            <>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Common Name*"
+                            value={commonName}
+                            error={errors.commonName && errors.commonName.message}
+                            {...register("commonName", {
+                                required: "Common Name is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "Common Name must be at most 100 characters long"
+                                }
+                            })}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Alternate Name 1"
+                            value={alternateName1}
+                            {...register("alternateName1")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Alternate Name 2"
+                            value={alternateName2}
+                            {...register("alternateName2")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Scientific Name"
+                            value={scientificName}
+                            {...register("scientificName")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormTextArea
+                            title="Description"
+                            value={description}
+                            {...register("description")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormTextArea
+                            title="Brief"
+                            value={brief}
+                            {...register("brief")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Status*"
+                            value={status}
+                            options={statusOptions}
+                            displayKey="label"
+                            error={errors.status && errors.status.message}
+                            {...register("status", {
+                                required: "Status is required"
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Tier*"
+                            value={tier}
+                            options={tierOptions}
+                            displayKey="label"
+                            error={errors.tier && errors.tier.message}
+                            {...register("tier", {
+                                required: "Tier is required"
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Janka Hardness (lbf)"
+                            type="number"
+                            value={jankaHardness}
+                            {...register("jankaHardness", {
+                                min: {
+                                    value: 0,
+                                    message: "Hardness must be a positive number"
+                                }
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Tree height (ft)"
+                            type="number"
+                            value={treeHeight}
+                            {...register("treeHeight", {
+                                min: {
+                                    value: 0,
+                                    message: "Height must be a positive number"
+                                }
+                            })}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Trunk Diameter (ft)"
+                            type="number"
+                            value={trunkDiameter}
+                            {...register("trunkDiameter", {
+                                min: {
+                                    value: 0,
+                                    message: "Diameter must be a positive number"
+                                }
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Geographic origin"
+                            value={geographicOrigin}
+                            {...register("geographicOrigin")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormMultiSelect
+                            title="Colors"
+                            value={colors || []}
+                            options={colorOptions}
+                            displayKey="label"
+                            {...register("colors")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Streaks & Veins"
+                            value={streaksVeins}
+                            {...register("streaksVeins")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Texture"
+                            value={texture}
+                            {...register("texture")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Grain Pattern"
+                            value={grainPattern}
+                            {...register("grainPattern")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Metaphysical Tag 1"
+                            value={metaphysicalTag1}
+                            options={metaphysicalOptions}
+                            displayKey="label"
+                            {...register("metaphysicalTag1")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Metaphysical Tag 2"
+                            value={metaphysicalTag2}
+                            options={metaphysicalOptions}
+                            displayKey="label"
+                            {...register("metaphysicalTag2")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Metaphysical Tag 3"
+                            value={metaphysicalTag3}
+                            options={metaphysicalOptions}
+                            displayKey="label"
+                            {...register("metaphysicalTag3")}
+                        />
+                    </div>
+                </div>
+            </>
+        );
+    };
+
+    const renderCrystalAttributes = () => {
+        // Watch all crystal-specific values
+        const commonName = watch("commonName");
+        const alternateName1 = watch("alternateName1");
+        const alternateName2 = watch("alternateName2");
+        const mineralClass = watch("mineralClass");
+        const description = watch("description");
+        const brief = watch("brief");
+        const status = watch("status");
+        const tier = watch("tier");
+        const mohs = watch("mohs");
+        const density = watch("density");
+        const chakra = watch("chakra");
+        const formation = watch("formation");
+        const colors = watch("colors");
+        const transparency = watch("transparency");
+        const cleavage = watch("cleavage");
+        
+        return (
+            <>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Common Name*"
+                            value={commonName}
+                            error={errors.commonName && errors.commonName.message}
+                            {...register("commonName", {
+                                required: "Common Name is required"
+                            })}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Alternate Name 1"
+                            value={alternateName1}
+                            {...register("alternateName1")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Alternate Name 2"
+                            value={alternateName2}
+                            {...register("alternateName2")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField 
+                            title="Mineral Class"
+                            value={mineralClass}
+                            {...register("mineralClass")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormTextArea
+                            title="Description"
+                            value={description}
+                            {...register("description")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormTextArea
+                            title="Brief"
+                            value={brief}
+                            {...register("brief")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Status*"
+                            value={status}
+                            options={statusOptions}
+                            displayKey="label"
+                            error={errors.status && errors.status.message}
+                            {...register("status", {
+                                required: "Status is required"
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Tier*"
+                            value={tier}
+                            options={tierOptions}
+                            displayKey="label"
+                            error={errors.tier && errors.tier.message}
+                            {...register("tier", {
+                                required: "Tier is required"
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Mohs Hardness"
+                            type="number"
+                            value={mohs}
+                            {...register("mohs", {
+                                min: {
+                                    value: 0,
+                                    message: "Hardness must be a positive number"
+                                },
+                                max: {
+                                    value: 10,
+                                    message: "Mohs scale is 1-10"
+                                }
+                            })}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Density (g/cm³)"
+                            type="number"
+                            value={density}
+                            {...register("density", {
+                                min: {
+                                    value: 0,
+                                    message: "Density must be a positive number"
+                                }
+                            })}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormSelect
+                            title="Chakra"
+                            value={chakra}
+                            options={chakraOptions}
+                            displayKey="label"
+                            {...register("chakra")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Formation"
+                            value={formation}
+                            {...register("formation")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormMultiSelect
+                            title="Colors"
+                            value={colors || []}
+                            options={colorOptions}
+                            displayKey="label"
+                            {...register("colors")}
+                        />
+                    </div>
+                </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Transparency"
+                            value={transparency}
+                            {...register("transparency")}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <FormField
+                            title="Cleavage"
+                            value={cleavage}
+                            {...register("cleavage")}
+                        />
+                    </div>
+                </div>
+            </>
+        );
+    };
+    
+    // Watch material type outside the render methods since it's used for conditional rendering
+    const materialTypeValue = watch("materialType");
+    
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
@@ -1238,18 +1603,22 @@ function MaterialDialog({ open, onClose, title, getData, element = false}) {
                 <form className="material-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-column">
                         <FormSelect
-                            title="Material Type"
-                            value={materialType}
-                            onChange={(e) => setMaterialType(e.target.value)}
+                            title="Material Type*"
+                            value={materialTypeValue}
+                            error={errors.materialType && errors.materialType.message}
                             options={materialTypeOptions}
                             displayKey="label"
+                            {...register("materialType", {
+                                required: "Material Type is required"
+                            })}
                         />
                         {materialType === 'wood' && renderWoodAttributes()}
                         {materialType === 'crystal' && renderCrystalAttributes()}
-                        {materialType &&
+                        {materialType && 
                             <DialogActions>
                                 <DefaultButton text={"Save"} />
-                            </DialogActions>}
+                            </DialogActions>
+                        }
                     </div>
                 </form>
             </DialogContent>

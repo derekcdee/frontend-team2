@@ -77,6 +77,7 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
                 <label className="form-field-title">
                     {title}
                 </label>
+                <i className={'fa-solid multi-select-chevron fa-chevron-down'}></i>
             </div>
             <p className="form-error-text">{error}</p>
         </div>
@@ -142,6 +143,7 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                             </div>
                         ))}
                     </div>
+                    <i className={'fa-solid multi-select-chevron fa-chevron-down'}></i>
                 </div>
                 <label className="form-field-title">
                     {title}

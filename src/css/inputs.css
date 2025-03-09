@@ -168,7 +168,7 @@
     left: 0;
     right: 0;
     background-color: white;
-    border: 1px solid var(--border-color);
+    border: 1px solid #c9c9c9;
     border-radius: 4px;
     max-height: 200px;
     overflow-y: auto;
@@ -177,8 +177,26 @@
 }
 
 .multi-select-option {
-    padding: 8px;
+    padding: 8px 8px;
+    height: 20px;
     cursor: pointer;
+}
+
+.multi-select-chevron {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+}
+
+.multi-select-option:hover {
+    background-color: blue;
+}
+
+.multi-select-option.selected {
+    font-weight: 500;
+    text-decoration: underline;
 }
 
 .multi-select-option:hover {
@@ -187,4 +205,8 @@
 
 .multi-select-option.selected {
     background-color: var(--primary-color-light);
+}
+
+.form-field select.form-field-input {
+    cursor: pointer;
 }

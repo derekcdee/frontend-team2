@@ -136,6 +136,18 @@ p {
   margin-top: 65px;
 }
 
+.form-field-input[list],
+.form-field-input[type="select"],
+select.form-field-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+
+select.form-field-input::-ms-expand {
+  display: none;
+}
 
 /*==============================================================
 # Header

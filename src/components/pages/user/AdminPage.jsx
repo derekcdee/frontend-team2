@@ -8,6 +8,32 @@ import { getUsers, createUser, editUser, changePassword, deleteUser } from '../.
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 
+// Global constants
+const COLOR_OPTIONS = [
+    { value: 'black', label: 'Black' },
+    { value: 'blue', label: 'Blue' },
+    { value: 'brown_light', label: 'Brown - Light' },
+    { value: 'brown_med', label: 'Brown - Med' },
+    { value: 'brown_dark', label: 'Brown - Dark' },
+    { value: 'cream', label: 'Cream' },
+    { value: 'green_light', label: 'Green - Light' },
+    { value: 'green_med', label: 'Green - Med' },
+    { value: 'green_dark', label: 'Green - Dark' },
+    { value: 'green_tint', label: 'Green Tint' },
+    { value: 'grey_light', label: 'Grey - Light' },
+    { value: 'grey_med', label: 'Grey - Med' },
+    { value: 'grey_dark', label: 'Grey - Dark' },
+    { value: 'orange', label: 'Orange' },
+    { value: 'pink', label: 'Pink' },
+    { value: 'purple', label: 'Purple' },
+    { value: 'red_light', label: 'Red - Light' },
+    { value: 'red_med', label: 'Red - Med' },
+    { value: 'red_bright', label: 'Red - Bright' },
+    { value: 'white', label: 'White' },
+    { value: 'yellow_light', label: 'Yellow - Light' },
+    { value: 'yellow_med', label: 'Yellow - Med' },
+    { value: 'yellow_bright', label: 'Yellow - Bright' }
+];
 
 export default function AdminPage() {
     const [adminPage, setAdminPage] = useState('Cues');
@@ -402,10 +428,10 @@ function CueDialog({ open, onClose, title, getData, element = {
     ringsInlaySize: '',
     forearmPointQuantity: '',
     forearmPointSize: '',
-    forearmPointVeneerColor: '',
+    forearmPointVeneerColors: [], // Changed from forearmPointVeneerColor to forearmPointVeneerColors and made array
     buttSleevePointQuantity: '',
     buttSleevePointSize: '',
-    buttSleevePointVeneerColor: ''
+    buttSleevePointVeneerColors: [], // Changed from buttSleevePointVeneerColor to buttSleevePointVeneerColors and made array
   }}) {
     const [includeWrap, setIncludeWrap] = useState(false);
     const [includeForearmPointVeneers, setIncludeForearmPointVeneers] = useState(false);
@@ -453,10 +479,10 @@ function CueDialog({ open, onClose, title, getData, element = {
     const buttCapMaterial = watch("buttCapMaterial");
     const forearmPointQuantity = watch("forearmPointQuantity");
     const forearmPointSize = watch("forearmPointSize");
-    const forearmPointVeneerColor = watch("forearmPointVeneerColor");
+    const forearmPointVeneerColors = watch("forearmPointVeneerColors");
     const buttSleevePointQuantity = watch("buttSleevePointQuantity");
     const buttSleevePointSize = watch("buttSleevePointSize");
-    const buttSleevePointVeneerColor = watch("buttSleevePointVeneerColor");
+    const buttSleevePointVeneerColors = watch("buttSleevePointVeneerColors");
     const forearmInlayQuantity = watch("forearmInlayQuantity");
     const forearmInlaySize = watch("forearmInlaySize");
     const buttsleeveInlayQuantity = watch("buttsleeveInlayQuantity");
@@ -804,12 +830,12 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     {includeForearmPointVeneers &&
                                         <div className='flex-1'>
-                                        <FormSelect
-                                            title="Point Veneer Color"
-                                            value={forearmPointVeneerColor}
-                                            options={sizeOptions}
+                                        <FormMultiSelect
+                                            title="Point Veneer Colors"
+                                            value={forearmPointVeneerColors || []}
+                                            options={COLOR_OPTIONS}
                                             displayKey="label"
-                                            {...register("forearmPointVeneerColor")}
+                                            {...register("forearmPointVeneerColors")}
                                         />
                                     </div>}
                                 </div>
@@ -840,12 +866,12 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     {includeButtSleevePointVeneers &&
                                         <div className='flex-1'>
-                                        <FormSelect
-                                            title="Point Veneer Color"
-                                            value={buttSleevePointVeneerColor}
-                                            options={sizeOptions}
+                                        <FormMultiSelect
+                                            title="Point Veneer Colors"
+                                            value={buttSleevePointVeneerColors || []}
+                                            options={COLOR_OPTIONS}
                                             displayKey="label"
-                                            {...register("buttSleevePointVeneerColor")}
+                                            {...register("buttSleevePointVeneerColors")}
                                         />
                                     </div>}
                                 </div>
@@ -1344,7 +1370,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormMultiSelect
                             title="Colors"
                             value={colors || []}
-                            options={colorOptions}
+                            options={COLOR_OPTIONS}
                             displayKey="label"
                             {...register("colors")}
                         />

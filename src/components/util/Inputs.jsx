@@ -1,6 +1,18 @@
 import React, { forwardRef, useState, useRef } from 'react';
 import { useOutsideClick } from '../../util/hooks';
 
+/**
+ * Single line input field with floating label
+ * 
+ * @param {Object} props
+ * @param {string} [props.type="text"] - Input type (text, password, email, etc.)
+ * @param {string} props.title - Label text
+ * @param {string} props.value - Current input value
+ * @param {function} props.onChange - onChange handler function
+ * @param {string} [props.error] - Error message to display
+ * @param {React.Ref} ref - Forwarded ref
+ * @returns {JSX.Element} Styled input field with floating label
+ */
 export const FormField = forwardRef(({ type = "text", title, value, onChange, error, ...restProps }, ref) => {
     const classes = ["form-field"];
     if (value?.length) classes.push("text-within")
@@ -27,6 +39,17 @@ export const FormField = forwardRef(({ type = "text", title, value, onChange, er
     );
 });
 
+/**
+ * Multi-line textarea with floating label
+ * 
+ * @param {Object} props
+ * @param {string} props.title - Label text
+ * @param {string} props.value - Current textarea content
+ * @param {function} props.onChange - onChange handler function
+ * @param {string} [props.error] - Error message to display
+ * @param {React.Ref} ref - Forwarded ref
+ * @returns {JSX.Element} Styled textarea with floating label
+ */
 export const FormTextArea = forwardRef(({ title, value, onChange, error, ...restProps }, ref) => {
     const classes = ["form-field"];
     if (error) classes.push("input-error");
@@ -52,6 +75,19 @@ export const FormTextArea = forwardRef(({ title, value, onChange, error, ...rest
     );
 });
 
+/**
+ * Select dropdown with floating label and custom styling
+ * 
+ * @param {Object} props
+ * @param {string} props.title - Label text
+ * @param {string} props.value - Currently selected value
+ * @param {function} props.onChange - onChange handler function
+ * @param {string} [props.error] - Error message to display
+ * @param {Array} props.options - Array of option objects to render
+ * @param {string} props.displayKey - Key in option object to display as text
+ * @param {React.Ref} ref - Forwarded ref
+ * @returns {JSX.Element} Styled select dropdown with floating label
+ */
 export const FormSelect = forwardRef(({ title, value, onChange, error, options, displayKey, ...restProps }, ref) => {
     const classes = ["form-field"];
     if (value?.length) classes.push("text-within");
@@ -94,6 +130,19 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
     );
 });
 
+/**
+ * Custom multi-select dropdown with selected items displayed as tags
+ * 
+ * @param {Object} props
+ * @param {string} props.title - Label text
+ * @param {Array<string>} props.value - Array of selected values
+ * @param {function} props.onChange - onChange handler function
+ * @param {string} [props.error] - Error message to display
+ * @param {Array} props.options - Array of option objects to render
+ * @param {string} props.displayKey - Key in option object to display as text
+ * @param {React.Ref} ref - Forwarded ref
+ * @returns {JSX.Element} Custom multi-select dropdown with tags for selected values
+ */
 export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error, options, displayKey, ...restProps }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef(null);
@@ -165,6 +214,15 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
     );
 });
 
+/**
+ * Toggle switch with customizable text for on/off states
+ * 
+ * @param {Object} props
+ * @param {string} props.titleOn - Text to display when toggle is on
+ * @param {string} props.titleOff - Text to display when toggle is off
+ * @param {function} props.onChange - Callback function that receives boolean indicating new state
+ * @returns {JSX.Element} Styled toggle switch with text
+ */
 export function DefaultToggle({ titleOn, titleOff, onChange }) {
     const [isOn, setIsOn] = useState(false);
 

@@ -34,6 +34,48 @@ const COLOR_OPTIONS = [
     { value: 'yellow_bright', label: 'Yellow - Bright' }
 ];
 
+const METAPHYSICAL_OPTIONS = [
+    { value: 'none', label: 'Not yet available. Currently being researched' },
+    { value: 'ambition', label: 'Ambition' },
+    { value: 'balance', label: 'Balance' },
+    { value: 'beauty', label: 'Beauty' },
+    { value: 'calming', label: 'Calming' },
+    { value: 'clarity', label: 'Clarity' },
+    { value: 'concentration', label: 'Concentration' },
+    { value: 'confidence', label: 'Confidence' },
+    { value: 'connectedness', label: 'Connectedness' },
+    { value: 'control', label: 'Control' },
+    { value: 'creativity', label: 'Creativity' },
+    { value: 'energy', label: 'Energy' },
+    { value: 'focus', label: 'Focus' },
+    { value: 'grounding', label: 'Grounding' },
+    { value: 'growth', label: 'Growth' },
+    { value: 'harmony', label: 'Harmony' },
+    { value: 'healing', label: 'Healing' },
+    { value: 'imagination', label: 'Imagination' },
+    { value: 'insight', label: 'Insight' },
+    { value: 'inspiration', label: 'Inspiration' },
+    { value: 'integrity', label: 'Integrity' },
+    { value: 'intuition', label: 'Intuition' },
+    { value: 'kindness', label: 'Kindness' },
+    { value: 'knowledge', label: 'Knowledge' },
+    { value: 'logic', label: 'Logic' },
+    { value: 'love', label: 'Love' },
+    { value: 'loyalty', label: 'Loyalty' },
+    { value: 'new_beginnings', label: 'New Beginnings' },
+    { value: 'peace', label: 'Peace' },
+    { value: 'positive_luck', label: 'Positive Luck' },
+    { value: 'power', label: 'Power' },
+    { value: 'precision', label: 'Precision' },
+    { value: 'protection', label: 'Protection' },
+    { value: 'purity', label: 'Purity' },
+    { value: 'resilience', label: 'Resilience' },
+    { value: 'spiritual_guidance', label: 'Spiritual Guidance' },
+    { value: 'spiritual_amplification', label: 'Spiritual Amplification' },
+    { value: 'strength', label: 'Strength' },
+    { value: 'wisdom', label: 'Wisdom' }
+];
+
 const STATUS_OPTIONS = [
     { value: 'available', label: 'Available' },
     { value: 'not_available', label: 'Not Available' },
@@ -994,11 +1036,6 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     const accessoryNumber = watch("accessoryNumber");
     const status = watch("status");
 
-    const statusOptions = [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
-    ];
-
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
@@ -1105,7 +1142,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
             tier: '',
             colors: []
         };
-        
+
         // Type-specific defaults
         if (type === 'wood') {
             return {
@@ -1118,9 +1155,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 streaksVeins: '',
                 texture: '',
                 grainPattern: '',
-                metaphysicalTag1: '',
-                metaphysicalTag2: '',
-                metaphysicalTag3: ''
+                metaphysicalTags: [] // Changed to array instead of separate fields
             };
         } else if (type === 'crystal') {
             return {
@@ -1131,12 +1166,14 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 chakra: '',
                 formation: '',
                 transparency: '',
-                cleavage: ''
+                cleavage: '',
+                metaphysicalTags: [] // Added for crystals too
             };
         }
-        
+
         return commonDefaults;
     };
+
 
     // Initialize form with empty values since materialType is initially empty
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
@@ -1176,35 +1213,10 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         { value: 'crystal', label: 'Stone/Crystal' }
     ];
 
-    const statusOptions = [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
-    ];
-
     const tierOptions = [
         { value: 'tier1', label: 'Tier 1' },
         { value: 'tier2', label: 'Tier 2' },
         { value: 'tier3', label: 'Tier 3' }
-    ];
-
-    const metaphysicalOptions = [
-        { value: 'prosperity', label: 'Prosperity' },
-        { value: 'health', label: 'Health' },
-        { value: 'wisdom', label: 'Wisdom' },
-        { value: 'clarity', label: 'Clarity' },
-        { value: 'strength', label: 'Strength' }
-    ];
-
-    const colorOptions = [
-        { value: 'red', label: 'Red' },
-        { value: 'orange', label: 'Orange' },
-        { value: 'yellow', label: 'Yellow' },
-        { value: 'green', label: 'Green' },
-        { value: 'blue', label: 'Blue' },
-        { value: 'purple', label: 'Purple' },
-        { value: 'black', label: 'Black' },
-        { value: 'white', label: 'White' },
-        { value: 'brown', label: 'Brown' }
     ];
 
     const chakraOptions = [
@@ -1235,9 +1247,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         const streaksVeins = watch("streaksVeins");
         const texture = watch("texture");
         const grainPattern = watch("grainPattern");
-        const metaphysicalTag1 = watch("metaphysicalTag1");
-        const metaphysicalTag2 = watch("metaphysicalTag2");
-        const metaphysicalTag3 = watch("metaphysicalTag3");
+        const metaphysicalTags = watch("metaphysicalTags");
         
         return (
             <>
@@ -1412,30 +1422,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 </div>
                 <div className='form-row'>
                     <div className='flex-1'>
-                        <FormSelect
-                            title="Metaphysical Tag 1"
-                            value={metaphysicalTag1}
-                            options={metaphysicalOptions}
+                        <FormMultiSelect
+                            title="Metaphysical Tags"
+                            value={metaphysicalTags || []}
+                            options={METAPHYSICAL_OPTIONS}
                             displayKey="label"
-                            {...register("metaphysicalTag1")}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormSelect
-                            title="Metaphysical Tag 2"
-                            value={metaphysicalTag2}
-                            options={metaphysicalOptions}
-                            displayKey="label"
-                            {...register("metaphysicalTag2")}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormSelect
-                            title="Metaphysical Tag 3"
-                            value={metaphysicalTag3}
-                            options={metaphysicalOptions}
-                            displayKey="label"
-                            {...register("metaphysicalTag3")}
+                            {...register("metaphysicalTags")}
                         />
                     </div>
                 </div>
@@ -1519,7 +1511,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormSelect
                             title="Status*"
                             value={status}
-                            options={statusOptions}
+                            options={STATUS_OPTIONS_MATERIALS}
                             displayKey="label"
                             error={errors.status && errors.status.message}
                             {...register("status", {
@@ -1597,7 +1589,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormMultiSelect
                             title="Colors"
                             value={colors || []}
-                            options={colorOptions}
+                            options={COLOR_OPTIONS}
                             displayKey="label"
                             {...register("colors")}
                         />

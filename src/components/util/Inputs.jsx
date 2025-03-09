@@ -57,6 +57,12 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
     if (value?.length) classes.push("text-within");
     if (error) classes.push("input-error");
 
+    const handleClick = () => {
+        if (ref.current) {
+            ref.current.click();
+        }
+    };
+
     return (
         <div>
             <div className={classes.join(" ")}>
@@ -77,7 +83,11 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
                 <label className="form-field-title">
                     {title}
                 </label>
-                <i className={'fa-solid multi-select-chevron fa-chevron-down'}></i>
+                <i 
+                    className={'fa-solid form-select-chevron fa-chevron-down'}
+                    style={{ pointerEvents: 'none' }}
+                    onClick={handleClick}
+                />
             </div>
             <p className="form-error-text">{error}</p>
         </div>
@@ -144,7 +154,7 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                             </div>
                         ))}
                     </div>
-                    <i className={'fa-solid multi-select-chevron fa-chevron-down'}></i>
+                    <i className={'fa-solid form-select-chevron fa-chevron-down'}></i>
                 </div>
                 <label className="form-field-title">
                     {title}

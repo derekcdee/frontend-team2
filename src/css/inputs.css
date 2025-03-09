@@ -32,7 +32,7 @@
 }
 
 .form-field select {
-    padding: 18px 6px 0px 6px;
+    padding: 18px 6px 0px 10px;
     height: 50px;
 }
 
@@ -134,7 +134,7 @@
 .multi-select-input {
     position: relative;
     min-height: 40px;
-    padding: 4px 8px;
+    padding: 4px 10px;
     cursor: pointer;
     border-radius: 3px;
 }
@@ -185,12 +185,13 @@
     align-items: center;
 }
 
-.multi-select-chevron {
+.form-select-chevron {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 12px;
+    color: #747474;
 }
 
 .multi-select-option:hover {
@@ -208,4 +209,6 @@
 
 .form-field select.form-field-input {
     cursor: pointer;
+    /* Adding padding to account for the chevron */
+    padding-right: 30px;
 }

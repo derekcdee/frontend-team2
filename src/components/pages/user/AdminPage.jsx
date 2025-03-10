@@ -125,6 +125,164 @@ const BASIC_SIZE_OPTIONS = [
     { value: 'multi', label: 'Multi-color/-mat\'l' }
 ];
 
+const PSYCHOLOGICAL_CORRESPONDENCE_OPTIONS = [
+    { value: 'abundance', label: 'Abundance' },
+    { value: 'acceptance', label: 'Acceptance' },
+    { value: 'achievement', label: 'Achievement' },
+    { value: 'alleviates_sorrow', label: 'Alleviates Sorrow' },
+    { value: 'ambition', label: 'Ambition' },
+    { value: 'assertiveness', label: 'Assertiveness' },
+    { value: 'attracts_new_love', label: 'Attracts New Love' },
+    { value: 'attracts_prosperity', label: 'Attracts Prosperity' },
+    { value: 'awareness', label: 'Awareness' },
+    { value: 'awakenings', label: 'Awakenings' },
+    { value: 'balance', label: 'Balance' },
+    { value: 'balanced_judgement', label: 'Balanced Judgement' },
+    { value: 'benevolence', label: 'Benevolence' },
+    { value: 'bliss', label: 'Bliss' },
+    { value: 'business_booster', label: 'Business Booster' },
+    { value: 'calmness', label: 'Calmness' },
+    { value: 'change', label: 'Change' },
+    { value: 'changes_for_success', label: 'Changes for Success' },
+    { value: 'charisma', label: 'Charisma' },
+    { value: 'clarity', label: 'Clarity' },
+    { value: 'communication', label: 'Communication' },
+    { value: 'compassion', label: 'Compassion' },
+    { value: 'concentration', label: 'Concentration' },
+    { value: 'confidence', label: 'Confidence' },
+    { value: 'contentment', label: 'Contentment' },
+    { value: 'control', label: 'Control' },
+    { value: 'courage', label: 'Courage' },
+    { value: 'creating_positivity', label: 'Creating Positivity' },
+    { value: 'creativity', label: 'Creativity' },
+    { value: 'decision_making', label: 'Decision-Making' },
+    { value: 'deeper_self_awareness', label: 'Deeper Self-Awareness' },
+    { value: 'determination', label: 'Determination' },
+    { value: 'diplomacy', label: 'Diplomacy' },
+    { value: 'drive', label: 'Drive' },
+    { value: 'emotional_balance', label: 'Emotional Balance' },
+    { value: 'emotional_ease', label: 'Emotional Ease' },
+    { value: 'emotional_healing', label: 'Emotional Healing' },
+    { value: 'emotional_honesty', label: 'Emotional Honesty' },
+    { value: 'emotional_mastery', label: 'Emotional Mastery' },
+    { value: 'emotional_security', label: 'Emotional Security' },
+    { value: 'emotional_strength', label: 'Emotional Strength' },
+    { value: 'empathy', label: 'Empathy' },
+    { value: 'empowerment', label: 'Empowerment' },
+    { value: 'endurance', label: 'Endurance' },
+    { value: 'enlightenment', label: 'Enlightenment' },
+    { value: 'enthusiasm', label: 'Enthusiasm' },
+    { value: 'fast_acting_love', label: 'Fast-Acting Love Attractor' },
+    { value: 'fast_progress', label: 'Fast Progress toward Success' },
+    { value: 'fearlessness', label: 'Fearlessness' },
+    { value: 'feminine_vitality', label: 'Feminine Vitality' },
+    { value: 'fidelity', label: 'Fidelity' },
+    { value: 'fine_tuned_perception', label: 'Fine-Tuned Perception' },
+    { value: 'flexibility', label: 'Flexibility' },
+    { value: 'focus', label: 'Focus' },
+    { value: 'forgiveness', label: 'Forgiveness' },
+    { value: 'fortitude', label: 'Fortitude' },
+    { value: 'freedom_from_expectations', label: 'Freedom from Expectations' },
+    { value: 'generosity', label: 'Generosity' },
+    { value: 'getting_what_you_desire', label: 'Getting what you Desire' },
+    { value: 'good_decision_making', label: 'Good Decision-Making' },
+    { value: 'good_fortune', label: 'Good Fortune' },
+    { value: 'good_luck', label: 'Good Luck' },
+    { value: 'good_will', label: 'Good Will' },
+    { value: 'grounding', label: 'Grounding' },
+    { value: 'growth', label: 'Growth' },
+    { value: 'harmony', label: 'Harmony' },
+    { value: 'harmonious_relations', label: 'Harmonious Relations' },
+    { value: 'heals_heartbreak', label: 'Heals Heartbreak' },
+    { value: 'healing', label: 'Healing' },
+    { value: 'holistic_balance', label: 'Holistic Balance' },
+    { value: 'holistic_well_being', label: 'Holistic Well-Being' },
+    { value: 'honesty', label: 'Honesty' },
+    { value: 'imagination', label: 'Imagination' },
+    { value: 'inner_peace', label: 'Inner Peace' },
+    { value: 'insight', label: 'Insight' },
+    { value: 'inspiration', label: 'Inspiration' },
+    { value: 'integrity', label: 'Integrity' },
+    { value: 'intellectual_acumen', label: 'Intellectual Acumen' },
+    { value: 'intellectual_power', label: 'Intellectual Power' },
+    { value: 'intuition', label: 'Intuition' },
+    { value: 'joy', label: 'Joy' },
+    { value: 'letting_go', label: 'Letting Go' },
+    { value: 'loving_communication', label: 'Loving Communication' },
+    { value: 'luck', label: 'Luck' },
+    { value: 'magical_well_being', label: 'Magical Well-Being' },
+    { value: 'magnet_for_love', label: 'Magnet for Love' },
+    { value: 'manifesting_intentions', label: 'Manifesting Intentions' },
+    { value: 'manifests_desire', label: 'Manifests Desire' },
+    { value: 'motivation', label: 'Motivation' },
+    { value: 'new_beginnings', label: 'New Beginnings' },
+    { value: 'new_romance', label: 'New Romance' },
+    { value: 'non_judgemental_love', label: 'Non-Judgemental Love & Acceptance' },
+    { value: 'objectivity', label: 'Objectivity' },
+    { value: 'optimism', label: 'Optimism' },
+    { value: 'originality', label: 'Originality' },
+    { value: 'passion', label: 'Passion' },
+    { value: 'patience', label: 'Patience' },
+    { value: 'peace', label: 'Peace' },
+    { value: 'perception', label: 'Perception' },
+    { value: 'personal_freedom', label: 'Personal Freedom' },
+    { value: 'personal_growth', label: 'Personal Growth' },
+    { value: 'positive_attitude', label: 'Positive Attitude' },
+    { value: 'positive_change', label: 'Positive Change' },
+    { value: 'positive_romantic_change', label: 'Positive Romantic Change' },
+    { value: 'positivity', label: 'Positivity' },
+    { value: 'potent_success', label: 'Potent Success' },
+    { value: 'progress', label: 'Progress' },
+    { value: 'protection', label: 'Protection' },
+    { value: 'protects_from_anger', label: 'Protects from Other\'s Anger' },
+    { value: 'rationality', label: 'Rationality' },
+    { value: 'realism', label: 'Realism' },
+    { value: 'reliable_perception', label: 'Reliable Perception' },
+    { value: 'self_assurance', label: 'Self-Assurance' },
+    { value: 'self_awareness', label: 'Self-Awareness' },
+    { value: 'self_belief', label: 'Self-Belief' },
+    { value: 'self_confidence', label: 'Self-Confidence' },
+    { value: 'self_control', label: 'Self-Control' },
+    { value: 'self_esteem', label: 'Self-Esteem' },
+    { value: 'self_expression', label: 'Self-Expression' },
+    { value: 'self_love', label: 'Self-Love' },
+    { value: 'self_reliance', label: 'Self-Reliance' },
+    { value: 'self_respect', label: 'Self-Respect' },
+    { value: 'self_value', label: 'Self-Value' },
+    { value: 'self_worth', label: 'Self-Worth' },
+    { value: 'serenity', label: 'Serenity' },
+    { value: 'sexual_excitement', label: 'Sexual Excitement' },
+    { value: 'sexual_self_reflection', label: 'Sexual Self-Reflection' },
+    { value: 'sharp_mind', label: 'Sharp Mind' },
+    { value: 'sociability', label: 'Sociability' },
+    { value: 'soul_attraction', label: 'Soul Attraction' },
+    { value: 'spiritual_growth', label: 'Spiritual Growth' },
+    { value: 'spiritual_love', label: 'Spiritual Love' },
+    { value: 'spontaneity', label: 'Spontaneity' },
+    { value: 'stability', label: 'Stability' },
+    { value: 'stone_to_sell_success', label: 'Stone to "Sell Your Success"' },
+    { value: 'strength', label: 'Strength' },
+    { value: 'strength_of_mind', label: 'Strength of Mind' },
+    { value: 'stress_reduction', label: 'Stress-Reduction' },
+    { value: 'stress_relief', label: 'Stress-Relief' },
+    { value: 'success', label: 'Success' },
+    { value: 'synchronicity', label: 'Synchronicity' },
+    { value: 'tenacity', label: 'Tenacity' },
+    { value: 'togetherness', label: 'Togetherness' },
+    { value: 'tolerance', label: 'Tolerance' },
+    { value: 'transformation', label: 'Transformation' },
+    { value: 'trust', label: 'Trust' },
+    { value: 'trusting_instincts', label: 'Trusting Instincts' },
+    { value: 'truth', label: 'Truth' },
+    { value: 'unconditional_love', label: 'Unconditional Love' },
+    { value: 'understanding', label: 'Understanding' },
+    { value: 'uplifts', label: 'Uplifts' },
+    { value: 'vitality', label: 'Vitality' },
+    { value: 'will', label: 'Will' },
+    { value: 'willpower', label: 'Willpower' },
+    { value: 'zesty_for_living', label: 'Zesty for Living' }
+];
+
 export default function AdminPage() {
     const [adminPage, setAdminPage] = useState('Cues');
     const [loading, setLoading] = useState(false);
@@ -1160,26 +1318,25 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 }
 
 function MaterialDialog({ open, onClose, title, getData, element = false }) {
-    // Initialize with proper defaults based on element or empty
     const getDefaultValues = (type) => {
-        // Common fields for both types
+        // Common bare minimum defaults
         const commonDefaults = {
             materialType: type || '',
-            commonName: '',
-            alternateName1: '',
-            alternateName2: '',
-            description: '',
-            brief: '',
             status: '',
+            description: '',
             tier: '',
-            colors: []
+            colors: [],
         };
 
         // Type-specific defaults
         if (type === 'wood') {
             return {
                 ...commonDefaults,
+                commonName: '',
+                alternateName1: '',
+                alternateName2: '',
                 scientificName: '',
+                brief: '',
                 jankaHardness: '',
                 treeHeight: '',
                 trunkDiameter: '',
@@ -1187,25 +1344,19 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 streaksVeins: '',
                 texture: '',
                 grainPattern: '',
-                metaphysicalTags: [] // Changed to array instead of separate fields
+                metaphysicalTags: []
             };
         } else if (type === 'crystal') {
             return {
                 ...commonDefaults,
-                mineralClass: '',
-                mohs: '',
-                density: '',
-                chakra: '',
-                formation: '',
-                transparency: '',
-                cleavage: '',
-                metaphysicalTags: [] // Added for crystals too
+                crystalName: '',
+                crystalCategory: '',
+                psychologicalCorrespondence: []
             };
         }
 
         return commonDefaults;
     };
-
 
     // Initialize form with empty values since materialType is initially empty
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
@@ -1481,55 +1632,26 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     };
 
     const renderCrystalAttributes = () => {
-        // Watch all crystal-specific values
-        const commonName = watch("commonName");
-        const alternateName1 = watch("alternateName1");
-        const alternateName2 = watch("alternateName2");
-        const mineralClass = watch("mineralClass");
-        const description = watch("description");
-        const brief = watch("brief");
-        const status = watch("status");
-        const tier = watch("tier");
-        const mohs = watch("mohs");
-        const density = watch("density");
-        const chakra = watch("chakra");
-        const formation = watch("formation");
+        // Watch crystal-specific values
+        const crystalName = watch("crystalName");
+        const description = watch("description"); // Added description watch
+        const crystalCategory = watch("crystalCategory");
         const colors = watch("colors");
-        const transparency = watch("transparency");
-        const cleavage = watch("cleavage");
+        const psychologicalCorrespondence = watch("psychologicalCorrespondence");
+        const status = watch("status");
+        const tier = watch("tier"); // Added tier watch
         
         return (
             <>
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormField 
-                            title="Common Name*"
-                            value={commonName}
-                            error={errors.commonName && errors.commonName.message}
-                            {...register("commonName", {
-                                required: "Common Name is required"
+                            title="Crystal Name*"
+                            value={crystalName}
+                            error={errors.crystalName && errors.crystalName.message}
+                            {...register("crystalName", {
+                                required: "Crystal Name is required"
                             })}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormField 
-                            title="Alternate Name 1"
-                            value={alternateName1}
-                            {...register("alternateName1")}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormField 
-                            title="Alternate Name 2"
-                            value={alternateName2}
-                            {...register("alternateName2")}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormField 
-                            title="Mineral Class"
-                            value={mineralClass}
-                            {...register("mineralClass")}
                         />
                     </div>
                 </div>
@@ -1539,15 +1661,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             title="Description"
                             value={description}
                             {...register("description")}
-                        />
-                    </div>
-                </div>
-                <div className='form-row'>
-                    <div className='flex-1'>
-                        <FormTextArea
-                            title="Brief"
-                            value={brief}
-                            {...register("brief")}
                         />
                     </div>
                 </div>
@@ -1581,78 +1694,43 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 </div>
                 <div className='form-row'>
                     <div className='flex-1'>
-                        <FormField
-                            title="Mohs Hardness"
-                            type="number"
-                            value={mohs}
-                            {...register("mohs", {
-                                min: {
-                                    value: 0,
-                                    message: "Hardness must be a positive number"
-                                },
-                                max: {
-                                    value: 10,
-                                    message: "Mohs scale is 1-10"
-                                }
-                            })}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormField
-                            title="Density (g/cm³)"
-                            type="number"
-                            value={density}
-                            {...register("density", {
-                                min: {
-                                    value: 0,
-                                    message: "Density must be a positive number"
-                                }
-                            })}
-                        />
-                    </div>
-                </div>
-                <div className='form-row'>
-                    <div className='flex-1'>
                         <FormSelect
-                            title="Chakra"
-                            value={chakra}
-                            options={chakraOptions}
+                            title="Crystal Category*"
+                            value={crystalCategory}
+                            options={tierOptions}
                             displayKey="label"
-                            {...register("chakra")}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormField
-                            title="Formation"
-                            value={formation}
-                            {...register("formation")}
+                            error={errors.crystalCategory && errors.crystalCategory.message}
+                            {...register("crystalCategory", {
+                                required: "Crystal Category is required"
+                            })}
                         />
                     </div>
                 </div>
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormMultiSelect
-                            title="Colors"
+                            title="Colors*"
                             value={colors || []}
                             options={COLOR_OPTIONS}
                             displayKey="label"
-                            {...register("colors")}
+                            error={errors.colors && errors.colors.message}
+                            {...register("colors", {
+                                required: "At least one color must be selected"
+                            })}
                         />
                     </div>
                 </div>
                 <div className='form-row'>
                     <div className='flex-1'>
-                        <FormField
-                            title="Transparency"
-                            value={transparency}
-                            {...register("transparency")}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <FormField
-                            title="Cleavage"
-                            value={cleavage}
-                            {...register("cleavage")}
+                        <FormMultiSelect
+                            title="Psychological Correspondence*"
+                            value={psychologicalCorrespondence || []}
+                            options={PSYCHOLOGICAL_CORRESPONDENCE_OPTIONS}
+                            displayKey="label"
+                            error={errors.psychologicalCorrespondence && errors.psychologicalCorrespondence.message}
+                            {...register("psychologicalCorrespondence", {
+                                required: "At least one psychological correspondence must be selected"
+                            })}
                         />
                     </div>
                 </div>

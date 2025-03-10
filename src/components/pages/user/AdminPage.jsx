@@ -1248,7 +1248,8 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     const tierOptions = [
         { value: 'tier1', label: 'Tier 1' },
         { value: 'tier2', label: 'Tier 2' },
-        { value: 'tier3', label: 'Tier 3' }
+        { value: 'tier3', label: 'Tier 3' },
+        { value: 'tier4', label: 'Tier 4' }
     ];
 
     const chakraOptions = [
@@ -1412,29 +1413,38 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormField
-                            title="Geographic origin"
+                            title="Geographic Origin*"
                             value={geographicOrigin}
-                            {...register("geographicOrigin")}
+                            error={errors.geographicOrigin && errors.geographicOrigin.message}
+                            {...register("geographicOrigin", {
+                                required: "Geographic Origin is required"
+                            })}
                         />
                     </div>
                 </div>
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormMultiSelect
-                            title="Colors"
+                            title="Colors*"
                             value={colors || []}
                             options={COLOR_OPTIONS}
                             displayKey="label"
-                            {...register("colors")}
+                            error={errors.colors && errors.colors.message}
+                            {...register("colors", {
+                                required: "At least one color must be selected"
+                            })}
                         />
                     </div>
                 </div>
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormField
-                            title="Streaks & Veins"
+                            title="Streaks & Veins*"
                             value={streaksVeins}
-                            {...register("streaksVeins")}
+                            error={errors.streaksVeins && errors.streaksVeins.message}
+                            {...register("streaksVeins", {
+                                required: "Streaks & Veins is required"
+                            })}
                         />
                     </div>
                     <div className='flex-1'>
@@ -1455,11 +1465,14 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormMultiSelect
-                            title="Metaphysical Tags"
+                            title="Metaphysical Tags*"
                             value={metaphysicalTags || []}
                             options={METAPHYSICAL_OPTIONS}
                             displayKey="label"
-                            {...register("metaphysicalTags")}
+                            error={errors.metaphysicalTags && errors.metaphysicalTags.message}
+                            {...register("metaphysicalTags", {
+                                required: "At least one metaphysical tag must be selected"
+                            })}
                         />
                     </div>
                 </div>

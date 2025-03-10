@@ -283,6 +283,13 @@ const PSYCHOLOGICAL_CORRESPONDENCE_OPTIONS = [
     { value: 'zesty_for_living', label: 'Zesty for Living' }
 ];
 
+const CRYSTAL_CATEGORY_OPTIONS = [
+    { value: 'abundance_good_fortune', label: 'For Abundance & Good Fortune' },
+    { value: 'love', label: 'For Love' },
+    { value: 'success', label: 'For Success' },
+    { value: 'well_being', label: 'For Well-Being' }
+];
+
 export default function AdminPage() {
     const [adminPage, setAdminPage] = useState('Cues');
     const [loading, setLoading] = useState(false);
@@ -1697,7 +1704,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormSelect
                             title="Crystal Category*"
                             value={crystalCategory}
-                            options={tierOptions}
+                            options={CRYSTAL_CATEGORY_OPTIONS}
                             displayKey="label"
                             error={errors.crystalCategory && errors.crystalCategory.message}
                             {...register("crystalCategory", {
@@ -1716,20 +1723,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             error={errors.colors && errors.colors.message}
                             {...register("colors", {
                                 required: "At least one color must be selected"
-                            })}
-                        />
-                    </div>
-                </div>
-                <div className='form-row'>
-                    <div className='flex-1'>
-                        <FormMultiSelect
-                            title="Psychological Correspondence*"
-                            value={psychologicalCorrespondence || []}
-                            options={PSYCHOLOGICAL_CORRESPONDENCE_OPTIONS}
-                            displayKey="label"
-                            error={errors.psychologicalCorrespondence && errors.psychologicalCorrespondence.message}
-                            {...register("psychologicalCorrespondence", {
-                                required: "At least one psychological correspondence must be selected"
                             })}
                         />
                     </div>

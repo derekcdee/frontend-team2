@@ -8,7 +8,7 @@ import { NavLink, useLocation } from "react-router-dom";
 const options = {
     "Materials": [
         { text: "Woods", link: "/collections/materials" },
-        { text: "Stones & Crystals", link: "/collections/materials" },
+        { text: "Stones and Crystals", link: "/collections/materials" },
         { text: "View All", link: "/collections/materials" }
     ]
 };

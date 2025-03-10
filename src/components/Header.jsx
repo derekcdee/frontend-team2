@@ -6,11 +6,6 @@ import { DrawerLoginButton, LoginButton } from "./util/Buttons";
 import { NavLink, useLocation } from "react-router-dom";
 
 const options = {
-    "Cues & Accessories": [
-        { text: "Pool Cues", link: "/collections/available" },
-        { text: "Accessories", link: "/collections/available" },
-        { text: "View All", link: "/collections/available" }
-    ],
     "Materials": [
         { text: "Woods", link: "/collections/materials" },
         { text: "Stones & Crystals", link: "/collections/materials" },
@@ -19,7 +14,8 @@ const options = {
 };
 
 const navItems = [
-    { text: "Cues n Accessories", options: options["Cues & Accessories"] },
+    { text: "Cues", link: "/collections/available" },
+    { text: "Accessories", link: "/collections/available" },
     { text: "Coming Soon", link: "/collections/coming-soon" },
     { text: "Build-A-Que", link: "/build-a-que" },
     { text: "Materials", options: options["Materials"] }

@@ -149,7 +149,7 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
     const classes = ["form-field"];
     if (value?.length || isOpen) classes.push("text-within");
     if (isOpen) classes.push("focus");
-    if (error) classes.push("error");
+    if (error) classes.push("input-error");
 
     useOutsideClick(selectRef, () => {
         setIsOpen(false);

@@ -1727,6 +1727,20 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         />
                     </div>
                 </div>
+                <div className='form-row'>
+                    <div className='flex-1'>
+                        <FormMultiSelect
+                            title="Psychological Correspondence*"
+                            value={psychologicalCorrespondence || []}
+                            options={PSYCHOLOGICAL_CORRESPONDENCE_OPTIONS}
+                            displayKey="label"
+                            error={errors.psychologicalCorrespondence && errors.psychologicalCorrespondence.message}
+                            {...register("psychologicalCorrespondence", {
+                                required: "At least one psychological correspondence must be selected"
+                            })}
+                        />
+                    </div>
+                </div>
             </>
         );
     };

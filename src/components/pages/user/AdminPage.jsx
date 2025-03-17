@@ -76,16 +76,15 @@ const METAPHYSICAL_OPTIONS = [
     { value: 'wisdom', label: 'Wisdom' }
 ];
 
-const STATUS_OPTIONS = [
-    { value: 'available', label: 'Available' },
-    { value: 'not_available', label: 'Not Available' },
-    { value: 'sold', label: 'Sold' },
-    { value: 'coming_soon', label: 'Coming Soon' }
-];
-
-const STATUS_OPTIONS_MATERIALS = [
+const STATUS_OPTIONS_AVAILABLE = [
     { value: 'available', label: 'Available' },
     { value: 'not_available', label: 'Not Available' }
+];
+
+const STATUS_OPTIONS_CUE = [
+    ...STATUS_OPTIONS_AVAILABLE,
+    { value: 'sold', label: 'Sold' },
+    { value: 'coming_soon', label: 'Coming Soon' }
 ];
 
 const TIP_SIZE_OPTIONS = [
@@ -836,7 +835,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     title="Status*"
                                     value={status}
                                     error={errors.status && errors.status.message}
-                                    options={STATUS_OPTIONS}
+                                    options={STATUS_OPTIONS_CUE}
                                     displayKey="label"
                                     {...register("status", {
                                         required: "Status is required"
@@ -1308,7 +1307,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                             title="Status*"
                             value={status}
                             error={errors.status && errors.status.message}
-                            options={STATUS_OPTIONS}
+                            options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
                             {...register("status", {
                                 required: "Status is required"
@@ -1497,7 +1496,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormSelect
                             title="Status*"
                             value={status}
-                            options={STATUS_OPTIONS_MATERIALS}
+                            options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
                             error={errors.status && errors.status.message}
                             {...register("status", {
@@ -1674,7 +1673,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormSelect
                             title="Status*"
                             value={status}
-                            options={STATUS_OPTIONS_MATERIALS}
+                            options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
                             error={errors.status && errors.status.message}
                             {...register("status", {

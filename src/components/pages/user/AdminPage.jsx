@@ -1326,7 +1326,6 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 
 function MaterialDialog({ open, onClose, title, getData, element = false }) {
     const getDefaultValues = (type) => {
-        // Common bare minimum defaults
         const commonDefaults = {
             materialType: type || '',
             status: '',
@@ -1335,7 +1334,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
             colors: [],
         };
 
-        // Type-specific defaults
         if (type === 'wood') {
             return {
                 ...commonDefaults,
@@ -1365,15 +1363,11 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         return commonDefaults;
     };
 
-    // Initialize form with empty values since materialType is initially empty
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
         defaultValues: element || getDefaultValues('')
     });
 
-    // Watch material type to know which form to render
     const materialType = watch("materialType");
-    
-    // When materialType changes, reset the form with appropriate defaults
     useEffect(() => {
         if (materialType && materialType !== '') {
             // Keep current materialType when resetting
@@ -1383,11 +1377,9 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     
     useEffect(() => {
         if (open) {
-            // If editing existing material, use its data
             if (element && element.materialType) {
                 reset(element);
             } else {
-                // For new material, start with empty form
                 reset(getDefaultValues(''));
             }
         }
@@ -1482,9 +1474,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormTextArea
-                            title="Description"
+                            title="Description*"
                             value={description}
-                            {...register("description")}
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required"
+                            })}
                         />
                     </div>
                 </div>
@@ -1665,9 +1660,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 <div className='form-row'>
                     <div className='flex-1'>
                         <FormTextArea
-                            title="Description"
+                            title="Description*"
                             value={description}
-                            {...register("description")}
+                            error={errors.description && errors.description.message}
+                            {...register("description", {
+                                required: "Description is required"
+                            })}
                         />
                     </div>
                 </div>

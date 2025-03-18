@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
@@ -696,6 +696,8 @@ function CueDialog({ open, onClose, title, getData, element = {
         defaultValues: element
     });
 
+    const formRef = useRef(null);
+    
     useEffect(() => {
         if (open) {
             reset(element);
@@ -705,6 +707,12 @@ function CueDialog({ open, onClose, title, getData, element = {
     const onSubmit = (data) => {
         console.log(data);
         onClose();
+    };
+
+    const handleSaveClick = () => {
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
     };
 
     const cueNumber = watch("cueNumber");
@@ -755,14 +763,23 @@ function CueDialog({ open, onClose, title, getData, element = {
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
+                <div style={{ float: 'right', display: 'flex' }}>
+                    <button
+                        type="button"
+                        className='fa-solid fa-floppy-disk admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
+                        onClick={handleSaveClick}
+                    />
+                    <button
+                        type="button"
+                        className='fa-solid fa-xmark admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                        onClick={onClose}
+                    />
+                </div>
             </DialogTitle>
             <DialogContent>
-                <form className="cue-form" onSubmit={handleSubmit(onSubmit)}>
+                <form className="cue-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <div>
                             <h3 className="dialog-header">General Attributes</h3>
@@ -1200,9 +1217,6 @@ function CueDialog({ open, onClose, title, getData, element = {
                                 </div> 
                             </>}
                         </div>
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
                     </div>
                 </form>
             </DialogContent>
@@ -1214,6 +1228,8 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
+    
+    const formRef = useRef(null);
 
     useEffect(() => {
         if (open) {
@@ -1224,6 +1240,12 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     const onSubmit = (data) => {
         console.log(data);
         onClose();
+    };
+    
+    const handleSaveClick = () => {
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
     };
 
     const name = watch("name");
@@ -1236,14 +1258,23 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
+                <div style={{ float: 'right', display: 'flex' }}>
+                    <button
+                        type="button"
+                        className='fa-solid fa-floppy-disk admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
+                        onClick={handleSaveClick}
+                    />
+                    <button
+                        type="button"
+                        className='fa-solid fa-xmark admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                        onClick={onClose}
+                    />
+                </div>
             </DialogTitle>
             <DialogContent>
-                <form className="accessory-form" onSubmit={handleSubmit(onSubmit)}>
+                <form className="accessory-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <div className='form-row'>
                             <div className='flex-1'>
@@ -1313,9 +1344,6 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                                 required: "Status is required"
                             })}
                         />
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
                     </div>
                 </form>
             </DialogContent>
@@ -1387,6 +1415,14 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     const onSubmit = (data) => {
         console.log(data);
         onClose();
+    };
+
+    const formRef = useRef(null);
+    
+    const handleSaveClick = () => {
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
     };
 
     const materialTypeOptions = [
@@ -1742,25 +1778,31 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         );
     };
     
-    // Watch material type outside the render methods since it's used for conditional rendering
-    const materialTypeValue = watch("materialType");
-    
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
+                <div style={{ float: 'right', display: 'flex' }}>
+                    {materialType && <button
+                        type="button"
+                        className='fa-solid fa-floppy-disk admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
+                        onClick={handleSaveClick}
+                    />}
+                    <button
+                        type="button"
+                        className='fa-solid fa-xmark admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                        onClick={onClose}
+                    />
+                </div>
             </DialogTitle>
             <DialogContent>
-                <form className="material-form" onSubmit={handleSubmit(onSubmit)}>
+                <form className="material-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <FormSelect
                             title="Material Type*"
-                            value={materialTypeValue}
+                            value={materialType}
                             error={errors.materialType && errors.materialType.message}
                             options={materialTypeOptions}
                             displayKey="label"
@@ -1770,11 +1812,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         />
                         {materialType === 'wood' && renderWoodAttributes()}
                         {materialType === 'crystal' && renderCrystalAttributes()}
-                        {materialType && 
-                            <DialogActions>
-                                <DefaultButton text={"Save"} />
-                            </DialogActions>
-                        }
                     </div>
                 </form>
             </DialogContent>
@@ -1822,6 +1859,14 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
         }
     };
 
+    const formRef = useRef(null);
+    
+    const handleSaveClick = () => {
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    };
+
     const email = watch("email");
     const password = watch("password");
     const firstName = watch("firstName");
@@ -1831,14 +1876,23 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
                 {title}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
+                <div style={{ float: 'right', display: 'flex' }}>
+                    <button
+                        type="button"
+                        className='fa-solid fa-floppy-disk admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
+                        onClick={handleSaveClick}
+                    />
+                    <button
+                        type="button"
+                        className='fa-solid fa-xmark admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                        onClick={onClose}
+                    />
+                </div>
             </DialogTitle>
             <DialogContent>
-                <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
+                <form className="user-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <FormField
                             title="Email*"
@@ -1906,9 +1960,6 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                                 />
                             </div>
                         </div>
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
                     </div>
                 </form>
             </DialogContent>
@@ -1985,6 +2036,14 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
         onClose();
     };
 
+    const formRef = useRef(null);
+    
+    const handleSaveClick = () => {
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    };
+
     const firstName = element.firstName;
     const password = watch("password");
 
@@ -1992,14 +2051,23 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
         <Dialog open={open} onClose={onClose} >
             <DialogTitle>
                 {title} {firstName && `'${firstName}'`}
-                <button
-                    className='fa-solid fa-xmark admin-action-button'
-                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginLeft: '10px' }}
-                    onClick={onClose}
-                />
+                <div style={{ float: 'right', display: 'flex' }}>
+                    <button
+                        type="button"
+                        className='fa-solid fa-floppy-disk admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
+                        onClick={handleSaveClick}
+                    />
+                    <button
+                        type="button"
+                        className='fa-solid fa-xmark admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                        onClick={onClose}
+                    />
+                </div>
             </DialogTitle>
             <DialogContent>
-                <form className="password-form" onSubmit={handleSubmit(onSubmit)}>
+                <form className="password-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <FormField
                             title="Password"
@@ -2018,9 +2086,6 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
                                 }
                             })}
                         />
-                        <DialogActions>
-                            <DefaultButton text={"Save"} />
-                        </DialogActions>
                     </div>
                 </form>
             </DialogContent>

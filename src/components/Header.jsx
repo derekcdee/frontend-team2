@@ -10,13 +10,16 @@ const options = {
         { text: "Woods", link: "/collections/materials" },
         { text: "Stones and Crystals", link: "/collections/materials" },
         { text: "View All", link: "/collections/materials" }
+    ],
+    "Cues": [
+        { text: "Coming Soon", link: "/collections/coming-soon" },
+        { text: "View All", link: "/collections/available" },
     ]
 };
 
 const navItems = [
-    { text: "Cues", link: "/collections/available" },
+    { text: "Cues", options: options["Cues"] },
     { text: "Accessories", link: "/collections/available" },
-    { text: "Coming Soon", link: "/collections/coming-soon" },
     { text: "Build-A-Que", link: "/build-a-que" },
     { text: "Materials", options: options["Materials"] }
 ];

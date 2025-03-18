@@ -59,6 +59,13 @@ export function registerUser(email, password, fName, lName){
     });
 }
 
+export function checkAuth() {
+    return _ajax({
+        url: "/account/check-auth",
+        method: "GET",  
+    });
+}
+
 /*==============================================================
 # Products
 ==============================================================*/

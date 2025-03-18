@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 /*==============================================================
 # Defaults
@@ -67,13 +68,14 @@ export function DefaultButton({text, onClick}) {
 ==============================================================*/
 export function LoginButton({onClick}) {
     const navigate = useNavigate();
+    const isAuthenticated = useSelector(state => !!state.user?.authenticated);
 
     return (
         <button
             className="fa-solid fa-user header-icon"
             onClick={() => {
                 onClick && onClick();
-                navigate('/login')
+                navigate(isAuthenticated ? '/account/profile' : '/login');
             }}
         >
         </button>
@@ -81,10 +83,24 @@ export function LoginButton({onClick}) {
 }
 
 export function DrawerLoginButton({onClick}) {
+    const navigate = useNavigate();
+    const isAuthenticated = useSelector(state => !!state.user?.authenticated);
+
     return (
-        <NavLink className="drawer-foot-nav-text" tabIndex={0} to="/login" onClick={onClick}>
-            <button className="fa-solid fa-user drawer-login-icon" tabIndex={-1} />
-            Log In
+        <NavLink 
+            className="drawer-foot-nav-text" 
+            tabIndex={0} 
+            to={isAuthenticated ? '/account/profile' : '/login'}
+            onClick={(e) => {
+                onClick && onClick();
+            }}
+        >
+            <button 
+                className="fa-solid fa-user drawer-login-icon" 
+                tabIndex={-1} 
+                onClick={(e) => e.stopPropagation()}
+            />
+            {isAuthenticated ? 'My Account' : 'Log In'}
         </NavLink>
     );
 }

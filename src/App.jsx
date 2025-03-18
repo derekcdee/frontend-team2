@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -24,9 +24,33 @@ import "./css/fontawesome/solid.css";
 import "react-toastify/dist/ReactToastify.css";
 import OrdersPage from "./components/pages/user/OrdersPage.jsx";
 import AdminPage from "./components/pages/user/AdminPage.jsx";
-
+import { checkAuth } from "./util/requests.js";
+import { updateUser } from "./util/redux/actionCreators.js";
 
 function App() {
+    // ping for user auth on mount and on focus
+    useEffect(() => {
+        const checkUserAuth = () => {
+            checkAuth()
+                .then((response) => {
+                    updateUser({
+                        authenticated: !!response.data,
+                    });
+                })
+                .catch(error => {
+                    console.error("Authentication check failed:", error);
+                    updateUser({ authenticated: false });
+                });
+        };
+        
+        checkUserAuth();
+
+        const handleFocus = () => checkUserAuth();
+        window.addEventListener('focus', handleFocus);
+        
+        return () => window.removeEventListener('focus', handleFocus);
+    }, []);
+
     return (
         <>
             <ToastContainer

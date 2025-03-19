@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
 
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer";
@@ -26,6 +27,29 @@ import OrdersPage from "./components/pages/user/OrdersPage.jsx";
 import AdminPage from "./components/pages/user/AdminPage.jsx";
 import { checkAuth } from "./util/requests.js";
 import { updateUser } from "./util/redux/actionCreators.js";
+
+const GuestRoute = ({ redirectTo = '/' }) => {
+    const isAuthenticated = useSelector(state => !!state.user?.authenticated);
+    const location = useLocation();
+    
+    if (isAuthenticated) {
+        return <Navigate to={redirectTo} replace state={{ from: location }}/>;
+    }
+    
+    return <Outlet />;
+};
+
+
+const AuthRoute = () => {
+    const isAuthenticated = useSelector(state => !!state.user?.authenticated);
+    const location = useLocation();
+    
+    if (!isAuthenticated) {
+        return <Navigate to="/" replace state={{ from: location }} />;
+    }
+    
+    return <Outlet />;
+};
 
 function App() {
     // ping for user auth on mount and on focus
@@ -92,18 +116,20 @@ function App() {
                     {/* 
                         User Pages
                     */}
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/create-account" element={<CreateAccountPage />} />
-                    <Route path="/password-reset" element={<PasswordReset />} />
-                    <Route path="/account">
-                        <Route index element={<Navigate to="/" replace />} />
-                        <Route element={<UserLayout />}>
+                    <Route element={<GuestRoute />}>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/create-account" element={<CreateAccountPage />} />
+                        <Route path="/password-reset" element={<PasswordReset />} />
+                    </Route>
+                    <Route path="/account" element={<UserLayout />}>
+                        <Route element={<AuthRoute />}>
                             <Route path="profile" element={<ProfilePage />} />
                             <Route path="settings" element={<SettingsPage />} />
                             <Route path="orders" element={<OrdersPage />} />
                             <Route path="admin" element={<AdminPage />} />
-                            <Route path="*" element={<Navigate to="/" replace />} />
                         </Route>
+                        <Route index element={<Navigate to="/" replace />} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
                     </Route>
 
                     <Route path="*" element={<NotFoundPage />} />

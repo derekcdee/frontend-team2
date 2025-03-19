@@ -79,7 +79,7 @@ function App() {
         <>
             <ToastContainer
                 position="top-center"
-                autoClose={8000}
+                autoClose={200000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -89,6 +89,7 @@ function App() {
                 stacked
                 pauseOnHover
                 toastClassName="toast-class"
+                className="toast-body-class"
             />
             <main className="jmiller-app">
                 <Header />

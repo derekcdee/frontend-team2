@@ -135,7 +135,7 @@ select.form-field-input::-ms-expand {
   box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 6px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 
-@media (min-width: 1035px) {
+@media (min-width: 990px) {
   .header-overlay {
       display: none;
   }
@@ -243,7 +243,7 @@ select.form-field-input::-ms-expand {
   display: none;
   grid-area: navigation;
   justify-self: center;
-  font-size: 16px;
+  font-size: 20px;
 }
 .header-list-menu {
   display: inline-flex;
@@ -324,7 +324,7 @@ select.form-field-input::-ms-expand {
 .header-heading a.scrolled-past {
   height: 59px;
 }
-@media (min-width: 1035px) {
+@media (min-width: 990px) {
   .header-heading {
     justify-self: left;
   }
@@ -360,7 +360,7 @@ select.form-field-input::-ms-expand {
   }
 }
 
-@media (min-width: 1035px) {
+@media (min-width: 990px) {
   .main-header {
     grid-template-areas: "heading navigation icons";
     padding: 0px 50px;

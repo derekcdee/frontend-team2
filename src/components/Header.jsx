@@ -9,11 +9,12 @@ const options = {
     "Materials": [
         { text: "Woods", link: "/collections/materials" },
         { text: "Stones and Crystals", link: "/collections/materials" },
-        { text: "View All", link: "/collections/materials" }
+        { text: "View All Materials", link: "/collections/materials" }
     ],
     "Cues": [
-        { text: "Coming Soon", link: "/collections/coming-soon" },
-        { text: "View All", link: "/collections/available" },
+        { text: "Available Cues", link: "/collections/available" },
+        { text: "Upcoming Cues", link: "/collections/coming-soon" },
+        { text: "View All Cues", link: "/collections/available" },
     ]
 };
 

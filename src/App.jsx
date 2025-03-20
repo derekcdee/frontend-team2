@@ -28,12 +28,12 @@ import AdminPage from "./components/pages/user/AdminPage.jsx";
 import { checkAuth } from "./util/requests.js";
 import { updateUser } from "./util/redux/actionCreators.js";
 
-const GuestRoute = ({ redirectTo = '/' }) => {
+const GuestRoute = () => {
     const isAuthenticated = useSelector(state => !!state.user?.authenticated);
     const location = useLocation();
     
     if (isAuthenticated) {
-        return <Navigate to={redirectTo} replace state={{ from: location }}/>;
+        return <Navigate to="/" replace state={{ from: location }}/>;
     }
     
     return <Outlet />;
@@ -51,6 +51,19 @@ const AuthRoute = () => {
     return <Outlet />;
 };
 
+const AdminRoute = () => {
+    const user = useSelector(state => state.user);
+    const isAuthenticated = !!user?.authenticated;
+    const isAdmin = user?.role === "Admin";
+    const location = useLocation();
+
+    if (!isAuthenticated || !isAdmin) {
+        return <Navigate to="/" replace state={{ from: location }} />;
+    }
+
+    return <Outlet />;
+};
+
 function App() {
     // ping for user auth on mount and on focus
     useEffect(() => {
@@ -58,7 +71,7 @@ function App() {
             checkAuth()
                 .then((response) => {
                     updateUser({
-                        authenticated: !!response.data,
+                        ...response.data,
                     });
                 })
                 .catch(error => {
@@ -79,7 +92,7 @@ function App() {
         <>
             <ToastContainer
                 position="top-center"
-                autoClose={200000}
+                autoClose={10000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -127,6 +140,8 @@ function App() {
                             <Route path="profile" element={<ProfilePage />} />
                             <Route path="settings" element={<SettingsPage />} />
                             <Route path="orders" element={<OrdersPage />} />
+                        </Route>
+                        <Route element={<AdminRoute />}>
                             <Route path="admin" element={<AdminPage />} />
                         </Route>
                         <Route index element={<Navigate to="/" replace />} />

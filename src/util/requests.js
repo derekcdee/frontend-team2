@@ -51,6 +51,13 @@ export function login(email, password) {
     });
 }
 
+export function logout() {
+    return _ajax({
+        url: "/account/logout",
+        method: "POST",
+    });
+}
+
 export function registerUser(email, password, fName, lName){
     return _ajax({
         url: "/account/register",

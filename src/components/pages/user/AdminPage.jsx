@@ -7,6 +7,7 @@ import { DefaultButton } from '../../util/Buttons';
 import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
+import { useSelector } from 'react-redux';
 
 const COLOR_OPTIONS = [
     { value: 'black', label: 'Black' },
@@ -290,6 +291,12 @@ const CRYSTAL_CATEGORY_OPTIONS = [
 ];
 
 export default function AdminPage() {
+    const user = useSelector(state => state.user);
+    const isAdmin = user?.role === "Admin";
+    if (!isAdmin) {
+        return null; // return nothing if user is not an admin (already handled by AdminRoute but just in case)
+    }
+
     const [adminPage, setAdminPage] = useState('Cues');
     const [loading, setLoading] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);

@@ -15,8 +15,8 @@ import { useOutsideClick } from '../../util/hooks';
  */
 export const FormField = forwardRef(({ type = "text", title, value, onChange, error, ...restProps }, ref) => {
     const classes = ["form-field"];
-    if (value?.length) classes.push("text-within")
-    if (error) classes.push("input-error")
+    if (value !== undefined && value !== null && value !== '') classes.push("text-within");
+    if (error) classes.push("input-error");
 
     return (
         <div>     
@@ -88,9 +88,18 @@ export const FormTextArea = forwardRef(({ title, value, onChange, error, ...rest
  * @param {React.Ref} ref - Forwarded ref
  * @returns {JSX.Element} Styled select dropdown with floating label
  */
-export const FormSelect = forwardRef(({ title, value, onChange, error, options, displayKey, ...restProps }, ref) => {
+export const FormSelect = forwardRef(({ 
+    title, 
+    value, 
+    onChange, 
+    error, 
+    options, 
+    displayKey = "label",
+    valueKey = "value",
+    ...restProps 
+}, ref) => {
     const classes = ["form-field"];
-    if (value?.length) classes.push("text-within");
+    if (value !== undefined && value !== null && value !== '') classes.push("text-within");
     if (error) classes.push("input-error");
 
     const handleClick = () => {
@@ -111,7 +120,7 @@ export const FormSelect = forwardRef(({ title, value, onChange, error, options, 
                 >
                     <option value={""}/>
                     {options?.map((option, index) => (
-                        <option key={index} value={option.value}>
+                        <option key={index} value={option[valueKey]}>
                             {option[displayKey]}
                         </option>
                     ))}

@@ -81,6 +81,9 @@ export function checkAuth() {
 /*==============================================================
 # Admin
 ==============================================================*/
+
+// admin users sections
+
 export function getUsers() {
     return _ajax({
         url: "/admin/users",
@@ -121,6 +124,38 @@ export function changePassword(email, password) {
 export function deleteUser(email) {
     return _ajax({
         url: "/admin/users/" + email,
+        method: "DELETE",
+    });
+}
+
+// admin accessories section
+
+export function getAccessories() {
+    return _ajax({
+        url: "/admin/accessories",
+        method: "GET",
+    });
+}
+
+export function createAccessory(accessoryNumber, name, description, price, status) {
+    return _ajax({
+        url: "/admin/accessories",
+        method: "POST",
+        data: { accessoryNumber, name, description, price, status }
+    });
+}
+
+export function editAccessory(accessoryNumber, name, description, price, status) {
+    return _ajax({
+        url: "/admin/accessories/" + accessoryNumber,
+        method: "PUT",
+        data: { name, description, price, status }
+    });
+}
+
+export function deleteAccessory(id) {
+    return _ajax({
+        url: "/admin/accessories/" + id,
         method: "DELETE",
     });
 }

@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers, createUser, editUser, changePassword, deleteUser } from '../../../util/requests';
+import { getUsers, createUser, editUser, changePassword, deleteUser, getAccessories } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -319,7 +319,14 @@ export default function AdminPage() {
                 setLoading(false);
                 break;
             case 'Accessories':
-                setLoading(false);
+                getAccessories()
+                    .then((res) => {
+                        setLoading(false);
+                        setAccessoryData(res.data);
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                    });
                 break;
             case 'Materials':
                 setLoading(false);
@@ -469,7 +476,7 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
         case 'Cues':
             return <CuesTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Accessories':
-            return <AccessoriesTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
+            return <AccessoriesTable data={accessoryData} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Materials':
             return <MaterialsTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Users':
@@ -523,16 +530,20 @@ function CuesTable({ data, onEditClick }) {
 function AccessoriesTable({ data, onEditClick }) {
     const columns = [
         {
-            accessorKey: 'firstName',
-            header: 'First Name',
+            accessorKey: 'accessoryNumber',
+            header: 'Accessory Number',
         },
         {
-            accessorKey: 'lastName',
-            header: 'Last Name',
+            accessorKey: 'name',
+            header: 'Name',
         },
         {
-            accessorKey: 'age',
-            header: 'Age',
+            accessorKey: 'price',
+            header: 'Price',
+        },
+        {
+            accessorKey: 'status',
+            header: 'Status',
         },
         {
             id: 'actions',
@@ -1347,6 +1358,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                             error={errors.status && errors.status.message}
                             options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
+                            valueKey="value"
                             {...register("status", {
                                 required: "Status is required"
                             })}

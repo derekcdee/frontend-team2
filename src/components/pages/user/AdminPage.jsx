@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers, createUser, editUser, changePassword, deleteUser, getAccessories } from '../../../util/requests';
+import { getUsers, createUser, editUser, changePassword, deleteUser, getAccessories, createAccessory, editAccessory, deleteAccessory, getMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -78,14 +78,14 @@ const METAPHYSICAL_OPTIONS = [
 ];
 
 const STATUS_OPTIONS_AVAILABLE = [
-    { value: 'available', label: 'Available' },
-    { value: 'not_available', label: 'Not Available' }
+    { label: 'Available' },
+    { label: 'Not Available' }
 ];
 
 const STATUS_OPTIONS_CUE = [
     ...STATUS_OPTIONS_AVAILABLE,
-    { value: 'sold', label: 'Sold' },
-    { value: 'coming_soon', label: 'Coming Soon' }
+    { label: 'Sold' },
+    { label: 'Coming Soon' }
 ];
 
 const TIP_SIZE_OPTIONS = [
@@ -306,10 +306,10 @@ export default function AdminPage() {
     const [passwordDialogProps, setPasswordDialogProps] = useState({});
     const [deleteDialogProps, setDeleteDialogProps] = useState({});
 
-    const [cueData, setCueData] = useState([]);
-    const [accessoryData, setAccessoryData] = useState([]);
-    const [materialData, setMaterialData] = useState([]);
-    const [userData, setUserData] = useState([]);
+    const [cueData, setCueData] = useState(null);
+    const [accessoryData, setAccessoryData] = useState(null);
+    const [materialData, setMaterialData] = useState(null);
+    const [userData, setUserData] = useState(null);
 
     const getData = async () => {
         setLoading(true);
@@ -329,7 +329,14 @@ export default function AdminPage() {
                     });
                 break;
             case 'Materials':
-                setLoading(false);
+                getMaterials()
+                    .then((res) => {
+                        setLoading(false);
+                        setMaterialData(res.data);
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                    });
                 break;
             case 'Users':
                 getUsers()
@@ -347,7 +354,15 @@ export default function AdminPage() {
     };
 
     useEffect(() => {
-        getData();
+        // Only load data if it's null for the current page
+        if (
+            (adminPage === 'Cues' && cueData === null) ||
+            (adminPage === 'Accessories' && accessoryData === null) ||
+            (adminPage === 'Materials' && materialData === null) ||
+            (adminPage === 'Users' && userData === null)
+        ) {
+            getData();
+        }
     }, [adminPage]);
 
     const handleDialogOpen = (props) => {
@@ -384,7 +399,7 @@ export default function AdminPage() {
         <div>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={handleDialogOpen} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData} accessoryData={accessoryData} materialData={materialData} userData={userData}/>
+                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData || []} accessoryData={accessoryData || []} materialData={materialData || []} userData={userData || []} />
             </div>
             {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
@@ -478,7 +493,7 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
         case 'Accessories':
             return <AccessoriesTable data={accessoryData} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Materials':
-            return <MaterialsTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
+            return <MaterialsTable data={materialData} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Users':
             return <UsersTable data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} onDeleteClick={onDeleteClick} />;
         default:
@@ -527,7 +542,7 @@ function CuesTable({ data, onEditClick }) {
     );
 }
 
-function AccessoriesTable({ data, onEditClick }) {
+function AccessoriesTable({ data, onEditClick, onDeleteClick }) {
     const columns = [
         {
             accessorKey: 'accessoryNumber',
@@ -546,7 +561,6 @@ function AccessoriesTable({ data, onEditClick }) {
             header: 'Status',
         },
         {
-            id: 'actions',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -554,7 +568,13 @@ function AccessoriesTable({ data, onEditClick }) {
                         className='fa-solid fa-pencil admin-action-button'
                         onClick={() => onEditClick({ element: row.original })}
                     />
-                    <button className='fa-solid fa-trash admin-action-button' />
+                    <button
+                        className='fa-solid fa-trash admin-action-button'
+                        onClick={() => onDeleteClick({
+                            element: row.original,
+                            title: `Delete Accessory '${row.original.name}'`
+                        })}
+                    />
                 </div>
             ),
         },
@@ -572,22 +592,27 @@ function AccessoriesTable({ data, onEditClick }) {
     );
 }
 
-function MaterialsTable({ data, onEditClick }) {
+function MaterialsTable({ data, onEditClick, onDeleteClick }) {
     const columns = [
         {
-            accessorKey: 'firstName',
-            header: 'First Name',
+            header: 'Type',
+            accessorFn: (row) => row.commonName ? 'Wood' : row.crystalName ? 'Stone/Crystal' : 'Unknown',
+            id: 'materialType',
         },
         {
-            accessorKey: 'lastName',
-            header: 'Last Name',
+            header: 'Name',
+            accessorFn: (row) => row.commonName || row.crystalName || '',
+            id: 'materialName',
         },
         {
-            accessorKey: 'age',
-            header: 'Age',
+            header: 'Tier',
+            accessorKey: 'tier',
         },
         {
-            id: 'actions',
+            header: 'Status',
+            accessorKey: 'status',
+        },
+        {
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -595,7 +620,13 @@ function MaterialsTable({ data, onEditClick }) {
                         className='fa-solid fa-pencil admin-action-button'
                         onClick={() => onEditClick({ element: row.original })}
                     />
-                    <button className='fa-solid fa-trash admin-action-button' />
+                    <button
+                        className='fa-solid fa-trash admin-action-button'
+                        onClick={() => onDeleteClick({
+                            element: row.original,
+                            title: `Delete ${row.original.commonName ? 'Wood' : 'Stone/Crystal'} '${row.original.commonName || row.original.crystalName}'`
+                        })}
+                    />
                 </div>
             ),
         },
@@ -1246,6 +1277,8 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
+
+    const existingAccessory = !!element._id;
     
     const formRef = useRef(null);
 
@@ -1256,8 +1289,21 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     }, [open, reset]);
 
     const onSubmit = (data) => {
-        console.log(data);
-        onClose();
+        if (existingAccessory) {
+            editAccessory(data._id, data.accessoryNumber, data.name, data.description, data.price, data.status)
+                .then((res) => {
+                    receiveResponse(res);
+                    getData();
+                    onClose();
+                })
+        } else {
+            createAccessory(data.accessoryNumber, data.name, data.description, data.price, data.status)
+                .then((res) => {
+                    receiveResponse(res);
+                    getData();
+                    onClose();
+                })
+        }
     };
     
     const handleSaveClick = () => {
@@ -1358,7 +1404,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                             error={errors.status && errors.status.message}
                             options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
-                            valueKey="value"
+                            valueKey="label"
                             {...register("status", {
                                 required: "Status is required"
                             })}
@@ -1371,9 +1417,10 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 }
 
 function MaterialDialog({ open, onClose, title, getData, element = false }) {
+    const [materialType, setMaterialType] = useState('');
+
     const getDefaultValues = (type) => {
         const commonDefaults = {
-            materialType: type || '',
             status: '',
             description: '',
             tier: '',
@@ -1413,27 +1460,120 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         defaultValues: element || getDefaultValues('')
     });
 
-    const materialType = watch("materialType");
-    useEffect(() => {
-        if (materialType && materialType !== '') {
-            // Keep current materialType when resetting
-            reset({...getDefaultValues(materialType), materialType});
-        }
-    }, [materialType]);
+    const existingMaterial = !!element._id;
     
     useEffect(() => {
         if (open) {
-            if (element && element.materialType) {
+            if (element && element._id) {
+                // Determine material type from element properties
+                if (element.commonName || element.scientificName || element.jankaHardness) {
+                    setMaterialType('wood');
+                } else if (element.crystalName || element.crystalCategory || element.psychologicalCorrespondence) {
+                    setMaterialType('crystal');
+                }
                 reset(element);
             } else {
-                reset(getDefaultValues(''));
+                // New material
+                setMaterialType('');
+                reset(getDefaultValues());
             }
         }
     }, [open, reset]);
 
+    useEffect(() => {
+        if (materialType && !element._id) {
+            reset({ ...getDefaultValues() });
+        }
+    }, [materialType]);
+
     const onSubmit = (data) => {
-        console.log(data);
-        onClose();
+        if (materialType === 'wood') {
+            if (existingMaterial) {
+                editWood(
+                    data._id,
+                    data.commonName,
+                    data.description,
+                    data.status,
+                    data.tier,
+                    data.colors,
+                    data.alternateName1,
+                    data.alternateName2,
+                    data.scientificName,
+                    data.brief,
+                    data.jankaHardness,
+                    data.treeHeight,
+                    data.trunkDiameter,
+                    data.geographicOrigin,
+                    data.streaksVeins,
+                    data.texture,
+                    data.grainPattern,
+                    data.metaphysicalTags
+                )
+                    .then(res => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    })
+            } else {
+                createWood(
+                    data.commonName,
+                    data.description,
+                    data.status,
+                    data.tier,
+                    data.colors,
+                    data.alternateName1,
+                    data.alternateName2,
+                    data.scientificName,
+                    data.brief,
+                    data.jankaHardness,
+                    data.treeHeight,
+                    data.trunkDiameter,
+                    data.geographicOrigin,
+                    data.streaksVeins,
+                    data.texture,
+                    data.grainPattern,
+                    data.metaphysicalTags
+                )
+                    .then(res => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    })
+            }
+        } else if (materialType === 'crystal') {
+            if (existingMaterial) {
+                editCrystal(
+                    data._id,
+                    data.crystalName,
+                    data.description,
+                    data.status,
+                    data.tier,
+                    data.colors,
+                    data.crystalCategory,
+                    data.psychologicalCorrespondence
+                )
+                    .then(res => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    })
+            } else {
+                createCrystal(
+                    data.crystalName,
+                    data.description,
+                    data.status,
+                    data.tier,
+                    data.colors,
+                    data.crystalCategory,
+                    data.psychologicalCorrespondence
+                )
+                    .then(res => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    })
+            }
+        }
     };
 
     const formRef = useRef(null);
@@ -1450,24 +1590,13 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     ];
 
     const tierOptions = [
-        { value: 'tier1', label: 'Tier 1' },
-        { value: 'tier2', label: 'Tier 2' },
-        { value: 'tier3', label: 'Tier 3' },
-        { value: 'tier4', label: 'Tier 4' }
-    ];
-
-    const chakraOptions = [
-        { value: 'root', label: 'Root' },
-        { value: 'sacral', label: 'Sacral' },
-        { value: 'solar', label: 'Solar Plexus' },
-        { value: 'heart', label: 'Heart' },
-        { value: 'throat', label: 'Throat' },
-        { value: 'third_eye', label: 'Third Eye' },
-        { value: 'crown', label: 'Crown' }
+        { label: 'Tier 1' },
+        { label: 'Tier 2' },
+        { label: 'Tier 3' },
+        { label: 'Tier 4' }
     ];
 
     const renderWoodAttributes = () => {
-        // Watch all wood-specific values
         const commonName = watch("commonName");
         const alternateName1 = watch("alternateName1");
         const alternateName2 = watch("alternateName2");
@@ -1553,6 +1682,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={status}
                             options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.status && errors.status.message}
                             {...register("status", {
                                 required: "Status is required"
@@ -1567,6 +1697,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={tier}
                             options={tierOptions}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.tier && errors.tier.message}
                             {...register("tier", {
                                 required: "Tier is required"
@@ -1730,6 +1861,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={status}
                             options={STATUS_OPTIONS_AVAILABLE}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.status && errors.status.message}
                             {...register("status", {
                                 required: "Status is required"
@@ -1744,6 +1876,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={tier}
                             options={tierOptions}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.tier && errors.tier.message}
                             {...register("tier", {
                                 required: "Tier is required"
@@ -1822,12 +1955,10 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         <FormSelect
                             title="Material Type*"
                             value={materialType}
-                            error={errors.materialType && errors.materialType.message}
                             options={materialTypeOptions}
                             displayKey="label"
-                            {...register("materialType", {
-                                required: "Material Type is required"
-                            })}
+                            valueKey="value"
+                            onChange={(e) => setMaterialType(e.target.value)}
                         />
                         {materialType === 'wood' && renderWoodAttributes()}
                         {materialType === 'crystal' && renderCrystalAttributes()}
@@ -1843,7 +1974,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
         defaultValues: element
     });
 
-    const existingUser = !!element.email;
+    const existingUser = !!element._id;
 
     useEffect(() => {
         if (open) {
@@ -1993,10 +2124,34 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
 
                 break;
             case 'Accessories':
-
+                deleteAccessory(element._id)
+                    .then((res) => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    });
                 break;
             case 'Materials':
-
+                if (element.commonName) {
+                    // It's a wood material
+                    deleteWood(element._id)
+                        .then((res) => {
+                            receiveResponse(res);
+                            getData();
+                            onClose();
+                        })
+                } else if (element.crystalName) {
+                    // It's a crystal material
+                    deleteCrystal(element._id)
+                        .then((res) => {
+                            receiveResponse(res);
+                            getData();
+                            onClose();
+                        })
+                } else {
+                    console.error("Unknown material type");
+                    onClose();
+                }
                 break;
             case 'Users':
                 deleteUser(element.email)
@@ -2022,7 +2177,7 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
             <DialogContent>
                 <div className="form-column">
                     <DialogContentText>
-                        Are you sure you want to delete?
+                        This action is irreversible. Are you sure you want to proceed?
                     </DialogContentText>
                     <DialogActions>
                         <div className='form-row'>

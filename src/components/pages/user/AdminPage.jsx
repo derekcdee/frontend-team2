@@ -837,6 +837,8 @@ function CueDialog({ open, onClose, title, getData, element = {
     const [includeButtSleevePointInlay, setIncludeButtSleevePointInlay] = useState(false);
     const [includeForearmPoint, setIncludeForarmPoint] = useState(false);
     const [includeButtSleevePoint, setIncludeButtSleevePoint] = useState(false);
+    const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
+    const [isCustomTipSize, setIsCustomTipSize] = useState(false);
 
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
         defaultValues: element
@@ -857,6 +859,8 @@ function CueDialog({ open, onClose, title, getData, element = {
             setIncludeButtSleevePointInlay(!!element.buttSleevePointInlayDescription);
             setIncludeForearmPointInlay(!!element.forearmPointInlayDescription);
             setIncludeButtSleevePointInlay(!!element.buttSleevePointInlayDescription);
+            setIsCustomJointPinSize(element.jointPinSize === 'custom');
+            setIsCustomTipSize(element.tipSize === 'custom');
         }
     }, [open, reset]);
 
@@ -1018,6 +1022,104 @@ function CueDialog({ open, onClose, title, getData, element = {
         }
     }, [buttType, setValue]);
 
+    // Add these effects to reset fields when toggles are changed
+
+    // Reset forearm point fields when toggle changes
+    useEffect(() => {
+        if (!includeForearmPoint) {
+            setValue("forearmPointQuantity", "");
+            setValue("forearmPointSize", "");
+            setValue("forearmPointVeneerDescription", "");
+            setValue("forearmPointInlayDescription", "");
+            setIncludeForearmPointVeneers(false);
+            setIncludeForearmPointInlay(false);
+        }
+    }, [includeForearmPoint, setValue]);
+
+    // Reset butt sleeve point fields when toggle changes
+    useEffect(() => {
+        if (!includeButtSleevePoint) {
+            setValue("buttSleevePointQuantity", "");
+            setValue("buttSleevePointSize", "");
+            setValue("buttSleevePointVeneerDescription", "");
+            setValue("buttSleevePointInlayDescription", "");
+            setIncludeButtSleevePointVeneers(false);
+            setIncludeButtSleevePointInlay(false);
+        }
+    }, [includeButtSleevePoint, setValue]);
+
+    // Reset forearm inlay fields when toggle changes
+    useEffect(() => {
+        if (!includeForearmInlay) {
+            setValue("forearmInlayQuantity", "");
+            setValue("forearmInlaySize", "");
+            setValue("forearmInlayDescription", "");
+        }
+    }, [includeForearmInlay, setValue]);
+
+    // Reset handle inlay fields when toggle changes
+    useEffect(() => {
+        if (!includeHandleInlay) {
+            setValue("handleInlayQuantity", "");
+            setValue("handleInlaySize", "");
+            setValue("handleInlayDescription", "");
+        }
+    }, [includeHandleInlay, setValue]);
+
+    // Reset butt sleeve inlay fields when toggle changes
+    useEffect(() => {
+        if (!includeButtSleeveInlay) {
+            setValue("buttsleeveInlayQuantity", "");
+            setValue("buttsleeveInlaySize", "");
+            setValue("buttsleeveInlayDescription", "");
+        }
+    }, [includeButtSleeveInlay, setValue]);
+
+    // Reset specific veneer and inlay descriptions when their toggles change
+    useEffect(() => {
+        if (!includeForearmPointVeneers) {
+            setValue("forearmPointVeneerDescription", "");
+        }
+    }, [includeForearmPointVeneers, setValue]);
+
+    useEffect(() => {
+        if (!includeForearmPointInlay) {
+            setValue("forearmPointInlayDescription", "");
+        }
+    }, [includeForearmPointInlay, setValue]);
+
+    useEffect(() => {
+        if (!includeButtSleevePointVeneers) {
+            setValue("buttSleevePointVeneerDescription", "");
+        }
+    }, [includeButtSleevePointVeneers, setValue]);
+
+    useEffect(() => {
+        if (!includeButtSleevePointInlay) {
+            setValue("buttSleevePointInlayDescription", "");
+        }
+    }, [includeButtSleevePointInlay, setValue]);
+
+    // Add state to track custom joint pin size
+
+    // Add effect to handle joint pin size changes
+    useEffect(() => {
+        if (jointPinSize === 'other') {
+            setValue("jointPinSize", "");
+            setIsCustomJointPinSize(true);
+        }
+    }, [jointPinSize, setValue]);
+
+    // Add state to track custom tip size
+
+    // Add effect to handle tip size changes
+    useEffect(() => {
+    if (tipSize === 'other') {
+        setValue("tipSize", "");
+        setIsCustomTipSize(true);
+    }
+    }, [tipSize, setValue]);
+
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle>
@@ -1146,7 +1248,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             {...register("shaftTaper")}
                                         />
                                     </div>
-                                    <div className='flex-1'>
+                                    {!isCustomTipSize && <div className='flex-1'>
                                         <FormSelect
                                             title="Tip Size (mm)"
                                             value={tipSize}
@@ -1154,8 +1256,17 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             displayKey="label"
                                             {...register("tipSize")}
                                         />
-                                    </div>
+                                    </div>}
                                 </div>
+                                {isCustomTipSize && <div className='form-row'>
+                                    <div className='flex-1'>
+                                        <FormTextArea
+                                            title="Custom Tip Size Description"
+                                            value={tipSize}
+                                            {...register("tipSize")}
+                                        />
+                                    </div>
+                                </div>}
                             </div>
                             <div>
                                 <h3 className="dialog-header3">Ferrule</h3>
@@ -1202,8 +1313,17 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     </div>
                                     <div>
                                         <h3 className="dialog-header3">Joint Pin</h3>
-                                        <div className='form-row'>
+                                        {isCustomJointPinSize && <div className='form-row'>
                                             <div className='flex-1'>
+                                                <FormTextArea
+                                                    title="Custom Joint Pin Size Description"
+                                                    value={jointPinSize}
+                                                    {...register("jointPinSize")}
+                                                />
+                                            </div>
+                                        </div>}
+                                        <div className='form-row'>
+                                            {!isCustomJointPinSize && <div className='flex-1'>
                                                 <FormSelect
                                                     title="Joint Pin Size (in)"
                                                     value={jointPinSize}
@@ -1211,7 +1331,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     displayKey="label"
                                                     {...register("jointPinSize")}
                                                 />
-                                            </div>
+                                            </div>}
                                             <div className='flex-1'>
                                                 <FormSelect
                                                     title="Joint Pin Material"
@@ -1367,127 +1487,128 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         <DefaultToggle titleOn={"Include Handle Wrap"} titleOff={"Exclude Handle Wrap"} onChange={setIncludeWrap} />
                                     </div>
                                     
-                                    <div>
-                                        <div className='form-row'>
-                                            {includeWrap ? (
-                                                <>
+                                    <div className='form-row'>
+                                        {includeWrap ? (
+                                            <>
+                                                <div className='flex-1'>
+                                                    {isCustomWrapType ? (
+                                                        <FormTextArea
+                                                            title="Custom Wrap Type"
+                                                            type="text"
+                                                            value={handleWrapType === 'other' ? '' : handleWrapType}
+                                                            onChange={(e) => setValue("handleWrapType", e.target.value)}
+                                                        />
+                                                    ) : (
+                                                        <FormSelect
+                                                            title="Handle Wrap Type"
+                                                            value={handleWrapType}
+                                                            options={WRAP_TYPE_OPTIONS}
+                                                            displayKey="label"
+                                                            onChange={(e) => {
+                                                                if (e.target.value === 'other') {
+                                                                    setValue("handleWrapType", 'other');
+                                                                } else {
+                                                                    setValue("handleWrapType", e.target.value);
+                                                                }
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+
+                                                {/* Only show standard color selector in the same row */}
+                                                {!isCustomWrapType && !isCustomColor && (
                                                     <div className='flex-1'>
-                                                        {isCustomWrapType ? (
-                                                            // Custom wrap type input
-                                                            <FormTextArea
-                                                                title="Custom Wrap Type"
-                                                                type="text"
-                                                                value={handleWrapType === 'other' ? '' : handleWrapType}
-                                                                onChange={(e) => setValue("handleWrapType", e.target.value)}
+                                                        {handleWrapType === 'irish_linen' ? (
+                                                            <FormSelect
+                                                                title="Wrap Color"
+                                                                value={handleWrapColor}
+                                                                options={IRISH_LINEN_COLOR_OPTIONS}
+                                                                displayKey="label"
+                                                                {...register("handleWrapColor")}
+                                                            />
+                                                        ) : ['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType) ? (
+                                                            <FormSelect
+                                                                title="Wrap Color"
+                                                                value={handleWrapColor}
+                                                                options={LEATHER_COLOR_OPTIONS}
+                                                                displayKey="label"
+                                                                {...register("handleWrapColor")}
                                                             />
                                                         ) : (
-                                                            // Standard wrap types dropdown
-                                                            <FormSelect
-                                                                title="Handle Wrap Type"
-                                                                value={handleWrapType}
-                                                                options={WRAP_TYPE_OPTIONS}
-                                                                displayKey="label"
-                                                                onChange={(e) => {
-                                                                    if (e.target.value === 'other') {
-                                                                        setValue("handleWrapType", 'other');
-                                                                    } else {
-                                                                        setValue("handleWrapType", e.target.value);
-                                                                    }
-                                                                }}
+                                                            <FormField
+                                                                title="Wrap Color/Description"
+                                                                type="text"
+                                                                value={handleWrapColor}
+                                                                {...register("handleWrapColor")}
                                                             />
                                                         )}
                                                     </div>
-
-                                                    {/* Only show color selector for standard wrap types */}
-                                                    {!isCustomWrapType && (
-                                                        <div className='flex-1'>
-                                                            {handleWrapType === 'irish_linen' ? (
-                                                                <FormSelect
-                                                                    title="Wrap Color"
-                                                                    value={handleWrapColor}
-                                                                    options={IRISH_LINEN_COLOR_OPTIONS}
-                                                                    displayKey="label"
-                                                                    {...register("handleWrapColor")}
-                                                                />
-                                                            ) : ['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType) ? (
-                                                                isCustomColor ? (
-                                                                    <FormTextArea
-                                                                        title="Custom Leather Color"
-                                                                        type="text"
-                                                                        value={handleWrapColor === 'other' ? '' : handleWrapColor}
-                                                                        onChange={(e) => setValue("handleWrapColor", e.target.value)}
-                                                                    />
-                                                                ) : (
-                                                                    <FormSelect
-                                                                        title="Wrap Color"
-                                                                        value={handleWrapColor}
-                                                                        options={LEATHER_COLOR_OPTIONS}
-                                                                        displayKey="label"
-                                                                        {...register("handleWrapColor")}
-                                                                    />
-                                                                )
-                                                            ) : (
-                                                                <FormField
-                                                                    title="Wrap Color/Description"
-                                                                    type="text"
-                                                                    value={handleWrapColor}
-                                                                    {...register("handleWrapColor")}
-                                                                />
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <div className='flex-1'>
-                                                    <FormSelect
-                                                        title="Handle Material"
-                                                        value={handleMaterial}
-                                                        options={materialOptions}
-                                                        displayKey="label"
-                                                        {...register("handleMaterial")}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        
-                                        {/* Move Handle Inlay inside here instead of as a separate section */}
-                                        <div className='form-row'>
-                                            <h3 className="dialog-header3">Handle Inlay</h3>
-                                            <DefaultToggle titleOn={"Include Handle Inlays"} titleOff={"Exclude Handle Inlays"} onChange={setIncludeHandleInlay} />
-                                        </div>
-                                        {includeHandleInlay && (
-                                            <div className='form-row'>
-                                                <div className='flex-1'>
-                                                    <FormField
-                                                        title="Quantity"
-                                                        type="number"
-                                                        value={handleInlayQuantity}
-                                                        {...register("handleInlayQuantity")}
-                                                    />
-                                                </div>
-                                                <div className='flex-1'>
-                                                    <FormSelect
-                                                        title="Size"
-                                                        value={handleInlaySize}
-                                                        options={BASIC_SIZE_OPTIONS}
-                                                        displayKey="label"
-                                                        {...register("handleInlaySize")}
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-                                        {includeHandleInlay && (
-                                            <div className='form-row'>
-                                                <div className='flex-1'>
-                                                    <FormTextArea
-                                                        title="Handle Inlay Description"
-                                                        value={handleInlayDescription}
-                                                        {...register("handleInlayDescription")}
-                                                    />
-                                                </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div className='flex-1'>
+                                                <FormSelect
+                                                    title="Handle Material"
+                                                    value={handleMaterial}
+                                                    options={materialOptions}
+                                                    displayKey="label"
+                                                    {...register("handleMaterial")}
+                                                />
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Add custom color in its own row */}
+                                    {includeWrap && !isCustomWrapType && isCustomColor && (
+                                        <div className='form-row'>
+                                            <div className='flex-1'>
+                                                <FormTextArea
+                                                    title="Custom Leather Color"
+                                                    type="text"
+                                                    value={handleWrapColor === 'other' ? '' : handleWrapColor}
+                                                    onChange={(e) => setValue("handleWrapColor", e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {/* Move Handle Inlay inside here instead of as a separate section */}
+                                    <div className='form-row'>
+                                        <h3 className="dialog-header3">Handle Inlay</h3>
+                                        <DefaultToggle titleOn={"Include Handle Inlays"} titleOff={"Exclude Handle Inlays"} onChange={setIncludeHandleInlay} />
+                                    </div>
+                                    {includeHandleInlay && (
+                                        <div className='form-row'>
+                                            <div className='flex-1'>
+                                                <FormField
+                                                    title="Quantity"
+                                                    type="number"
+                                                    value={handleInlayQuantity}
+                                                    {...register("handleInlayQuantity")}
+                                                />
+                                            </div>
+                                            <div className='flex-1'>
+                                                <FormSelect
+                                                    title="Size"
+                                                    value={handleInlaySize}
+                                                    options={BASIC_SIZE_OPTIONS}
+                                                    displayKey="label"
+                                                    {...register("handleInlaySize")}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                    {includeHandleInlay && (
+                                        <div className='form-row'>
+                                            <div className='flex-1'>
+                                                <FormTextArea
+                                                    title="Handle Inlay Description"
+                                                    value={handleInlayDescription}
+                                                    {...register("handleInlayDescription")}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Butt Sleeve Attributes */}
@@ -1779,7 +1900,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     const getDefaultValues = (type) => {
         const commonDefaults = {
             status: '',
-            description: '',
             tier: '',
             colors: [],
         };
@@ -1791,6 +1911,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 alternateName1: '',
                 alternateName2: '',
                 scientificName: '',
+                description: '',
                 brief: '',
                 jankaHardness: '',
                 treeHeight: '',
@@ -1902,7 +2023,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 editCrystal(
                     data._id,
                     data.crystalName,
-                    data.description,
                     data.status,
                     data.tier,
                     data.colors,
@@ -1917,7 +2037,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
             } else {
                 createCrystal(
                     data.crystalName,
-                    data.description,
                     data.status,
                     data.tier,
                     data.colors,
@@ -2195,18 +2314,6 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             error={errors.crystalName && errors.crystalName.message}
                             {...register("crystalName", {
                                 required: "Crystal Name is required"
-                            })}
-                        />
-                    </div>
-                </div>
-                <div className='form-row'>
-                    <div className='flex-1'>
-                        <FormTextArea
-                            title="Description*"
-                            value={description}
-                            error={errors.description && errors.description.message}
-                            {...register("description", {
-                                required: "Description is required"
                             })}
                         />
                     </div>

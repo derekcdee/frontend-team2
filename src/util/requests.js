@@ -73,6 +73,18 @@ export function checkAuth() {
     });
 }
 
+
+export function updateName(email, firstName, lastName) {
+    return _ajax({
+        url: "/user/update-name/" + email,
+        method: "PUT",
+        data: { 
+            newFirstName: firstName, 
+            newLastName: lastName 
+        }
+    });
+}
+
 /*==============================================================
 # Products
 ==============================================================*/
@@ -99,9 +111,9 @@ export function createUser(email, firstName, lastName, password) {
     });
 }
 
-export function editUser(originalEmail, email, firstName, lastName) {
+export function editUser(id, email, firstName, lastName) {
     return _ajax({
-        url: "/admin/users/" + originalEmail,
+        url: "/admin/users/" + id,
         method: "PUT",
         data: { 
             newEmail: email, 
@@ -111,9 +123,9 @@ export function editUser(originalEmail, email, firstName, lastName) {
     });
 }
 
-export function changePassword(email, password) {
+export function changePassword(id, password) {
     return _ajax({
-        url: "/admin/users/resetPassword/" + email,
+        url: "/admin/users/resetPassword/" + id,
         method: "PUT",
         data: { 
             newPassword: password 
@@ -121,9 +133,9 @@ export function changePassword(email, password) {
     });
 }
 
-export function deleteUser(email) {
+export function deleteUser(id) {
     return _ajax({
-        url: "/admin/users/" + email,
+        url: "/admin/users/" + id,
         method: "DELETE",
     });
 }

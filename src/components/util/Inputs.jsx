@@ -98,14 +98,16 @@ export const FormSelect = forwardRef(({
     options, 
     displayKey = "label",
     valueKey = "value",
+    disabled = false,
     ...restProps 
 }, ref) => {
     const classes = ["form-field"];
     if (value !== undefined && value !== null && value !== '') classes.push("text-within");
     if (error) classes.push("input-error");
+    if (disabled) classes.push("disabled");
 
     const handleClick = () => {
-        if (ref.current) {
+        if (ref.current && !disabled) {
             ref.current.click();
         }
     };
@@ -118,6 +120,7 @@ export const FormSelect = forwardRef(({
                     className="form-field-input"
                     onChange={onChange}
                     value={value}
+                    disabled={disabled}
                     {...restProps}
                 >
                     <option value={""}/>
@@ -132,7 +135,10 @@ export const FormSelect = forwardRef(({
                 </label>
                 <i 
                     className={'fa-solid form-select-chevron fa-chevron-down'}
-                    style={{ pointerEvents: 'none' }}
+                    style={{ 
+                        pointerEvents: 'none',
+                        opacity: disabled ? 0.6 : 1 
+                    }}
                     onClick={handleClick}
                 />
             </div>

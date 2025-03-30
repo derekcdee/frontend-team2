@@ -8,7 +8,7 @@ import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdm
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
-import { Padding } from '@mui/icons-material';
+
 
 const COLOR_OPTIONS = [
     { value: 'black', label: 'Black' },
@@ -2470,6 +2470,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     <div className="form-column">
                         <FormSelect
                             title="Material Type*"
+                            disabled={!!existingMaterial}
                             value={materialType}
                             options={materialTypeOptions}
                             displayKey="label"

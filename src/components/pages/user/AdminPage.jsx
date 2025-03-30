@@ -8,6 +8,7 @@ import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdm
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
+import { data } from 'jquery';
 
 
 const COLOR_OPTIONS = [
@@ -490,7 +491,7 @@ export default function AdminPage() {
             <div className='user-content'>
                 <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData || []} accessoryData={accessoryData || []} materialData={materialData || []} userData={userData || []} />
             </div>
-            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} materialData={materialData} {...dialogProps} />}
+            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} cueData={cueData} materialData={materialData} {...dialogProps} />}
             {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
@@ -792,8 +793,8 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
 }
 
 // Add handleWrapColor to the CueDialog default element properties
-function CueDialog({ open, onClose, title, getData, materialData, element = {
-    cueNumber: '',
+function CueDialog({ open, onClose, title, getData, cueData, materialData, element = {
+    cueNumber: new Date().getFullYear() + '-',
     name: '',
     description: '',
     notes: '',
@@ -857,6 +858,25 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
     });
 
     const formRef = useRef(null);
+
+    const getNextCueNumber = (cuesArray) => {
+        const currentYear = new Date().getFullYear();
+        const yearPrefix = `${currentYear}-`;
+
+        if (!cuesArray || !cuesArray.length) return `${yearPrefix}001`;
+
+        const cueNumbers = cuesArray
+            .filter(cue => cue.cueNumber && cue.cueNumber.startsWith(yearPrefix))
+            .map(cue => {
+                const numPart = cue.cueNumber.substring(yearPrefix.length);
+                return parseInt(numPart, 10) || 0;
+            });
+
+        const highestNum = cueNumbers.length > 0 ? Math.max(...cueNumbers) : 0;
+
+        const nextNumber = (highestNum + 1).toString().padStart(3, '0');
+        return `${yearPrefix}${nextNumber}`;
+    };
     
     useEffect(() => {
         if (open) {
@@ -876,6 +896,10 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
             setIsCustomJointPinSize(JOINT_PIN_SIZE_OPTIONS.every(option => option.label !== element.jointPinSize));
             setIsCustomTipSize(TIP_SIZE_OPTIONS.every(option => option.label !== element.tipSize));
             setIsCustomWrapType(WRAP_TYPE_OPTIONS.every(option => option.label !== element.handleWrapType));
+            if (!existingCue && cueData) {
+                const nextCueNumber = getNextCueNumber(cueData);
+                setValue('cueNumber', nextCueNumber);
+            }
         }
     }, [open, reset]);
 

@@ -96,7 +96,7 @@ export function updateName(email, firstName, lastName) {
 
 // admin users sections
 
-export function getUsers() {
+export function getAdminUsers() {
     return _ajax({
         url: "/admin/users",
         method: "GET",
@@ -142,7 +142,7 @@ export function deleteUser(id) {
 
 // admin accessories section
 
-export function getAccessories() {
+export function getAdminAccessories() {
     return _ajax({
         url: "/admin/accessories",
         method: "GET",
@@ -174,7 +174,7 @@ export function deleteAccessory(id) {
 
 // admin materials sections
 
-export function getMaterials() {
+export function getAdminMaterials() {
     return _ajax({
         url: "/admin/materials",
         method: "GET",
@@ -249,6 +249,37 @@ export function editCrystal(id, crystalName, status, tier, colors,
 export function deleteCrystal(id) {
     return _ajax({
         url: "/admin/materials/crystal/" + id,
+        method: "DELETE",
+    });
+}
+
+// Admin cue endpoints in your requests.js file
+export function getAdminCues() {
+    return _ajax({
+        url: "/admin/cues",
+        method: "GET",
+    });
+}
+
+export function createCue(cueData) {
+    return _ajax({
+        url: "/admin/cues",
+        method: "POST",
+        data: cueData
+    });
+}
+
+export function editCue(id, cueData) {
+    return _ajax({
+        url: "/admin/cues/" + id,
+        method: "PATCH",
+        data: cueData
+    });
+}
+
+export function deleteCue(id) {
+    return _ajax({
+        url: "/admin/cues/" + id,
         method: "DELETE",
     });
 }

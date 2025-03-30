@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getUsers, createUser, editUser, changePassword, deleteUser, getAccessories, createAccessory, editAccessory, deleteAccessory, getMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood } from '../../../util/requests';
+import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -395,9 +395,17 @@ export default function AdminPage() {
         switch (adminPage) {
             case 'Cues':
                 setLoading(false);
+                getAdminCues()
+                    .then((res) => {
+                        setLoading(false);
+                        setCueData(res.data);
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                    });
                 break;
             case 'Accessories':
-                getAccessories()
+                getAdminAccessories()
                     .then((res) => {
                         setLoading(false);
                         setAccessoryData(res.data);
@@ -407,7 +415,7 @@ export default function AdminPage() {
                     });
                 break;
             case 'Materials':
-                getMaterials()
+                getAdminMaterials()
                     .then((res) => {
                         setLoading(false);
                         setMaterialData(res.data);
@@ -417,7 +425,7 @@ export default function AdminPage() {
                     });
                 break;
             case 'Users':
-                getUsers()
+                getAdminUsers()
                     .then((res) => {
                         setLoading(false);
                         setUserData(res.data);

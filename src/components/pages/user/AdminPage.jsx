@@ -825,7 +825,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     const [includeButtSleeveInlay, setIncludeButtSleeveInlay] = useState(false);
     const [includeForearmPointInlay, setIncludeForearmPointInlay] = useState(false);
     const [includeButtSleevePointInlay, setIncludeButtSleevePointInlay] = useState(false);
-    const [includeForearmPoint, setIncludeForarmPoint] = useState(false);
+    const [includeForearmPoint, setIncludeForearmPoint] = useState(false);
     const [includeButtSleevePoint, setIncludeButtSleevePoint] = useState(false);
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
@@ -839,14 +839,15 @@ function CueDialog({ open, onClose, title, getData, element = {
     useEffect(() => {
         if (open) {
             reset(element);
+            setButtType(element.isFullSplice || false);
             setIncludeWrap(!!element.handleWrapType);
             setIncludeForearmInlay(!!element.forearmInlayQuantity);
             setIncludeHandleInlay(!!element.handleInlayQuantity);
             setIncludeButtSleeveInlay(!!element.buttsleeveInlayQuantity);
+            setIncludeForearmPoint(!!element.forearmPointQuantity);
+            setIncludeButtSleevePoint(!!element.buttSleevePointQuantity);
             setIncludeForearmPointVeneers(!!element.forearmPointVeneerDescription);
             setIncludeButtSleevePointVeneers(!!element.buttSleevePointVeneerDescription);
-            setIncludeForearmPointInlay(!!element.forearmPointInlayDescription);
-            setIncludeButtSleevePointInlay(!!element.buttSleevePointInlayDescription);
             setIncludeForearmPointInlay(!!element.forearmPointInlayDescription);
             setIncludeButtSleevePointInlay(!!element.buttSleevePointInlayDescription);
             setIsCustomJointPinSize(element.jointPinSize === 'custom');
@@ -1295,7 +1296,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                         <div>
                             <div className='form-row'>
                                 <h1 className="dialog-header1">Butt</h1>
-                                <DefaultToggle titleOn={"Full Splice"} titleOff={"Standard"} onChange={setButtType} />
+                                <DefaultToggle titleOn={"Full Splice"} titleOff={"Standard"} onChange={setButtType} value={buttType} />
                             </div>
 
                             <div className='form-column'> 
@@ -1401,7 +1402,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     <div>
                                         <div className='form-row'>
                                             <h3 className="dialog-header3">Forearm Inlay</h3>
-                                            <DefaultToggle titleOn={"Include Forearm Inlays"} titleOff={"Exclude Forearm Inlays"} onChange={setIncludeForearmInlay} />
+                                            <DefaultToggle titleOn={"Include Forearm Inlays"} titleOff={"Exclude Forearm Inlays"} onChange={setIncludeForearmInlay} value={includeForearmInlay} />
                                         </div>
                                         {includeForearmInlay && (
                                             <div className='form-row'>
@@ -1441,9 +1442,9 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     <div>
                                         <div className='form-row'>
                                             <h3 className="dialog-header3">Forearm Point</h3>
-                                            <DefaultToggle titleOn={"Include Forearm Points"} titleOff={"Exclude Forearm Points"} onChange={setIncludeForarmPoint} />
-                                            {includeForearmPoint && <DefaultToggle titleOn={"Include Forearm Point Veneers"} titleOff={"Exclude Forearm Point Veneers"} onChange={setIncludeForearmPointVeneers}/>}
-                                            {includeForearmPoint && <DefaultToggle titleOn={"Include Forearm Point Inlays"} titleOff={"Exclude Forearm Point Inlays"} onChange={setIncludeForearmPointInlay} />}
+                                            <DefaultToggle titleOn={"Include Forearm Points"} titleOff={"Exclude Forearm Points"} onChange={setIncludeForearmPoint} value={includeForearmPoint} />
+                                            {includeForearmPoint && <DefaultToggle titleOn={"Include Forearm Point Veneers"} titleOff={"Exclude Forearm Point Veneers"} onChange={setIncludeForearmPointVeneers} value={includeForearmPointVeneers} />}
+                                            {includeForearmPoint && <DefaultToggle titleOn={"Include Forearm Point Inlays"} titleOff={"Exclude Forearm Point Inlays"} onChange={setIncludeForearmPointInlay} value={includeForearmPointInlay} />}
                                         </div>
                                         {includeForearmPoint && ( <>
                                             <div className='form-row'>
@@ -1493,7 +1494,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                 <div>
                                     <div className='form-row'>
                                         <h2 className="dialog-header2">Handle Attributes</h2>
-                                        <DefaultToggle titleOn={"Include Handle Wrap"} titleOff={"Exclude Handle Wrap"} onChange={setIncludeWrap} />
+                                        <DefaultToggle titleOn={"Include Handle Wrap"} titleOff={"Exclude Handle Wrap"} onChange={setIncludeWrap} value={includeWrap} />
                                     </div>
                                     
                                     <div className='form-row'>
@@ -1584,7 +1585,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     {/* Move Handle Inlay inside here instead of as a separate section */}
                                     <div className='form-row'>
                                         <h3 className="dialog-header3">Handle Inlay</h3>
-                                        <DefaultToggle titleOn={"Include Handle Inlays"} titleOff={"Exclude Handle Inlays"} onChange={setIncludeHandleInlay} />
+                                        <DefaultToggle titleOn={"Include Handle Inlays"} titleOff={"Exclude Handle Inlays"} onChange={setIncludeHandleInlay} value={includeHandleInlay} />
                                     </div>
                                     {includeHandleInlay && (
                                         <div className='form-row'>
@@ -1639,7 +1640,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     <div>
                                         <div className='form-row'>
                                             <h3 className="dialog-header3">Buttsleeve Inlay</h3>
-                                            <DefaultToggle titleOn={"Include Butt Sleeve Inlay"} titleOff={"Exclude Butt Sleeve Inlay"} onChange={setIncludeButtSleeveInlay} />
+                                            <DefaultToggle titleOn={"Include Butt Sleeve Inlay"} titleOff={"Exclude Butt Sleeve Inlay"} onChange={setIncludeButtSleeveInlay} value={includeButtSleeveInlay} />
                                         </div>
                                         {includeButtSleeveInlay && (
                                             <div className='form-row'>
@@ -1679,9 +1680,9 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     <div>
                                         <div className='form-row'>
                                             <h3 className="dialog-header3">Butt Sleeve Point</h3>
-                                            <DefaultToggle titleOn={"Include Butt Sleeve Points"} titleOff={"Exclude Butt Sleeve Points"} onChange={setIncludeButtSleevePoint} />
-                                            {includeButtSleevePoint && <DefaultToggle titleOn={"Include Butt Sleeve Point Veneers"} titleOff={"Exclude  Butt Sleeve Point Veneers"} onChange={setIncludeButtSleevePointVeneers}/>}
-                                            {includeButtSleevePoint && <DefaultToggle titleOn={"Include Butt Sleeve Point Inlays"} titleOff={"Exclude Butt Sleeve Point Inlays"} onChange={setIncludeButtSleevePointInlay} />}
+                                            <DefaultToggle titleOn={"Include Butt Sleeve Points"} titleOff={"Exclude Butt Sleeve Points"} onChange={setIncludeButtSleevePoint} value={includeButtSleevePoint} />
+                                            {includeButtSleevePoint && <DefaultToggle titleOn={"Include Butt Sleeve Point Veneers"} titleOff={"Exclude  Butt Sleeve Point Veneers"} onChange={setIncludeButtSleevePointVeneers} value={includeButtSleevePointVeneers} />}
+                                            {includeButtSleevePoint && <DefaultToggle titleOn={"Include Butt Sleeve Point Inlays"} titleOff={"Exclude Butt Sleeve Point Inlays"} onChange={setIncludeButtSleevePointInlay} value={includeButtSleevePointInlay} />}
                                         </div>
                                         
                                         {includeButtSleevePoint && (<>

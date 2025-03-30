@@ -255,25 +255,22 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
  * @param {function} props.onChange - Callback function that receives boolean indicating new state
  * @returns {JSX.Element} Styled toggle switch with text
  */
-export function DefaultToggle({ titleOn, titleOff, onChange }) {
-    const [isOn, setIsOn] = useState(false);
-
+export function DefaultToggle({ titleOn, titleOff, onChange, value }) {
     const handleToggle = () => {
-        const newIsOn = !isOn;
-        setIsOn(newIsOn);
+        const newValue = !value;
         if (onChange) {
-            onChange(newIsOn);
+            onChange(newValue);
         }
     };
 
     return (
         <div className="toggle-container" onClick={handleToggle}>
-            <div className={`toggle-switch ${isOn ? 'on' : 'off'}`}>
+            <div className={`toggle-switch ${value ? 'on' : 'off'}`}>
                 <div className="toggle-circle"></div>
             </div>
             <div className="toggle-title">
-                {isOn ? titleOn : titleOff}
+                {value ? titleOn : titleOff}
             </div>
         </div>
     );
-};
+}

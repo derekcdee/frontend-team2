@@ -572,18 +572,22 @@ function CuesTable({ data, onEditClick }) {
         {
             accessorKey: 'cueNumber',
             header: 'Cue Number',
+            id: 'cueNumber',
         },
         {
             accessorKey: 'name',
-            header: 'Last Name',
+            header: 'Name',
+            id: 'cueName',
         },
         {
-            accessorKey: 'price',
             header: 'Price',
+            accessorFn: (row) => row.price ? `$${row.price}` : '',
+            id: 'cuePrice',
         },
         {
             accessorKey: 'status',
             header: 'Status',
+            id: 'cueStatus',
         },
         {
             id: 'actions1',
@@ -617,18 +621,22 @@ function AccessoriesTable({ data, onEditClick, onDeleteClick }) {
         {
             accessorKey: 'accessoryNumber',
             header: 'Accessory Number',
+            id: 'accessoryNumber',
         },
         {
             accessorKey: 'name',
             header: 'Name',
+            id: 'accessoryName',
         },
         {
-            accessorKey: 'price',
             header: 'Price',
+            accessorFn: (row) => row.price ? `$${row.price}` : '',
+            id: 'accessoryPrice',
         },
         {
             accessorKey: 'status',
             header: 'Status',
+            id: 'accessoryStatus',
         },
         {
             id: 'actions2',
@@ -678,10 +686,12 @@ function MaterialsTable({ data, onEditClick, onDeleteClick }) {
         {
             header: 'Tier',
             accessorKey: 'tier',
+            id: 'materialTier',
         },
         {
             header: 'Status',
             accessorKey: 'status',
+            id: 'materialStatus',
         },
         {
             id: 'actions3',
@@ -721,14 +731,17 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
         {
             accessorKey: 'firstName',
             header: 'First Name',
+            id: 'userFirstName',
         },
         {
             accessorKey: 'lastName',
             header: 'Last Name',
+            id: 'userLastName',
         },
         {
             accessorKey: 'email',
             header: 'Email',
+            id: 'userEmail',
         },
         {
             header: 'Password',
@@ -740,6 +753,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
                     />
                 </div>
             ),
+            id: 'userPassword',
         },
         {
             id: 'actions4',

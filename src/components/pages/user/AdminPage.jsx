@@ -2699,12 +2699,24 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
                     <DialogContentText>
                         This action is irreversible. Are you sure you want to proceed?
                     </DialogContentText>
-                    <DialogActions>
-                        <div className='form-row'>
-                            <DefaultButton text={"Cancel"} onClick={onClose} />
-                            <DefaultButton text={"Confirm"} onClick={handleDelete} />
-                        </div>
-                    </DialogActions>
+                    
+                    <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
+                        <span 
+                            onClick={onClose} 
+                            style={{ 
+                                textDecoration: 'underline', 
+                                cursor: 'pointer',
+                                color: '#333',
+                                fontSize: '1rem'
+                            }}
+                        >
+                            Cancel
+                        </span>
+                        <DefaultButton
+                            text="Delete"
+                            onClick={handleDelete}
+                        />
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>
@@ -2726,18 +2738,11 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
         changePassword(element._id, data.password)
             .then((res) => {
                 receiveResponse(res);
+                onClose();
             });
-        onClose();
     };
 
     const formRef = useRef(null);
-    
-    const handleSaveClick = () => {
-        if (formRef.current) {
-            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-        }
-    };
-
     const firstName = element.firstName;
     const password = watch("password");
 
@@ -2745,20 +2750,12 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
         <Dialog open={open} onClose={onClose} >
             <DialogTitle>
                 {title} {firstName && `'${firstName}'`}
-                <div style={{ float: 'right', display: 'flex' }}>
-                    <button
-                        type="button"
-                        className='fa-solid fa-floppy-disk admin-action-button'
-                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
-                        onClick={handleSaveClick}
-                    />
-                    <button
-                        type="button"
-                        className='fa-solid fa-xmark admin-action-button'
-                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
-                        onClick={onClose}
-                    />
-                </div>
+                <button
+                    type="button"
+                    className='fa-solid fa-xmark admin-action-button'
+                    style={{ display: 'inline-block', float: 'right', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem' }}
+                    onClick={onClose}
+                />
             </DialogTitle>
             <DialogContent>
                 <form className="password-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
@@ -2780,6 +2777,24 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
                                 }
                             })}
                         />
+                        
+                        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
+                            <span 
+                                onClick={onClose} 
+                                style={{ 
+                                    textDecoration: 'underline', 
+                                    cursor: 'pointer',
+                                    color: '#333',
+                                    fontSize: '1rem'
+                                }}
+                            >
+                                Cancel
+                            </span>
+                            <DefaultButton
+                                text="Save"
+                                type="submit"
+                            />
+                        </div>
                     </div>
                 </form>
             </DialogContent>

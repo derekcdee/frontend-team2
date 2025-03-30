@@ -648,7 +648,7 @@ function AccessoriesTable({ data, onEditClick, onDeleteClick }) {
                 <div className='admin-actions'>
                     <button
                         className='fa-solid fa-pencil admin-action-button'
-                        onClick={() => onEditClick({ element: row.original })}
+                        onClick={() => onEditClick({ element: row.original, title: `Edit Accessory '${row.original.name}'` })}
                     />
                     <button
                         className='fa-solid fa-trash admin-action-button'
@@ -703,7 +703,7 @@ function MaterialsTable({ data, onEditClick, onDeleteClick }) {
                 <div className='admin-actions'>
                     <button
                         className='fa-solid fa-pencil admin-action-button'
-                        onClick={() => onEditClick({ element: row.original })}
+                        onClick={() => onEditClick({ element: row.original, title: `Edit ${row.original.commonName ? 'Wood' : 'Stone/Crystal'} '${row.original.commonName ? row.original.commonName : row.original.crystalName}'` })}
                     />
                     <button
                         className='fa-solid fa-trash admin-action-button'

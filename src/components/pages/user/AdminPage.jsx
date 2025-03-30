@@ -490,7 +490,7 @@ export default function AdminPage() {
             <div className='user-content'>
                 <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData || []} accessoryData={accessoryData || []} materialData={materialData || []} userData={userData || []} />
             </div>
-            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
+            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} materialData={materialData} {...dialogProps} />}
             {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
             {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
@@ -792,7 +792,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
 }
 
 // Add handleWrapColor to the CueDialog default element properties
-function CueDialog({ open, onClose, title, getData, element = {
+function CueDialog({ open, onClose, title, getData, materialData, element = {
     cueNumber: '',
     name: '',
     description: '',
@@ -849,6 +849,9 @@ function CueDialog({ open, onClose, title, getData, element = {
     const [includeButtSleevePoint, setIncludeButtSleevePoint] = useState(false);
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
+
+    const woods = materialData?.filter(item => item.commonName) || [];
+    const crystals = materialData?.filter(item => item.crystalName) || [];
 
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
         defaultValues: element
@@ -1422,9 +1425,9 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                 <FormSelect
                                                     title="Forearm Material"
                                                     value={forearmMaterial}
-                                                    options={materialOptions}
-                                                    displayKey="label"
-                                                    valueKey="label"
+                                                    options={woods}
+                                                    displayKey="commonName"
+                                                    valueKey="_id"
                                                     {...register("forearmMaterial")}
                                                 />
                                             </div>
@@ -1596,9 +1599,9 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                 <FormSelect
                                                     title="Handle Material"
                                                     value={handleMaterial}
-                                                    options={materialOptions}
-                                                    displayKey="label"
-                                                    valueKey="label"
+                                                    options={woods}
+                                                    displayKey="commonName"
+                                                    valueKey="_id"
                                                     {...register("handleMaterial")}
                                                 />
                                             </div>
@@ -1668,9 +1671,9 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                 <FormSelect
                                                     title="Butt Sleeve Material"
                                                     value={buttSleeveMaterial}
-                                                    options={materialOptions}
-                                                    displayKey="label"
-                                                    valueKey="label"
+                                                    options={woods}
+                                                    displayKey="commonName"
+                                                    valueKey="_id"
                                                     {...register("buttSleeveMaterial")}
                                                 />
                                             </div>

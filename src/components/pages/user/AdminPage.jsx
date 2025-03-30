@@ -849,7 +849,6 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
     const [includeButtSleevePoint, setIncludeButtSleevePoint] = useState(false);
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
-    console.log(element.handleWrapType)
     const woods = materialData?.filter(item => item.commonName && item.status === "Available") || [];
     const crystals = materialData?.filter(item => item.crystalName && item.status === "Available") || [];
 

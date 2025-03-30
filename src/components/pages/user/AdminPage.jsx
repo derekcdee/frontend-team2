@@ -849,7 +849,7 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
     const [includeButtSleevePoint, setIncludeButtSleevePoint] = useState(false);
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
-
+    console.log(element.handleWrapType)
     const woods = materialData?.filter(item => item.commonName && item.status === "Available") || [];
     const crystals = materialData?.filter(item => item.crystalName && item.status === "Available") || [];
 
@@ -874,8 +874,9 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
             setIncludeButtSleevePointVeneers(!!element.buttSleevePointVeneerDescription);
             setIncludeForearmPointInlay(!!element.forearmPointInlayDescription);
             setIncludeButtSleevePointInlay(!!element.buttSleevePointInlayDescription);
-            setIsCustomJointPinSize(element.jointPinSize === 'custom');
-            setIsCustomTipSize(element.tipSize === 'custom');
+            setIsCustomJointPinSize(JOINT_PIN_SIZE_OPTIONS.every(option => option.label !== element.jointPinSize));
+            setIsCustomTipSize(TIP_SIZE_OPTIONS.every(option => option.label !== element.tipSize));
+            setIsCustomWrapType(WRAP_TYPE_OPTIONS.every(option => option.label !== element.handleWrapType));
         }
     }, [open, reset]);
 
@@ -961,28 +962,27 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
     ];
 
     // Set default colors when wrap type changes
-    useEffect(() => {
-        if (handleWrapType === 'Irish Linen') {
-            setValue("handleWrapColor", 'Black w/ White');
-        } else if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType)) {
-            setValue("handleWrapColor", 'Black');
-        }
-    }, [handleWrapType, setValue]);
-
-    // Handle include wrap toggle
-    useEffect(() => {
-        if (includeWrap) {
+    const handleIncludeWrapChange = (newValue) => {
+        if (newValue) {
+            // Only set default values if there are no current values
             setValue("handleMaterial", '');
-            setValue("handleWrapType", 'Irish Linen');
-            setValue("handleWrapColor", 'Black w/ White');
-            setIsCustomWrapType(false);
-            setIsCustomColor(false);
+
+            // Only set defaults if no existing wrap type
+            if (!handleWrapType) {
+                setValue("handleWrapType", 'Irish Linen');
+                setValue("handleWrapColor", 'Black w/ White');
+                setIsCustomWrapType(false);
+                setIsCustomColor(false);
+            }
         } else {
             setValue("handleWrapType", '');
             setValue("handleWrapColor", '');
             setValue("handleCustomLeatherColor", '');
         }
-    }, [includeWrap, setValue]);
+
+        // Update the state
+        setIncludeWrap(newValue);
+    };
 
     // Watch these values for conditional rendering
     const [isCustomColor, setIsCustomColor] = useState(false);
@@ -990,32 +990,37 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
     // Check if we need to show custom color input when wrap type or color changes
     useEffect(() => {
         if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType) && 
-            handleWrapColor === 'other') {
+            handleWrapColor === 'Other') {
+            setValue("handleWrapColor", '');
             setIsCustomColor(true);
         }
     }, [handleWrapType, handleWrapColor]);
     
-    // Handle wrap type changes to set default colors
-    useEffect(() => {
-        if (handleWrapType === 'Irish Linen') {
-            setValue("handleWrapColor", 'Black w/ White');
-            setIsCustomColor(false);
-        } else if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType)) {
-            setValue("handleWrapColor", 'Black');
-            setIsCustomColor(false);
-        }
-    }, [handleWrapType, setValue]);
 
     // Add a state to track custom wrap type
     const [isCustomWrapType, setIsCustomWrapType] = useState(false);
 
-    // Add effect to handle wrap type changes
-    useEffect(() => {
-        if (handleWrapType === 'other') {
+    const handleWrapTypeChange = (e) => {
+        const newWrapType = e.target.value;
+
+        if (newWrapType === 'Other') {
             setIsCustomWrapType(true);
+            setValue("handleWrapType", '');
             setValue("handleWrapColor", '');
+        } else {
+            setValue("handleWrapType", newWrapType);
+            setIsCustomWrapType(false);
+
+            // Only set default colors for new selections when the user explicitly changes the wrap type
+            if (newWrapType === 'Irish Linen') {
+                setValue("handleWrapColor", 'Black w/ White');
+                setIsCustomColor(false);
+            } else if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(newWrapType)) {
+                setValue("handleWrapColor", 'Black');
+                setIsCustomColor(false);
+            }
         }
-    }, [handleWrapType, isCustomWrapType, setValue]);
+    };
 
     // Add effect to handle buttType changes
     useEffect(() => {
@@ -1134,21 +1139,17 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
         }
     }, [includeButtSleevePointInlay, setValue]);
 
-    // Add state to track custom joint pin size
-
     // Add effect to handle joint pin size changes
     useEffect(() => {
-        if (jointPinSize === 'other') {
+        if (jointPinSize === 'Other') {
             setValue("jointPinSize", "");
             setIsCustomJointPinSize(true);
         }
     }, [jointPinSize, setValue]);
 
-    // Add state to track custom tip size
-
     // Add effect to handle tip size changes
     useEffect(() => {
-    if (tipSize === 'other') {
+    if (tipSize === 'Other') {
         setValue("tipSize", "");
         setIsCustomTipSize(true);
     }
@@ -1530,7 +1531,7 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                 <div>
                                     <div className='form-row'>
                                         <h2 className="dialog-header2">Handle Attributes</h2>
-                                        <DefaultToggle titleOn={"Include Handle Wrap"} titleOff={"Exclude Handle Wrap"} onChange={setIncludeWrap} value={includeWrap} />
+                                        <DefaultToggle titleOn={"Include Handle Wrap"} titleOff={"Exclude Handle Wrap"} onChange={handleIncludeWrapChange} value={includeWrap} />
                                     </div>
                                     
                                     <div className='form-row'>
@@ -1541,8 +1542,8 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                         <FormTextArea
                                                             title="Custom Wrap Type"
                                                             type="text"
-                                                            value={handleWrapType === 'other' ? '' : handleWrapType}
-                                                            onChange={(e) => setValue("handleWrapType", e.target.value)}
+                                                            value={handleWrapType}
+                                                            {...register("handleWrapType")}
                                                         />
                                                     ) : (
                                                         <FormSelect
@@ -1551,13 +1552,7 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                             options={WRAP_TYPE_OPTIONS}
                                                             displayKey="label"
                                                             valueKey="label"
-                                                            onChange={(e) => {
-                                                                if (e.target.value === 'other') {
-                                                                    setValue("handleWrapType", 'other');
-                                                                } else {
-                                                                    setValue("handleWrapType", e.target.value);
-                                                                }
-                                                            }}
+                                                            onChange={handleWrapTypeChange}
                                                         />
                                                     )}
                                                 </div>
@@ -1565,7 +1560,7 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                 {/* Only show standard color selector in the same row */}
                                                 {!isCustomWrapType && !isCustomColor && (
                                                     <div className='flex-1'>
-                                                        {handleWrapType === 'irish_linen' ? (
+                                                        {handleWrapType === 'Irish Linen' ? (
                                                             <FormSelect
                                                                 title="Wrap Color"
                                                                 value={handleWrapColor}
@@ -1574,7 +1569,7 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                                 valueKey="label"
                                                                 {...register("handleWrapColor")}
                                                             />
-                                                        ) : ['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType) ? (
+                                                        ) : ['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType) ? (
                                                             <FormSelect
                                                                 title="Wrap Color"
                                                                 value={handleWrapColor}
@@ -1615,8 +1610,8 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                 <FormTextArea
                                                     title="Custom Leather Color"
                                                     type="text"
-                                                    value={handleWrapColor === 'other' ? '' : handleWrapColor}
-                                                    onChange={(e) => setValue("handleWrapColor", e.target.value)}
+                                                    value={handleWrapColor}
+                                                    {...register("handleWrapColor")}
                                                 />
                                             </div>
                                         </div>

@@ -850,8 +850,8 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
 
-    const woods = materialData?.filter(item => item.commonName) || [];
-    const crystals = materialData?.filter(item => item.crystalName) || [];
+    const woods = materialData?.filter(item => item.commonName && item.status === "Available") || [];
+    const crystals = materialData?.filter(item => item.crystalName && item.status === "Available") || [];
 
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
         defaultValues: element

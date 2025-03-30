@@ -390,12 +390,12 @@ export default function AdminPage() {
     const [materialData, setMaterialData] = useState(null);
     const [userData, setUserData] = useState(null);
 
-    const getData = async () => {
+    const getData = async (pageOverride = null) => {
         setLoading(true);
 
-        switch (adminPage) {
+        const currentPage = pageOverride || adminPage;
+        switch (currentPage) {
             case 'Cues':
-                setLoading(false);
                 getAdminCues()
                     .then((res) => {
                         setLoading(false);
@@ -416,6 +416,7 @@ export default function AdminPage() {
                     });
                 break;
             case 'Materials':
+                if (pageOverride && materialData !== null) return setLoading(false);
                 getAdminMaterials()
                     .then((res) => {
                         setLoading(false);
@@ -436,6 +437,7 @@ export default function AdminPage() {
                     });
                 break;
             default:
+                setLoading(false);
                 break;
         }
     };
@@ -856,6 +858,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     
     useEffect(() => {
         if (open) {
+            getData('Materials');
             reset(element);
             setButtType(element.isFullSplice || false);
             setIncludeWrap(!!element.handleWrapType);

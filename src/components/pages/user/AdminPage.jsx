@@ -879,6 +879,33 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
         }
     }, [open, reset]);
 
+    useEffect(() => {
+        // Only run when editing an existing cue AND materials have been loaded
+        if (open && materialData?.length > 0 && element._id) {
+            // For each material field, find the matching object from woods array
+            if (element.forearmMaterial) {
+                const forearmWood = woods.find(wood => wood._id === element.forearmMaterial);
+                if (forearmWood) {
+                    setValue('forearmMaterial', forearmWood);
+                }
+            }
+
+            if (element.handleMaterial) {
+                const handleWood = woods.find(wood => wood._id === element.handleMaterial);
+                if (handleWood) {
+                    setValue('handleMaterial', handleWood);
+                }
+            }
+
+            if (element.buttSleeveMaterial) {
+                const buttSleeveWood = woods.find(wood => wood._id === element.buttSleeveMaterial);
+                if (buttSleeveWood) {
+                    setValue('buttSleeveMaterial', buttSleeveWood);
+                }
+            }
+        }
+    }, [materialData, open, element._id]);
+
     const existingCue = !!element._id;
 
     const onSubmit = (data) => {
@@ -1428,7 +1455,12 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                     options={woods}
                                                     displayKey="commonName"
                                                     valueKey="_id"
-                                                    {...register("forearmMaterial")}
+                                                    {...register("forearmMaterial", {
+                                                        setValueAs: value => {
+                                                            return typeof value === 'object' && value?._id ? value._id : value;
+                                                        },
+                                                        value: forearmMaterial // Make sure this value is passed to the select
+                                                    })}
                                                 />
                                             </div>
                                         </div>
@@ -1596,7 +1628,12 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                     options={woods}
                                                     displayKey="commonName"
                                                     valueKey="_id"
-                                                    {...register("handleMaterial")}
+                                                    {...register("handleMaterial", {
+                                                        setValueAs: value => {
+                                                            return typeof value === 'object' && value?._id ? value._id : value;
+                                                        },
+                                                        value: handleMaterial
+                                                    })}
                                                 />
                                             </div>
                                         )}
@@ -1668,7 +1705,12 @@ function CueDialog({ open, onClose, title, getData, materialData, element = {
                                                     options={woods}
                                                     displayKey="commonName"
                                                     valueKey="_id"
-                                                    {...register("buttSleeveMaterial")}
+                                                    {...register("buttSleeveMaterial", {
+                                                        setValueAs: value => {
+                                                            return typeof value === 'object' && value?._id ? value._id : value;
+                                                        },
+                                                        value: buttSleeveMaterial
+                                                    })}
                                                 />
                                             </div>
                                         </div>

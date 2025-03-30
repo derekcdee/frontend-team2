@@ -154,7 +154,7 @@ export const FormSelect = forwardRef(({
  * @param {React.Ref} ref - Forwarded ref
  * @returns {JSX.Element} Custom multi-select dropdown with tags for selected values
  */
-export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error, options, displayKey, ...restProps }, ref) => {
+export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error, options, displayKey, valueKey = "value", ...restProps }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef(null);
     const classes = ["form-field"];
@@ -204,11 +204,12 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     <div className="selected-options">
-                        {value.map((selectedValue, index) => {
-                            const option = options?.find(opt => opt.value === selectedValue);
+                        {value && value.length > 0 && value.map((selectedValue, index) => {
+                            // Find matching option by value
+                            const option = options?.find(opt => opt[valueKey] === selectedValue);
                             return (
                                 <div key={index} className="selected-option">
-                                    {option?.[displayKey]}
+                                    {option ? option[displayKey] : selectedValue}
                                 </div>
                             );
                         })}
@@ -217,10 +218,10 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                         {options?.map((option, index) => (
                             <div
                                 key={index}
-                                className={`multi-select-option ${value.includes(option.value) ? 'selected' : ''}`}
+                                className={`multi-select-option ${value && value.includes(option[valueKey]) ? 'selected' : ''}`}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    handleChange({ target: { value: option.value } });
+                                    handleChange({ target: { value: option[valueKey] } });
                                 }}
                             >
                                 {option[displayKey]}
@@ -228,7 +229,7 @@ export const FormMultiSelect = forwardRef(({ title, value = [], onChange, error,
                         ))}
                     </div>
                     <div className="multi-select-icon-container">
-                        {value.length > 0 && (
+                        {value && value.length > 0 && (
                             <i 
                                 className="fa-solid fa-xmark clear-icon"
                                 onClick={handleClear}

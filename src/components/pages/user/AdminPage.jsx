@@ -2291,6 +2291,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={colors || []}
                             options={COLOR_OPTIONS}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.colors && errors.colors.message}
                             {...register("colors", {
                                 required: "At least one color must be selected"
@@ -2331,6 +2332,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={metaphysicalTags || []}
                             options={METAPHYSICAL_OPTIONS}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.metaphysicalTags && errors.metaphysicalTags.message}
                             {...register("metaphysicalTags", {
                                 required: "At least one metaphysical tag must be selected"
@@ -2343,14 +2345,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     };
 
     const renderCrystalAttributes = () => {
-        // Watch crystal-specific values
         const crystalName = watch("crystalName");
-        const description = watch("description"); // Added description watch
         const crystalCategory = watch("crystalCategory");
         const colors = watch("colors");
         const psychologicalCorrespondence = watch("psychologicalCorrespondence");
         const status = watch("status");
-        const tier = watch("tier"); // Added tier watch
+        const tier = watch("tier");
         
         return (
             <>
@@ -2403,6 +2403,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={crystalCategory}
                             options={CRYSTAL_CATEGORY_OPTIONS}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.crystalCategory && errors.crystalCategory.message}
                             {...register("crystalCategory", {
                                 required: "Crystal Category is required"
@@ -2417,6 +2418,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={colors || []}
                             options={COLOR_OPTIONS}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.colors && errors.colors.message}
                             {...register("colors", {
                                 required: "At least one color must be selected"
@@ -2431,6 +2433,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             value={psychologicalCorrespondence || []}
                             options={PSYCHOLOGICAL_CORRESPONDENCE_OPTIONS}
                             displayKey="label"
+                            valueKey="label"
                             error={errors.psychologicalCorrespondence && errors.psychologicalCorrespondence.message}
                             {...register("psychologicalCorrespondence", {
                                 required: "At least one psychological correspondence must be selected"

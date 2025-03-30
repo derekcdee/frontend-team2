@@ -8,6 +8,7 @@ import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdm
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
+import { Padding } from '@mui/icons-material';
 
 const COLOR_OPTIONS = [
     { value: 'black', label: 'Black' },
@@ -1149,7 +1150,7 @@ function CueDialog({ open, onClose, title, getData, element = {
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
+            <DialogTitle style={dialogTitleStyle}>
                 {title}
                 <div style={{ float: 'right', display: 'flex' }}>
                     <button
@@ -1846,7 +1847,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
+            <DialogTitle style={dialogTitleStyle}>
                 {title}
                 <div style={{ float: 'right', display: 'flex' }}>
                     <button
@@ -1863,7 +1864,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                     />
                 </div>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent style={dialogContentStyle}>
                 <form className="accessory-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <div className='form-row'>
@@ -2447,7 +2448,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
+            <DialogTitle style={dialogTitleStyle}>
                 {title}
                 <div style={{ float: 'right', display: 'flex' }}>
                     {materialType && <button
@@ -2464,7 +2465,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     />
                 </div>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent style={dialogContentStyle}>
                 <form className="material-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <FormSelect
@@ -2539,7 +2540,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
-            <DialogTitle>
+            <DialogTitle style={dialogTitleStyle}>
                 {title}
                 <div style={{ float: 'right', display: 'flex' }}>
                     <button
@@ -2556,7 +2557,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                     />
                 </div>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent style={dialogContentStyle}>
                 <form className="user-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
                     <div className="form-column">
                         <FormField
@@ -2824,4 +2825,16 @@ const tableProps = {
         shape: 'rounded',
         variant: 'outlined',
     },
+};
+
+const dialogTitleStyle = {
+    padding: '10px 24px',
+    position: 'relative',
+    zIndex: 1,
+    backgroundColor: '#f5f5f5',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+};
+
+const dialogContentStyle = {
+    marginTop: '24px'
 };

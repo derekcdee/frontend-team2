@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue } from '../../../util/requests';
+import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -567,7 +567,7 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
     }
 }
 
-function CuesTable({ data, onEditClick }) {
+function CuesTable({ data, onEditClick, onDeleteClick }) {
     const columns = [
         {
             accessorKey: 'cueNumber',
@@ -598,7 +598,10 @@ function CuesTable({ data, onEditClick }) {
                         className='fa-solid fa-pencil admin-action-button'
                         onClick={() => onEditClick({ element: row.original, title: `Edit Cue '${row.original.name}'` })}
                     />
-                    <button className='fa-solid fa-trash admin-action-button' />
+                    <button
+                        className='fa-solid fa-trash admin-action-button'
+                        onClick={() => onDeleteClick({ element: row.original, title: `Delete Cue '${row.original.name}'` })}
+                    />
                 </div>
             ),
         },
@@ -2630,7 +2633,12 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
     const handleDelete = () => {
         switch (adminPage) {
             case 'Cues':
-
+                deleteCue(element._id)
+                    .then((res) => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    });
                 break;
             case 'Accessories':
                 deleteAccessory(element._id)

@@ -795,12 +795,12 @@ function CueDialog({ open, onClose, title, getData, element = {
     overallWeight: '',
     overallLength: '',
     tipSize: '12.4',
-    ferruleMaterial: 'juma',
-    shaftMaterial: 'hard_maple',
-    shaftTaper: 'pro_taper',
-    jointPinSize: '3_8_10_mod',
-    jointPinMaterial: 'stainless_steel',
-    jointCollarMaterial: 'black_juma',
+    ferruleMaterial: 'Juma',
+    shaftMaterial: 'Hard Maple',
+    shaftTaper: 'Pro-Taper',
+    jointPinSize: '3/8-10 Modified',
+    jointPinMaterial: 'Stainless Steel',
+    jointCollarMaterial: 'Black Juma',
     forearmMaterial: '',
     handleMaterial: '',
     handleWrapType: '',
@@ -810,7 +810,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     ringsDescription: '',
     buttWeight: '',
     buttLength: '',
-    buttCapMaterial: 'juma',
+    buttCapMaterial: 'Juma',
     status: '',
     forearmInlayQuantity: '',
     forearmInlaySize: '',
@@ -874,7 +874,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     const onSubmit = (data) => {
         data.isFullSplice = buttType;
         data.includeWrap = includeWrap;
-
+        console.log(data)
         if (existingCue) {
             editCue(element._id, data)
                 .then((res) => {
@@ -952,10 +952,10 @@ function CueDialog({ open, onClose, title, getData, element = {
 
     // Set default colors when wrap type changes
     useEffect(() => {
-        if (handleWrapType === 'irish_linen') {
-            setValue("handleWrapColor", 'black_w_white');
-        } else if (['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType)) {
-            setValue("handleWrapColor", 'black');
+        if (handleWrapType === 'Irish Linen') {
+            setValue("handleWrapColor", 'Black w/ White');
+        } else if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType)) {
+            setValue("handleWrapColor", 'Black');
         }
     }, [handleWrapType, setValue]);
 
@@ -963,8 +963,8 @@ function CueDialog({ open, onClose, title, getData, element = {
     useEffect(() => {
         if (includeWrap) {
             setValue("handleMaterial", '');
-            setValue("handleWrapType", 'irish_linen');
-            setValue("handleWrapColor", 'black_w_white');
+            setValue("handleWrapType", 'Irish Linen');
+            setValue("handleWrapColor", 'Black w/ White');
             setIsCustomWrapType(false);
             setIsCustomColor(false);
         } else {
@@ -979,7 +979,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     
     // Check if we need to show custom color input when wrap type or color changes
     useEffect(() => {
-        if (['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType) && 
+        if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType) && 
             handleWrapColor === 'other') {
             setIsCustomColor(true);
         }
@@ -987,11 +987,11 @@ function CueDialog({ open, onClose, title, getData, element = {
     
     // Handle wrap type changes to set default colors
     useEffect(() => {
-        if (handleWrapType === 'irish_linen') {
-            setValue("handleWrapColor", 'black_w_white');
+        if (handleWrapType === 'Irish Linen') {
+            setValue("handleWrapColor", 'Black w/ White');
             setIsCustomColor(false);
-        } else if (['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType)) {
-            setValue("handleWrapColor", 'black');
+        } else if (['Leather', 'Embossed Leather', 'Stacked Leather'].includes(handleWrapType)) {
+            setValue("handleWrapColor", 'Black');
             setIsCustomColor(false);
         }
     }, [handleWrapType, setValue]);
@@ -1244,6 +1244,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                     error={errors.status && errors.status.message}
                                     options={STATUS_OPTIONS_CUE}
                                     displayKey="label"
+                                    valueKey="label"
                                     {...register("status", {
                                         required: "Status is required"
                                     })}
@@ -1260,6 +1261,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             value={shaftMaterial}
                                             options={SHAFT_MATERIAL_OPTIONS}
                                             displayKey="label"
+                                            valueKey="label"
                                             {...register("shaftMaterial")}
                                         />
                                     </div>
@@ -1269,6 +1271,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             value={shaftTaper}
                                             options={SHAFT_TAPER_OPTIONS} // Use the global constant instead of sizeOptions
                                             displayKey="label"
+                                            valueKey="label"
                                             {...register("shaftTaper")}
                                         />
                                     </div>
@@ -1278,6 +1281,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             value={tipSize}
                                             options={TIP_SIZE_OPTIONS} // Use the global constant here
                                             displayKey="label"
+                                            valueKey="label"
                                             {...register("tipSize")}
                                         />
                                     </div>}
@@ -1301,6 +1305,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                             value={ferruleMaterial}
                                             options={materialOptions}
                                             displayKey="label"
+                                            valueKey="label"
                                             {...register("ferruleMaterial")}
                                         />
                                     </div>
@@ -1353,6 +1358,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={jointPinSize}
                                                     options={JOINT_PIN_SIZE_OPTIONS}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("jointPinSize")}
                                                 />
                                             </div>}
@@ -1362,6 +1368,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={jointPinMaterial}
                                                     options={JOINT_MATERIAL_OPTIONS}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("jointPinMaterial")}
                                                 />
                                             </div>
@@ -1376,6 +1383,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={jointCollarMaterial}
                                                     options={materialOptions}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("jointCollarMaterial")}
                                                 />
                                             </div>
@@ -1390,6 +1398,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={buttCapMaterial}
                                                     options={materialOptions}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("buttCapMaterial")}
                                                 />
                                             </div>
@@ -1408,6 +1417,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={forearmMaterial}
                                                     options={materialOptions}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("forearmMaterial")}
                                                 />
                                             </div>
@@ -1434,6 +1444,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                         value={forearmInlaySize}
                                                         options={BASIC_SIZE_OPTIONS}
                                                         displayKey="label"
+                                                        valueKey="label"
                                                         {...register("forearmInlaySize")}
                                                     />
                                                 </div>
@@ -1476,6 +1487,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                         value={forearmPointSize}
                                                         options={BASIC_SIZE_OPTIONS}
                                                         displayKey="label"
+                                                        valueKey="label"
                                                         {...register("forearmPointSize")}
                                                     />
                                                 </div>
@@ -1528,6 +1540,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                             value={handleWrapType}
                                                             options={WRAP_TYPE_OPTIONS}
                                                             displayKey="label"
+                                                            valueKey="label"
                                                             onChange={(e) => {
                                                                 if (e.target.value === 'other') {
                                                                     setValue("handleWrapType", 'other');
@@ -1548,6 +1561,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                                 value={handleWrapColor}
                                                                 options={IRISH_LINEN_COLOR_OPTIONS}
                                                                 displayKey="label"
+                                                                valueKey="label"
                                                                 {...register("handleWrapColor")}
                                                             />
                                                         ) : ['leather', 'embossed_leather', 'stacked_leather'].includes(handleWrapType) ? (
@@ -1556,6 +1570,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                                 value={handleWrapColor}
                                                                 options={LEATHER_COLOR_OPTIONS}
                                                                 displayKey="label"
+                                                                valueKey="label"
                                                                 {...register("handleWrapColor")}
                                                             />
                                                         ) : (
@@ -1576,6 +1591,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={handleMaterial}
                                                     options={materialOptions}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("handleMaterial")}
                                                 />
                                             </div>
@@ -1617,6 +1633,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={handleInlaySize}
                                                     options={BASIC_SIZE_OPTIONS}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("handleInlaySize")}
                                                 />
                                             </div>
@@ -1646,6 +1663,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                     value={buttSleeveMaterial}
                                                     options={materialOptions}
                                                     displayKey="label"
+                                                    valueKey="label"
                                                     {...register("buttSleeveMaterial")}
                                                 />
                                             </div>
@@ -1672,6 +1690,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                         value={buttsleeveInlaySize}
                                                         options={BASIC_SIZE_OPTIONS}
                                                         displayKey="label"
+                                                        valueKey="label"
                                                         {...register("buttsleeveInlaySize")}
                                                     />
                                                 </div>
@@ -1715,6 +1734,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                                         value={buttSleevePointSize}
                                                         options={BASIC_SIZE_OPTIONS}
                                                         displayKey="label"
+                                                        valueKey="label"
                                                         {...register("buttSleevePointSize")}
                                                     />
                                                 </div>
@@ -1753,6 +1773,7 @@ function CueDialog({ open, onClose, title, getData, element = {
                                         value={ringType}
                                         options={RING_TYPE_OPTIONS}
                                         displayKey="label"
+                                        valueKey="label"
                                         {...register("ringType")}
                                     />
                                 </div>

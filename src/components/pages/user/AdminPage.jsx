@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues } from '../../../util/requests';
+import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -549,33 +549,13 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
 }
 
 function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, onDeleteClick, cueData, accessoryData, materialData, userData }) {
-    const data = [
-        { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 2, firstName: 'Jane', lastName: 'Smith', age: 25 },
-        { id: 3, firstName: 'Alice', lastName: 'Johnson', age: 22 },
-        { id: 4, firstName: 'Bob', lastName: 'Brown', age: 45 },
-        { id: 5, firstName: 'Carol', lastName: 'Martinez', age: 32 },
-        { id: 6, firstName: 'Dave', lastName: 'Wilson', age: 28 },
-        { id: 7, firstName: 'Eva', lastName: 'Davis', age: 35 },
-        { id: 8, firstName: 'Frank', lastName: 'Garcia', age: 40 },
-        { id: 9, firstName: 'Grace', lastName: 'Lee', age: 29 },
-        { id: 10, firstName: 'Henry', lastName: 'Anderson', age: 31 },
-        { id: 11, firstName: 'Isabel', lastName: 'Thomas', age: 26 },
-        { id: 12, firstName: 'Jack', lastName: 'Moore', age: 23 },
-        { id: 13, firstName: 'Laura', lastName: 'Taylor', age: 27 },
-        { id: 14, firstName: 'Mike', lastName: 'Jackson', age: 33 },
-        { id: 15, firstName: 'Nora', lastName: 'White', age: 34 },
-        { id: 16, firstName: 'Oscar', lastName: 'Harris', age: 37 },
-        { id: 17, firstName: 'Pamela', lastName: 'Clark', age: 38 },
-    ];
-
     if (loading) {
         return <AdminSkeletonLoader />;
     }
 
     switch (adminPage) {
         case 'Cues':
-            return <CuesTable data={data} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
+            return <CuesTable data={cueData} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Accessories':
             return <AccessoriesTable data={accessoryData} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Materials':
@@ -590,19 +570,23 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
 function CuesTable({ data, onEditClick }) {
     const columns = [
         {
-            accessorKey: 'firstName',
-            header: 'First Name',
+            accessorKey: 'cueNumber',
+            header: 'Cue Number',
         },
         {
-            accessorKey: 'lastName',
+            accessorKey: 'name',
             header: 'Last Name',
         },
         {
-            accessorKey: 'age',
-            header: 'Age',
+            accessorKey: 'price',
+            header: 'Price',
         },
         {
-            id: 'actions',
+            accessorKey: 'status',
+            header: 'Status',
+        },
+        {
+            id: 'actions1',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -647,6 +631,7 @@ function AccessoriesTable({ data, onEditClick, onDeleteClick }) {
             header: 'Status',
         },
         {
+            id: 'actions2',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -699,6 +684,7 @@ function MaterialsTable({ data, onEditClick, onDeleteClick }) {
             accessorKey: 'status',
         },
         {
+            id: 'actions3',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -756,6 +742,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
             ),
         },
         {
+            id: 'actions4',
             header: 'Actions',
             Cell: ({ row }) => (
                 <div className='admin-actions'>
@@ -789,7 +776,7 @@ function CueDialog({ open, onClose, title, getData, element = {
     cueNumber: '',
     name: '',
     description: '',
-    notes: '', // Add this new field
+    notes: '',
     price: '',
     overallWeight: '',
     overallLength: '',
@@ -805,11 +792,6 @@ function CueDialog({ open, onClose, title, getData, element = {
     handleWrapType: '',
     handleWrapColor: '',
     buttSleeveMaterial: '',
-    // Remove these three properties
-    // jointRings: '',
-    // handleRings: '',
-    // buttRings: '',
-    // Add these new properties
     ringType: '',
     ringsDescription: '',
     buttWeight: '',
@@ -822,17 +804,17 @@ function CueDialog({ open, onClose, title, getData, element = {
     buttsleeveInlaySize: '',
     forearmPointQuantity: '',
     forearmPointSize: '',
-    forearmPointVeneerDescription: '', // Changed to plural and array
+    forearmPointVeneerDescription: '',
     buttSleevePointQuantity: '',
     buttSleevePointSize: '',
-    buttSleevePointVeneerDescription: '', // Changed to plural and array
-    handleInlayQuantity: '', // Add this new field
-    handleInlaySize: '', // Add this new field
-    forearmPointInlayDescription: '', // Add this new field
-    buttSleevePointInlayDescription: '', // Add this new field
+    buttSleevePointVeneerDescription: '',
+    handleInlayQuantity: '',
+    handleInlaySize: '',
+    forearmPointInlayDescription: '',
+    buttSleevePointInlayDescription: '',
     forearmInlayDescription: '',
-    handleInlayDescription: '', // Add this new field
-    buttsleeveInlayDescription: '', // Add this new field
+    handleInlayDescription: '',
+    buttsleeveInlayDescription: '',
   }}) {
     const [includeWrap, setIncludeWrap] = useState(false);
     const [includeForearmPointVeneers, setIncludeForearmPointVeneers] = useState(false);
@@ -872,9 +854,28 @@ function CueDialog({ open, onClose, title, getData, element = {
         }
     }, [open, reset]);
 
+    const existingCue = !!element._id;
+
     const onSubmit = (data) => {
-        console.log(data);
-        onClose();
+        data.isFullSplice = buttType;
+        data.includeWrap = includeWrap;
+
+        if (existingCue) {
+            editCue(element._id, data)
+                .then((res) => {
+                    receiveResponse(res);
+                    getData();
+                    onClose();
+                })
+        }
+        else {
+            createCue(data)
+                .then((res) => {
+                    receiveResponse(res);
+                    getData();
+                    onClose();
+                })
+        }
     };
 
     const handleSaveClick = () => {
@@ -2740,7 +2741,6 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
 }
 
 const tableProps = {
-    positionActionsColumn: 'last',
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,

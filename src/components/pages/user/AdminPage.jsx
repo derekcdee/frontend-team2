@@ -2708,7 +2708,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                         {!existingUser && (
                             <FormField
                                 title="Password*"
-                                type="text"
+                                type="password"
                                 value={password}
                                 error={errors.password && errors.password.message}
                                 {...register("password", {

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { uploadImage } from "../../util/requests";
 import { DefaultButton } from "./Buttons";
 
-export function ImageUploader({ onImageUploaded }) {
+export function ImageUploader({ onImageUploaded, folder = 'general' }) {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previewUrls, setPreviewUrls] = useState({});
     const [uploading, setUploading] = useState(false);
@@ -126,7 +126,7 @@ export function ImageUploader({ onImageUploaded }) {
             setUploadProgress(prev => ({ ...prev, [fileObj.id]: 10 }));
             
             // Upload each file without progress callback
-            uploadImage(fileObj.file)
+            uploadImage(fileObj.file, folder)
                 .then(res => {
                     // Store the uploaded URL
                     uploadedUrls.push(res.data);

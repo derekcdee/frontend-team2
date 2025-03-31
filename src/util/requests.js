@@ -306,12 +306,11 @@ export function getImageUploadUrl(filename, filetype) {
     });
 }
 
-export function uploadImage(file) {
-    // Create FormData for file upload
+export function uploadImage(file, folder='general') {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('folder', folder);
 
-    // Use your _ajax function to upload to your backend
     return _ajax({
         url: "/imageUpload/upload",
         method: "POST",

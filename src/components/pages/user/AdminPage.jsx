@@ -1859,6 +1859,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                             </div>
                         </div>
                         <DialogImageSection
+                            folder={'cues'}
                             existingItem={existingCue}
                             imageUrls={getValues('imageUrls') || []}
                             onImageDelete={(index) => {
@@ -2019,6 +2020,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                         />
                         {/* Image section */}
                         <DialogImageSection
+                            folder={'accessories'}
                             existingItem={existingAccessory}
                             imageUrls={element.imageUrls || []}
                             onImageDelete={(index) => {
@@ -2583,6 +2585,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         {materialType === 'wood' && renderWoodAttributes()}
                         {materialType === 'crystal' && renderCrystalAttributes()}
                         <DialogImageSection
+                            folder={'materials'}
                             existingItem={existingMaterial}
                             imageUrls={getValues('imageUrls') || []}
                             onImageDelete={(index) => {
@@ -2923,7 +2926,7 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
     );
 }
 
-function DialogImageSection({ existingItem, imageUrls = [], onImageDelete, onImageUpload }) {
+function DialogImageSection({ folder = 'general', existingItem, imageUrls = [], onImageDelete, onImageUpload }) {
     return (
         <>
             {existingItem && imageUrls && imageUrls.length > 0 && (
@@ -2972,6 +2975,7 @@ function DialogImageSection({ existingItem, imageUrls = [], onImageDelete, onIma
             )}
             {existingItem && (
                 <ImageUploader
+                    folder={folder}
                     onImageUploaded={onImageUpload}
                 />
             )}

@@ -2004,8 +2004,8 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                         />
                         {existingAccessory && element.imageUrls && element.imageUrls.length > 0 && (
                             <div>
-                                <h2 className="dialog-header2" style={{ marginTop: '20px' }}>Current Images</h2>
-                                <ImageList sx={{ width: '100%', height: 'auto', maxHeight: 400 }} cols={4} rowHeight={200} gap={8}>
+                                <h2 className="dialog-header2" style={{ marginTop: '20px' }}>Images</h2>
+                                <ImageList sx={{ width: '100%', height: 'auto', maxHeight: 400, margin: "0px 0px 0px 0px" }} cols={4} rowHeight={200} gap={8}>
                                     {element.imageUrls.map((imageUrl, index) => (
                                         <ImageListItem key={index} sx={{
                                             overflow: 'hidden',

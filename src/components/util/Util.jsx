@@ -177,8 +177,6 @@ export function ImageUploader({ onImageUploaded }) {
             padding: '20px',
             marginBottom: '20px'
         }}>
-            <h2 className="dialog-header2" style={{ marginTop: 0 }}>Images</h2>
-            
             <div 
                 ref={dropZoneRef}
                 style={{

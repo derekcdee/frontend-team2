@@ -853,7 +853,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
     const woods = materialData?.filter(item => item.commonName && item.status === "Available") || [];
     const crystals = materialData?.filter(item => item.crystalName && item.status === "Available") || [];
 
-    const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
+    const { register, handleSubmit, watch, formState: { errors }, reset, setValue, getValues } = useForm({
         defaultValues: element
     });
 
@@ -1858,7 +1858,22 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                                 </div>
                             </div>
                         </div>
-
+                        <DialogImageSection
+                            existingItem={existingCue}
+                            imageUrls={getValues('imageUrls') || []}
+                            onImageDelete={(index) => {
+                                const updatedUrls = [...getValues('imageUrls')];
+                                updatedUrls.splice(index, 1);
+                                setValue('imageUrls', updatedUrls);
+                                handleSubmit(onSubmit)();
+                            }}
+                            onImageUpload={(imageUrls) => {
+                                const currentImageUrls = getValues('imageUrls') || [];
+                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+                                setValue('imageUrls', updatedImageUrls);
+                                handleSubmit(onSubmit)();
+                            }}
+                        />
                     </div>
                 </form>
             </DialogContent>
@@ -2002,67 +2017,23 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                                 required: "Status is required"
                             })}
                         />
-                        {existingAccessory && element.imageUrls && element.imageUrls.length > 0 && (
-                            <div>
-                                <h2 className="dialog-header2" style={{ marginTop: '20px' }}>Images</h2>
-                                <ImageList sx={{ width: '100%', height: 'auto', maxHeight: 400, margin: "0px 0px 0px 0px" }} cols={4} rowHeight={200} gap={8}>
-                                    {element.imageUrls.map((imageUrl, index) => (
-                                        <ImageListItem key={index} sx={{
-                                            overflow: 'hidden',
-                                            borderRadius: '4px',
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                        }}>
-                                            <img
-                                                src={imageUrl}
-                                                alt={`Accessory ${index}`}
-                                                loading="lazy"
-                                                style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    objectFit: 'cover'
-                                                }}
-                                            />
-                                            <ImageListItemBar
-                                                title={imageUrl.substring(imageUrl.lastIndexOf('/') + 1, imageUrl.indexOf('?') !== -1 ? imageUrl.indexOf('?') : undefined).substring(0, 20)}
-                                                position="bottom"
-                                                actionIcon={
-                                                    <IconButton
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            const updatedUrls = [...element.imageUrls];
-                                                            updatedUrls.splice(index, 1);
-                                                            setValue('imageUrls', updatedUrls);
-
-                                                            // Trigger form submission with updated values
-                                                            handleSubmit(onSubmit)();
-                                                        }}
-                                                        sx={{ color: 'rgba(255, 255, 255, 0.9)' }}
-                                                        aria-label={`delete image ${index}`}
-                                                    >
-                                                        <i className="fa-solid fa-times"></i>
-                                                    </IconButton>
-                                                }
-                                                sx={{
-                                                    background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
-                                                }}
-                                            />
-                                        </ImageListItem>
-                                    ))}
-                                </ImageList>
-                            </div>
-                        )}
-                        {existingAccessory && <ImageUploader
-                            onImageUploaded={(imageUrls) => {
-                                const currentImageUrls = getValues('imageUrls') || [];
-                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
-
-                                // Update the form value
-                                setValue('imageUrls', updatedImageUrls);
-
-                                // Trigger form submission with all current form values
+                        {/* Image section */}
+                        <DialogImageSection
+                            existingItem={existingAccessory}
+                            imageUrls={element.imageUrls || []}
+                            onImageDelete={(index) => {
+                                const updatedUrls = [...element.imageUrls];
+                                updatedUrls.splice(index, 1);
+                                setValue('imageUrls', updatedUrls);
                                 handleSubmit(onSubmit)();
                             }}
-                        />}
+                            onImageUpload={(imageUrls) => {
+                                const currentImageUrls = getValues('imageUrls') || [];
+                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+                                setValue('imageUrls', updatedImageUrls);
+                                handleSubmit(onSubmit)();
+                            }}
+                        />
                     </div>
                 </form>
             </DialogContent>
@@ -2110,7 +2081,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         return commonDefaults;
     };
 
-    const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
+    const { register, handleSubmit, watch, formState: { errors }, reset, setValue, getValues } = useForm({
         defaultValues: element || getDefaultValues('')
     });
 
@@ -2606,6 +2577,22 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         />
                         {materialType === 'wood' && renderWoodAttributes()}
                         {materialType === 'crystal' && renderCrystalAttributes()}
+                        <DialogImageSection
+                            existingItem={existingMaterial}
+                            imageUrls={getValues('imageUrls') || []}
+                            onImageDelete={(index) => {
+                                const updatedUrls = [...getValues('imageUrls')];
+                                updatedUrls.splice(index, 1);
+                                setValue('imageUrls', updatedUrls);
+                                handleSubmit(onSubmit)();
+                            }}
+                            onImageUpload={(imageUrls) => {
+                                const currentImageUrls = getValues('imageUrls') || [];
+                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+                                setValue('imageUrls', updatedImageUrls);
+                                handleSubmit(onSubmit)();
+                            }}
+                        />
                     </div>
                 </form>
             </DialogContent>
@@ -2928,6 +2915,62 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
                 </form>
             </DialogContent>
         </Dialog>
+    );
+}
+
+function DialogImageSection({ existingItem, imageUrls = [], onImageDelete, onImageUpload }) {
+    return (
+        <>
+            {existingItem && imageUrls && imageUrls.length > 0 && (
+                <div>
+                    <h2 className="dialog-header2" style={{ marginTop: '20px' }}>Images</h2>
+                    <ImageList sx={{ width: '100%', height: 'auto', maxHeight: 400, margin: "0px 0px 0px 0px" }} cols={4} rowHeight={200} gap={8}>
+                        {imageUrls.map((imageUrl, index) => (
+                            <ImageListItem key={index} sx={{
+                                overflow: 'hidden',
+                                borderRadius: '4px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            }}>
+                                <img
+                                    src={imageUrl}
+                                    alt={`Item ${index}`}
+                                    loading="lazy"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover'
+                                    }}
+                                />
+                                <ImageListItemBar
+                                    title={imageUrl.substring(imageUrl.lastIndexOf('/') + 1, imageUrl.indexOf('?') !== -1 ? imageUrl.indexOf('?') : undefined).substring(0, 20)}
+                                    position="bottom"
+                                    actionIcon={
+                                        <IconButton
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                onImageDelete(index);
+                                            }}
+                                            sx={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                            aria-label={`delete image ${index}`}
+                                        >
+                                            <i className="fa-solid fa-times"></i>
+                                        </IconButton>
+                                    }
+                                    sx={{
+                                        background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+                                    }}
+                                />
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )}
+            {existingItem && (
+                <ImageUploader
+                    onImageUploaded={onImageUpload}
+                />
+            )}
+        </>
     );
 }
 

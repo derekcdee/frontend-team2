@@ -283,3 +283,58 @@ export function deleteCue(id) {
         method: "DELETE",
     });
 }
+
+/*==============================================================
+# Images
+==============================================================*/
+
+export function getImageUploadUrl(filename, filetype) {
+    return _ajax({
+        url: "/imageUpload",
+        method: "GET",
+        params: { filename, filetype }
+    });
+}
+
+export function uploadImage(file, prefix = '') {
+    // Create a unique filename with original extension
+    const extension = file.name.split('.').pop();
+    const uniqueFilename = `${prefix ? prefix + '-' : ''}${Date.now()}.${extension}`;
+    
+    // First get the pre-signed URL
+    return getImageUploadUrl(uniqueFilename, file.type)
+        .then(response => {
+            if (!response.success) {
+                throw new Error(response.messages[0] || 'Failed to get upload URL');
+            }
+            
+            const uploadUrl = response.data[0];
+            
+            // Use jQuery to upload to Digital Ocean (not using our wrapper because this goes to DO, not our API)
+            return $.ajax({
+                url: uploadUrl,
+                method: 'PUT',
+                data: file,
+                processData: false, // Don't process the files
+                contentType: file.type, // Set content type to file's type
+                xhr: function() {
+                    const xhr = $.ajaxSettings.xhr();
+                    // Add progress event handling
+                    if (xhr.upload) {
+                        xhr.upload.addEventListener('progress', function(event) {
+                            if (event.lengthComputable) {
+                                const percentComplete = Math.round((event.loaded / event.total) * 100);
+                                // Could emit an event here if needed for progress tracking
+                                console.log(`Upload progress: ${percentComplete}%`);
+                            }
+                        }, false);
+                    }
+                    return xhr;
+                }
+            })
+            .then(() => {
+                // Return the final URL (this is the pattern for DO Spaces URLs)
+                return `https://jmillercustomcues.nyc3.digitaloceanspaces.com/${uniqueFilename}`;
+            });
+        });
+}

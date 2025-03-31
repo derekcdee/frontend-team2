@@ -8,7 +8,7 @@ import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdm
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
-import { data } from 'jquery';
+import { ImageUploader } from '../../util/Util';
 
 
 const COLOR_OPTIONS = [
@@ -2001,6 +2001,11 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                             {...register("status", {
                                 required: "Status is required"
                             })}
+                        />
+                        <ImageUploader
+                            onImageUploaded={(imageUrl) => {
+                                console.log("Uploaded image URL:", imageUrl);
+                            }}
                         />
                     </div>
                 </form>

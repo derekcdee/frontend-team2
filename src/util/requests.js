@@ -296,44 +296,37 @@ export function getImageUploadUrl(filename, filetype) {
     });
 }
 
-export function uploadImage(file, progressCallback) {
-    // Create a unique filename with original extension
+export function uploadImage(file) {
     const extension = file.name.split('.').pop();
     const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}.${extension}`;
-    
-    // First get the pre-signed URL
+
+    // First get the presigned URL from your backend
     return getImageUploadUrl(uniqueFilename, file.type)
         .then(response => {
-            if (!response.success) {
-                throw new Error(response.messages[0] || 'Failed to get upload URL');
-            }
-            
-            const uploadUrl = response.data[0];
-            
-            // Use jQuery to upload to Digital Ocean (not using our wrapper because this goes to DO, not our API)
-            return $.ajax({
-                url: uploadUrl,
-                method: 'PUT',
-                data: file,
-                processData: false, // Don't process the files
-                contentType: file.type, // Set content type to file's type
-                xhr: function() {
-                    const xhr = $.ajaxSettings.xhr();
-                    // Add progress event handling
-                    if (xhr.upload && progressCallback) {
-                        xhr.upload.addEventListener('progress', function(event) {
-                            if (event.lengthComputable) {
-                                const percentComplete = Math.round((event.loaded / event.total) * 100);
-                                progressCallback(percentComplete);
-                            }
-                        }, false);
+            // Extract the URL from the response - it's in an array
+            const uploadUrl = response.data;
+
+            // Use XMLHttpRequest instead of fetch to handle CORS issues
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+
+                xhr.open('PUT', uploadUrl, true);
+                xhr.setRequestHeader('Content-Type', file.type);
+
+                xhr.onload = function () {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        // Success - return the URL to the uploaded file
+                        resolve(`https://jmillercustomcues.nyc3.digitaloceanspaces.com/${uniqueFilename}`);
+                    } else {
+                        reject(new Error('Upload failed'));
                     }
-                    return xhr;
-                }
-            })
-            .then(() => {
-                // Return the final URL (this is the pattern for DO Spaces URLs)
-                return `https://jmillercustomcues.nyc3.digitaloceanspaces.com/${uniqueFilename}`;
+                };
+
+                xhr.onerror = function () {
+                    reject(new Error('Network error'));
+                };
+
+                xhr.send(file);
             });
         });
 }

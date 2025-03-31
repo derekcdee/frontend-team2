@@ -17,18 +17,16 @@ export function Cue() {
     return (
         <div>
             <Canvas>
-                <Scene />
+                <mesh>
+                    <boxGeometry args={[4, 4, 4]} />
+                    <meshPhongMaterial />
+                </mesh>
                 <ambientLight intensity={0.1} />
                 <directionalLight position={[0, 0, 5]} color="red" />
                 <OrbitControls />
             </Canvas>
         </div>
     )
-  }
-
-  export function Scene(){
-    const gltf = useLoader(GLTFLoader, '../models/CueModel_v1.glb')
-    return <primitive object={gltf.scene} />
   }
 
 createRoot(document.getElementById('root')).render(<Cue />)

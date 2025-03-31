@@ -211,7 +211,7 @@ export function createWood(commonName, description, status, tier, colors, altern
 export function editWood(id, commonName, description, status, tier, colors, alternateName1,
     alternateName2, scientificName, brief, jankaHardness, treeHeight,
     trunkDiameter, geographicOrigin, streaksVeins, texture,
-    grainPattern, metaphysicalTags) {
+    grainPattern, metaphysicalTags, imageUrls) {
     return _ajax({
         url: "/admin/materials/wood/" + id,
         method: "PUT",
@@ -219,7 +219,7 @@ export function editWood(id, commonName, description, status, tier, colors, alte
             commonName, description, status, tier, colors, alternateName1,
             alternateName2, scientificName, brief, jankaHardness, treeHeight,
             trunkDiameter, geographicOrigin, streaksVeins, texture,
-            grainPattern, metaphysicalTags
+            grainPattern, metaphysicalTags, imageUrls
         }
     });
 }
@@ -246,13 +246,13 @@ export function createCrystal(crystalName, status, tier, colors,
 }
 
 export function editCrystal(id, crystalName, status, tier, colors,
-    crystalCategory, psychologicalCorrespondence) {
+    crystalCategory, psychologicalCorrespondence, imageUrls) {
     return _ajax({
         url: "/admin/materials/crystal/" + id,
         method: "PUT",
         data: {
             crystalName, status, tier, colors,
-            crystalCategory, psychologicalCorrespondence
+            crystalCategory, psychologicalCorrespondence, imageUrls
         }
     });
 }

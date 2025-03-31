@@ -2049,6 +2049,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
             status: '',
             tier: '',
             colors: [],
+            imageUrls: [],
         };
 
         if (type === 'wood') {
@@ -2132,7 +2133,8 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     data.streaksVeins,
                     data.texture,
                     data.grainPattern,
-                    data.metaphysicalTags
+                    data.metaphysicalTags,
+                    data.imageUrls,
                 )
                     .then(res => {
                         receiveResponse(res);
@@ -2157,7 +2159,8 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     data.streaksVeins,
                     data.texture,
                     data.grainPattern,
-                    data.metaphysicalTags
+                    data.metaphysicalTags,
+                    data.imageUrls,
                 )
                     .then(res => {
                         receiveResponse(res);
@@ -2174,7 +2177,8 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     data.tier,
                     data.colors,
                     data.crystalCategory,
-                    data.psychologicalCorrespondence
+                    data.psychologicalCorrespondence,
+                    data.imageUrls,
                 )
                     .then(res => {
                         receiveResponse(res);
@@ -2188,7 +2192,8 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     data.tier,
                     data.colors,
                     data.crystalCategory,
-                    data.psychologicalCorrespondence
+                    data.psychologicalCorrespondence,
+                    data.imageUrls,
                 )
                     .then(res => {
                         receiveResponse(res);

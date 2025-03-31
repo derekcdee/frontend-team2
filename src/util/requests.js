@@ -15,6 +15,7 @@ export function _ajax(settings = {}) {
 
     return $.ajax(settings)
         .then((res) => {
+            console.log(res);
             const response = JSON.parse(res);
 
             if (Array.isArray(response.errors)) {
@@ -290,16 +291,15 @@ export function deleteCue(id) {
 
 export function getImageUploadUrl(filename, filetype) {
     return _ajax({
-        url: "/imageUpload",
-        method: "GET",
-        params: { filename, filetype }
+        url: `/imageUpload?filename=${encodeURIComponent(filename)}&filetype=${encodeURIComponent(filetype)}`,
+        method: "GET"
     });
 }
 
-export function uploadImage(file, prefix = '') {
+export function uploadImage(file, progressCallback) {
     // Create a unique filename with original extension
     const extension = file.name.split('.').pop();
-    const uniqueFilename = `${prefix ? prefix + '-' : ''}${Date.now()}.${extension}`;
+    const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}.${extension}`;
     
     // First get the pre-signed URL
     return getImageUploadUrl(uniqueFilename, file.type)
@@ -320,12 +320,11 @@ export function uploadImage(file, prefix = '') {
                 xhr: function() {
                     const xhr = $.ajaxSettings.xhr();
                     // Add progress event handling
-                    if (xhr.upload) {
+                    if (xhr.upload && progressCallback) {
                         xhr.upload.addEventListener('progress', function(event) {
                             if (event.lengthComputable) {
                                 const percentComplete = Math.round((event.loaded / event.total) * 100);
-                                // Could emit an event here if needed for progress tracking
-                                console.log(`Upload progress: ${percentComplete}%`);
+                                progressCallback(percentComplete);
                             }
                         }, false);
                     }

@@ -125,13 +125,19 @@ export function ImageUploader({ onImageUploaded }) {
             // Initialize progress for this file
             setUploadProgress(prev => ({ ...prev, [fileObj.id]: 0 }));
             
-            // Upload each file
-            uploadImage(fileObj.file)
+            // Upload each file with progress callback
+            uploadImage(
+                fileObj.file,
+                (progress) => {
+                    // Update progress state when the callback is triggered
+                    setUploadProgress(prev => ({ ...prev, [fileObj.id]: progress }));
+                }
+            )
                 .then(imageUrl => {
                     // Store the uploaded URL
                     uploadedUrls.push(imageUrl);
                     
-                    // Update progress to 100%
+                    // Update progress to 100% (completed)
                     setUploadProgress(prev => ({ ...prev, [fileObj.id]: 100 }));
                     
                     // Check if all uploads are finished

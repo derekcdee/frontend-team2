@@ -3,19 +3,29 @@ import { receiveResponse} from './notifications';
 
 
 export function _ajax(settings = {}) {
+    // Add base URL
     settings.url = `http://localhost:5000${settings.url}`;
-    settings.contentType = "application/json"; // Set content type to JSON
-    settings.dataType = "json"; // Expect JSON response
-    if (settings.data) {
-        settings.data = JSON.stringify(settings.data); // Send data as JSON string
+
+    // Special handling for FormData (file uploads)
+    if (settings.data instanceof FormData) {
+        settings.processData = false; // Don't process FormData
+        settings.contentType = false; // Let browser set content type with boundaries
+    } else {
+        // Default JSON handling for regular requests
+        settings.contentType = settings.contentType !== undefined ? settings.contentType : "application/json";
+        settings.dataType = "json";
+        if (settings.data) {
+            settings.data = JSON.stringify(settings.data);
+        }
     }
+
+    // Always add credentials
     settings.xhrFields = {
         withCredentials: true,
     };
 
     return $.ajax(settings)
         .then((res) => {
-            console.log(res);
             const response = JSON.parse(res);
 
             if (Array.isArray(response.errors)) {
@@ -158,11 +168,11 @@ export function createAccessory(accessoryNumber, name, description, price, statu
     });
 }
 
-export function editAccessory(id, accessoryNumber, name, description, price, status) {
+export function editAccessory(id, accessoryNumber, name, description, price, status, imageUrls) {
     return _ajax({
         url: "/admin/accessories/" + id,
         method: "PUT",
-        data: { accessoryNumber, name, description, price, status }
+        data: { accessoryNumber, name, description, price, status, imageUrls }
     });
 }
 
@@ -297,36 +307,14 @@ export function getImageUploadUrl(filename, filetype) {
 }
 
 export function uploadImage(file) {
-    const extension = file.name.split('.').pop();
-    const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(2, 10)}.${extension}`;
+    // Create FormData for file upload
+    const formData = new FormData();
+    formData.append('file', file);
 
-    // First get the presigned URL from your backend
-    return getImageUploadUrl(uniqueFilename, file.type)
-        .then(response => {
-            // Extract the URL from the response - it's in an array
-            const uploadUrl = response.data;
-
-            // Use XMLHttpRequest instead of fetch to handle CORS issues
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-
-                xhr.open('PUT', uploadUrl, true);
-                xhr.setRequestHeader('Content-Type', file.type);
-
-                xhr.onload = function () {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        // Success - return the URL to the uploaded file
-                        resolve(`https://jmillercustomcues.nyc3.digitaloceanspaces.com/${uniqueFilename}`);
-                    } else {
-                        reject(new Error('Upload failed'));
-                    }
-                };
-
-                xhr.onerror = function () {
-                    reject(new Error('Network error'));
-                };
-
-                xhr.send(file);
-            });
-        });
+    // Use your _ajax function to upload to your backend
+    return _ajax({
+        url: "/imageUpload/upload",
+        method: "POST",
+        data: formData
+    })
 }

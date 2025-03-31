@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
@@ -1866,8 +1866,8 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
     );
 }
 
-function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '', status: '' } }) {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
+function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '', status: '', imageUrls: [] } }) {
+    const { register, handleSubmit, watch, formState: { errors }, reset, setValue, getValues } = useForm({
         defaultValues: element
     });
 
@@ -1883,7 +1883,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 
     const onSubmit = (data) => {
         if (existingAccessory) {
-            editAccessory(data._id, data.accessoryNumber, data.name, data.description, data.price, data.status)
+            editAccessory(data._id, data.accessoryNumber, data.name, data.description, data.price, data.status, data.imageUrls)
                 .then((res) => {
                     receiveResponse(res);
                     getData();
@@ -2002,11 +2002,67 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                                 required: "Status is required"
                             })}
                         />
-                        <ImageUploader
-                            onImageUploaded={(imageUrl) => {
-                                console.log("Uploaded image URL:", imageUrl);
+                        {existingAccessory && element.imageUrls && element.imageUrls.length > 0 && (
+                            <div>
+                                <h2 className="dialog-header2" style={{ marginTop: '20px' }}>Current Images</h2>
+                                <ImageList sx={{ width: '100%', height: 'auto', maxHeight: 400 }} cols={4} rowHeight={200} gap={8}>
+                                    {element.imageUrls.map((imageUrl, index) => (
+                                        <ImageListItem key={index} sx={{
+                                            overflow: 'hidden',
+                                            borderRadius: '4px',
+                                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                        }}>
+                                            <img
+                                                src={imageUrl}
+                                                alt={`Accessory ${index}`}
+                                                loading="lazy"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover'
+                                                }}
+                                            />
+                                            <ImageListItemBar
+                                                title={imageUrl.substring(imageUrl.lastIndexOf('/') + 1, imageUrl.indexOf('?') !== -1 ? imageUrl.indexOf('?') : undefined).substring(0, 20)}
+                                                position="bottom"
+                                                actionIcon={
+                                                    <IconButton
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            const updatedUrls = [...element.imageUrls];
+                                                            updatedUrls.splice(index, 1);
+                                                            setValue('imageUrls', updatedUrls);
+
+                                                            // Trigger form submission with updated values
+                                                            handleSubmit(onSubmit)();
+                                                        }}
+                                                        sx={{ color: 'rgba(255, 255, 255, 0.9)' }}
+                                                        aria-label={`delete image ${index}`}
+                                                    >
+                                                        <i className="fa-solid fa-times"></i>
+                                                    </IconButton>
+                                                }
+                                                sx={{
+                                                    background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+                                                }}
+                                            />
+                                        </ImageListItem>
+                                    ))}
+                                </ImageList>
+                            </div>
+                        )}
+                        {existingAccessory && <ImageUploader
+                            onImageUploaded={(imageUrls) => {
+                                const currentImageUrls = getValues('imageUrls') || [];
+                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+
+                                // Update the form value
+                                setValue('imageUrls', updatedImageUrls);
+
+                                // Trigger form submission with all current form values
+                                handleSubmit(onSubmit)();
                             }}
-                        />
+                        />}
                     </div>
                 </form>
             </DialogContent>

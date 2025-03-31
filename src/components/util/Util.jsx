@@ -122,22 +122,16 @@ export function ImageUploader({ onImageUploaded }) {
         const uploadedUrls = [];
         
         selectedFiles.forEach(fileObj => {
-            // Initialize progress for this file
-            setUploadProgress(prev => ({ ...prev, [fileObj.id]: 0 }));
+            // Set initial progress
+            setUploadProgress(prev => ({ ...prev, [fileObj.id]: 10 }));
             
-            // Upload each file with progress callback
-            uploadImage(
-                fileObj.file,
-                (progress) => {
-                    // Update progress state when the callback is triggered
-                    setUploadProgress(prev => ({ ...prev, [fileObj.id]: progress }));
-                }
-            )
-                .then(imageUrl => {
+            // Upload each file without progress callback
+            uploadImage(fileObj.file)
+                .then(res => {
                     // Store the uploaded URL
-                    uploadedUrls.push(imageUrl);
+                    uploadedUrls.push(res.data);
                     
-                    // Update progress to 100% (completed)
+                    // Set progress to 100% when complete
                     setUploadProgress(prev => ({ ...prev, [fileObj.id]: 100 }));
                     
                     // Check if all uploads are finished
@@ -145,7 +139,7 @@ export function ImageUploader({ onImageUploaded }) {
                     if (completedUploads === selectedFiles.length) {
                         // Call the callback with all URLs
                         if (onImageUploaded) {
-                            uploadedUrls.forEach(url => onImageUploaded(url));
+                            onImageUploaded(uploadedUrls);
                         }
                         
                         // Reset the form
@@ -158,6 +152,21 @@ export function ImageUploader({ onImageUploaded }) {
                 .catch(() => {
                     setUploading(false);
                 });
+            
+            // Simulate progress since we don't have real progress events
+            // This provides visual feedback that something is happening
+            let simulatedProgress = 10;
+            const progressInterval = setInterval(() => {
+                simulatedProgress += Math.floor(Math.random() * 10) + 5;
+                if (simulatedProgress > 90) {
+                    simulatedProgress = 90; // Cap at 90% until actually complete
+                    clearInterval(progressInterval);
+                }
+                setUploadProgress(prev => ({ ...prev, [fileObj.id]: simulatedProgress }));
+            }, 500);
+            
+            // Clear interval if upload completes or fails
+            setTimeout(() => clearInterval(progressInterval), 10000); // Safety timeout
         });
     };
 

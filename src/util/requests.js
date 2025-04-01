@@ -299,13 +299,6 @@ export function deleteCue(id) {
 # Images
 ==============================================================*/
 
-export function getImageUploadUrl(filename, filetype) {
-    return _ajax({
-        url: `/imageUpload?filename=${encodeURIComponent(filename)}&filetype=${encodeURIComponent(filetype)}`,
-        method: "GET"
-    });
-}
-
 export function uploadImage(file, folder='general') {
     const formData = new FormData();
     formData.append('file', file);
@@ -316,4 +309,16 @@ export function uploadImage(file, folder='general') {
         method: "POST",
         data: formData
     })
+}
+
+export function deleteImages(imageUrls) {
+    if (!Array.isArray(imageUrls)) {
+        imageUrls = [imageUrls];
+    }
+    
+    return _ajax({
+        url: "/imageUpload/delete",
+        method: "POST",
+        data: { urls: imageUrls }
+    });
 }

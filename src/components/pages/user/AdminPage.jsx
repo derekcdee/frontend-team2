@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue } from '../../../util/requests';
+import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages } from '../../../util/requests';
 import { receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -1883,6 +1883,8 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
 }
 
 function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '', status: '', imageUrls: [] } }) {
+    const [deletedUrls, setDeletedUrls] = useState([]);
+    
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue, getValues } = useForm({
         defaultValues: element
     });
@@ -1898,6 +1900,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     }, [open, reset]);
 
     const onSubmit = (data) => {
+        debugger
         if (existingAccessory) {
             editAccessory(data._id, data.accessoryNumber, data.name, data.description, data.price, data.status, data.imageUrls)
                 .then((res) => {
@@ -1905,6 +1908,9 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                     getData();
                     onClose();
                 })
+            if (deletedUrls.length > 0) {
+                deleteImages(deletedUrls);
+            }
         } else {
             createAccessory(data.accessoryNumber, data.name, data.description, data.price, data.status)
                 .then((res) => {
@@ -2022,12 +2028,11 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                         <DialogImageSection
                             folder={'accessories'}
                             existingItem={existingAccessory}
-                            imageUrls={element.imageUrls || []}
-                            onImageDelete={(index) => {
-                                const updatedUrls = [...element.imageUrls];
-                                updatedUrls.splice(index, 1);
-                                setValue('imageUrls', updatedUrls);
-                                handleSubmit(onSubmit)();
+                            imageUrls={getValues('imageUrls') || []}
+                            onImageDelete={(imageUrl) => {
+                                setDeletedUrls(prev => [...prev, imageUrl]);
+                                const newImageUrls = (getValues('imageUrls') || []).filter(url => url !== imageUrl);
+                                setValue('imageUrls', newImageUrls);
                             }}
                             onImageUpload={(imageUrls) => {
                                 const currentImageUrls = getValues('imageUrls') || [];
@@ -2956,7 +2961,8 @@ function DialogImageSection({ folder = 'general', existingItem, imageUrls = [], 
                                         <IconButton
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                onImageDelete(index);
+                                                e.stopPropagation();
+                                                onImageDelete(imageUrl);
                                             }}
                                             sx={{ color: 'rgba(255, 255, 255, 0.9)' }}
                                             aria-label={`delete image ${index}`}

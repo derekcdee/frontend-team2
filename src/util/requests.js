@@ -305,7 +305,7 @@ export function uploadImage(file, folder='general') {
     formData.append('folder', folder);
 
     return _ajax({
-        url: "/imageUpload/upload",
+        url: "/admin/image/upload",
         method: "POST",
         data: formData
     })
@@ -317,7 +317,7 @@ export function deleteImages(imageUrls) {
     }
     
     return _ajax({
-        url: "/imageUpload/delete",
+        url: "/admin/image/delete",
         method: "POST",
         data: { urls: imageUrls }
     });

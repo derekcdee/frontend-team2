@@ -850,8 +850,10 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
     const [includeButtSleevePoint, setIncludeButtSleevePoint] = useState(false);
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
+    const [deletedUrls, setDeletedUrls] = useState([]);
     const woods = materialData?.filter(item => item.commonName && item.status === "Available") || [];
     const crystals = materialData?.filter(item => item.crystalName && item.status === "Available") || [];
+    
 
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue, getValues } = useForm({
         defaultValues: element
@@ -900,6 +902,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                 const nextCueNumber = getNextCueNumber(cueData);
                 setValue('cueNumber', nextCueNumber);
             }
+            setDeletedUrls([]);
         }
     }, [open, reset]);
 
@@ -943,6 +946,12 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                     getData();
                     onClose();
                 })
+            if (deletedUrls.length > 0) {
+                deleteImages(deletedUrls)
+                    .then((res) => {
+                        setDeletedUrls([]);
+                    })
+            }
         }
         else {
             createCue(data)
@@ -1862,11 +1871,10 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                             folder={'cues'}
                             existingItem={existingCue}
                             imageUrls={getValues('imageUrls') || []}
-                            onImageDelete={(index) => {
-                                const updatedUrls = [...getValues('imageUrls')];
-                                updatedUrls.splice(index, 1);
-                                setValue('imageUrls', updatedUrls);
-                                handleSubmit(onSubmit)();
+                            onImageDelete={(imageUrl) => {
+                                setDeletedUrls(prev => [...prev, imageUrl]);
+                                const newImageUrls = (getValues('imageUrls') || []).filter(url => url !== imageUrl);
+                                setValue('imageUrls', newImageUrls);
                             }}
                             onImageUpload={(imageUrls) => {
                                 const currentImageUrls = getValues('imageUrls') || [];

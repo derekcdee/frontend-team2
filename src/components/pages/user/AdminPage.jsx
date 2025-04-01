@@ -1896,6 +1896,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     useEffect(() => {
         if (open) {
             reset(element);
+            setDeletedUrls([]);
         }
     }, [open, reset]);
 
@@ -1909,7 +1910,10 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                     onClose();
                 })
             if (deletedUrls.length > 0) {
-                deleteImages(deletedUrls);
+                deleteImages(deletedUrls)
+                    .then((res) => {
+                        setDeletedUrls([]);
+                    })
             }
         } else {
             createAccessory(data.accessoryNumber, data.name, data.description, data.price, data.status)

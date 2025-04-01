@@ -1901,7 +1901,6 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     }, [open, reset]);
 
     const onSubmit = (data) => {
-        debugger
         if (existingAccessory) {
             editAccessory(data._id, data.accessoryNumber, data.name, data.description, data.price, data.status, data.imageUrls)
                 .then((res) => {
@@ -2054,6 +2053,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
 
 function MaterialDialog({ open, onClose, title, getData, element = false }) {
     const [materialType, setMaterialType] = useState('');
+    const [deletedUrls, setDeletedUrls] = useState([]);
 
     const getDefaultValues = (type) => {
         const commonDefaults = {
@@ -2114,6 +2114,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                 setMaterialType('');
                 reset(getDefaultValues());
             }
+            setDeletedUrls([]);
         }
     }, [open, reset]);
 
@@ -2152,6 +2153,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         getData();
                         onClose();
                     })
+                if (deletedUrls.length > 0) {
+                    deleteImages(deletedUrls)
+                        .then((res) => {
+                            setDeletedUrls([]);
+                        })
+                }
             } else {
                 createWood(
                     data.commonName,
@@ -2196,6 +2203,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                         getData();
                         onClose();
                     })
+                if (deletedUrls.length > 0) {
+                    deleteImages(deletedUrls)
+                        .then((res) => {
+                            setDeletedUrls([]);
+                        })
+                }
             } else {
                 createCrystal(
                     data.crystalName,
@@ -2597,11 +2610,10 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                             folder={'materials'}
                             existingItem={existingMaterial}
                             imageUrls={getValues('imageUrls') || []}
-                            onImageDelete={(index) => {
-                                const updatedUrls = [...getValues('imageUrls')];
-                                updatedUrls.splice(index, 1);
-                                setValue('imageUrls', updatedUrls);
-                                handleSubmit(onSubmit)();
+                            onImageDelete={(imageUrl) => {
+                                setDeletedUrls(prev => [...prev, imageUrl]);
+                                const newImageUrls = (getValues('imageUrls') || []).filter(url => url !== imageUrl);
+                                setValue('imageUrls', newImageUrls);
                             }}
                             onImageUpload={(imageUrls) => {
                                 const currentImageUrls = getValues('imageUrls') || [];

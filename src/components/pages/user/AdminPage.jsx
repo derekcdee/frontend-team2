@@ -1876,11 +1876,16 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                                 const newImageUrls = (getValues('imageUrls') || []).filter(url => url !== imageUrl);
                                 setValue('imageUrls', newImageUrls);
                             }}
-                            onImageUpload={(imageUrls) => {
-                                const currentImageUrls = getValues('imageUrls') || [];
-                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
-                                setValue('imageUrls', updatedImageUrls);
-                                handleSubmit(onSubmit)();
+                            onImageUpload={(imageUrls, isReorder) => {
+                                if (isReorder) {
+                                    setValue('imageUrls', imageUrls);
+                                } else {
+                                    // Add new images to the existing array (for uploading new images)
+                                    const currentImageUrls = getValues('imageUrls') || [];
+                                    const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+                                    setValue('imageUrls', updatedImageUrls);
+                                    handleSubmit(onSubmit)();
+                                }
                             }}
                         />
                     </div>
@@ -2045,11 +2050,16 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                                 const newImageUrls = (getValues('imageUrls') || []).filter(url => url !== imageUrl);
                                 setValue('imageUrls', newImageUrls);
                             }}
-                            onImageUpload={(imageUrls) => {
-                                const currentImageUrls = getValues('imageUrls') || [];
-                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
-                                setValue('imageUrls', updatedImageUrls);
-                                handleSubmit(onSubmit)();
+                            onImageUpload={(imageUrls, isReorder) => {
+                                if (isReorder) {
+                                    setValue('imageUrls', imageUrls);
+                                } else {
+                                    // Add new images to the existing array (for uploading new images)
+                                    const currentImageUrls = getValues('imageUrls') || [];
+                                    const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+                                    setValue('imageUrls', updatedImageUrls);
+                                    handleSubmit(onSubmit)();
+                                }
                             }}
                         />
                     </div>
@@ -2623,11 +2633,16 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                                 const newImageUrls = (getValues('imageUrls') || []).filter(url => url !== imageUrl);
                                 setValue('imageUrls', newImageUrls);
                             }}
-                            onImageUpload={(imageUrls) => {
-                                const currentImageUrls = getValues('imageUrls') || [];
-                                const updatedImageUrls = [...currentImageUrls, ...imageUrls];
-                                setValue('imageUrls', updatedImageUrls);
-                                handleSubmit(onSubmit)();
+                            onImageUpload={(imageUrls, isReorder) => {
+                                if (isReorder) {
+                                    setValue('imageUrls', imageUrls);
+                                } else {
+                                    // Add new images to the existing array (for uploading new images)
+                                    const currentImageUrls = getValues('imageUrls') || [];
+                                    const updatedImageUrls = [...currentImageUrls, ...imageUrls];
+                                    setValue('imageUrls', updatedImageUrls);
+                                    handleSubmit(onSubmit)();
+                                }
                             }}
                         />
                     </div>
@@ -2956,26 +2971,141 @@ function PasswordDialog({ open, onClose, title, element = { password: '', firstN
 }
 
 function DialogImageSection({ folder = 'general', existingItem, imageUrls = [], onImageDelete, onImageUpload }) {
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const [localImageUrls, setLocalImageUrls] = useState(imageUrls);
+    
+    // Keep local state in sync with props when props change
+    useEffect(() => {
+        setLocalImageUrls(imageUrls);
+    }, [imageUrls]);
+    
+    // Handle drag start
+    const handleDragStart = (e, index) => {
+        setDraggedIndex(index);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', e.target.parentNode);
+        
+        setTimeout(() => {
+            e.target.style.opacity = '0.4';
+        }, 0);
+    };
+    
+    // Handle drag end
+    const handleDragEnd = (e) => {
+        e.target.style.opacity = '1';
+        document.querySelectorAll('.image-over').forEach(item => {
+            item.classList.remove('image-over');
+        });
+    };
+    
+    // Handle drag over another item
+    const handleDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    };
+    
+    // Apply visual cue when dragging over a drop target
+    const handleDragEnter = (e, index) => {
+        const listItem = e.target.closest('.MuiImageListItem-root');
+        if (listItem) {
+            listItem.classList.add('image-over');
+        }
+    };
+    
+    // Remove visual cue when leaving a drop target
+    const handleDragLeave = (e) => {
+        const listItem = e.target.closest('.MuiImageListItem-root');
+        if (listItem) {
+            listItem.classList.remove('image-over');
+        }
+    };
+    
+    // Handle the actual drop - update local state immediately for visual feedback
+    const handleDrop = (e, dropIndex) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (draggedIndex === null || draggedIndex === dropIndex) return;
+        
+        // Create a copy of the local image URLs array
+        const newImageUrls = [...localImageUrls];
+        
+        // Remove the dragged item
+        const draggedItem = newImageUrls[draggedIndex];
+        newImageUrls.splice(draggedIndex, 1);
+        
+        // Insert at the new position
+        newImageUrls.splice(dropIndex, 0, draggedItem);
+        
+        // Update local state immediately to show the change visually
+        setLocalImageUrls(newImageUrls);
+        
+        // Notify parent component about the reordering
+        onReorder(newImageUrls);
+        
+        // Reset
+        setDraggedIndex(null);
+        const listItem = e.target.closest('.MuiImageListItem-root');
+        if (listItem) {
+            listItem.classList.remove('image-over');
+        }
+        return false;
+    };
+    
+    // Function to pass the reordered array to the parent component
+    const onReorder = (newOrder) => {
+        if (typeof onImageUpload === 'function') {
+            onImageUpload(newOrder, true);
+        }
+    };
+
     return (
         <>
-            {existingItem && imageUrls && imageUrls.length > 0 && (
+            {existingItem && localImageUrls && localImageUrls.length > 0 && (
                 <div>
                     <h2 className="dialog-header2" style={{ marginTop: '20px' }}>Images</h2>
-                    <ImageList sx={{ width: '100%', height: 'auto', maxHeight: 400, margin: "0px 0px 0px 0px" }} cols={4} rowHeight={200} gap={8}>
-                        {imageUrls.map((imageUrl, index) => (
-                            <ImageListItem key={index} sx={{
-                                overflow: 'hidden',
-                                borderRadius: '4px',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                            }}>
+                    <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+                        Drag and drop images to reorder them
+                    </p>
+                    <ImageList sx={{ 
+                        width: '100%', 
+                        height: 'auto', 
+                        maxHeight: 400, 
+                        margin: "0px 0px 0px 0px" 
+                    }} cols={4} rowHeight={200} gap={8}>
+                        {localImageUrls.map((imageUrl, index) => (
+                            <ImageListItem 
+                                key={`${imageUrl}-${index}`} 
+                                sx={{
+                                    overflow: 'hidden',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                    cursor: 'grab',
+                                    transition: 'all 0.2s ease',
+                                    '&.image-over': {
+                                        boxShadow: '0 0 0 2px #1976d2',
+                                        transform: 'scale(1.02)'
+                                    }
+                                }}
+                                draggable="true"
+                                onDragStart={(e) => handleDragStart(e, index)}
+                                onDragEnd={handleDragEnd}
+                                onDragOver={(e) => handleDragOver(e, index)}
+                                onDragEnter={(e) => handleDragEnter(e, index)}
+                                onDragLeave={handleDragLeave}
+                                onDrop={(e) => handleDrop(e, index)}
+                            >
                                 <img
                                     src={imageUrl}
                                     alt={`Item ${index}`}
                                     loading="lazy"
+                                    draggable="false"
                                     style={{
                                         width: '100%',
                                         height: '100%',
-                                        objectFit: 'cover'
+                                        objectFit: 'cover',
+                                        pointerEvents: 'none'
                                     }}
                                 />
                                 <ImageListItemBar
@@ -2998,6 +3128,21 @@ function DialogImageSection({ folder = 'general', existingItem, imageUrls = [], 
                                         background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
                                     }}
                                 />
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '5px',
+                                    left: '5px',
+                                    backgroundColor: 'rgba(0,0,0,0.5)',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    width: '24px',
+                                    height: '24px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {index + 1}
+                                </div>
                             </ImageListItem>
                         ))}
                     </ImageList>
@@ -3009,6 +3154,13 @@ function DialogImageSection({ folder = 'general', existingItem, imageUrls = [], 
                     onImageUploaded={onImageUpload}
                 />
             )}
+
+            <style jsx>{`
+                .image-over {
+                    box-shadow: 0 0 0 2px #1976d2 !important;
+                    transform: scale(1.02);
+                }
+            `}</style>
         </>
     );
 }

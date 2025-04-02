@@ -2090,9 +2090,11 @@ function AccessoryDialog({ open, onClose, title: initialTitle, getData, setDialo
     );
 }
 
-function MaterialDialog({ open, onClose, title, getData, element = false }) {
+function MaterialDialog({ open, onClose, title: initialTitle, getData, setDialogProps, element = false }) {
     const [materialType, setMaterialType] = useState('');
     const [deletedUrls, setDeletedUrls] = useState([]);
+    const [savedMaterial, setSavedMaterial] = useState(false);
+    const [localTitle, setLocalTitle] = useState(initialTitle);
 
     const getDefaultValues = (type) => {
         const commonDefaults = {
@@ -2136,7 +2138,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
         defaultValues: element || getDefaultValues('')
     });
 
-    const existingMaterial = !!element._id;
+    // Update local title when prop changes
+    useEffect(() => {
+        setLocalTitle(initialTitle);
+    }, [initialTitle]);
+    
+    const existingMaterial = savedMaterial || !!element._id;
     
     useEffect(() => {
         if (open) {
@@ -2148,18 +2155,20 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     setMaterialType('crystal');
                 }
                 reset(element);
+                setSavedMaterial(true);
             } else {
                 // New material
                 setMaterialType('');
                 reset(getDefaultValues());
+                setSavedMaterial(false);
             }
             setDeletedUrls([]);
         }
     }, [open, reset]);
 
     useEffect(() => {
-        if (materialType && !element._id) {
-            reset({ ...getDefaultValues() });
+        if (materialType && !existingMaterial) {
+            reset({ ...getDefaultValues(materialType) });
         }
     }, [materialType]);
 
@@ -2190,13 +2199,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     .then(res => {
                         receiveResponse(res);
                         getData();
-                        onClose();
-                    })
+                    });
                 if (deletedUrls.length > 0) {
                     deleteImages(deletedUrls)
                         .then((res) => {
                             setDeletedUrls([]);
-                        })
+                        });
                 }
             } else {
                 createWood(
@@ -2222,8 +2230,22 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     .then(res => {
                         receiveResponse(res);
                         getData();
-                        onClose();
-                    })
+                        
+                        // Update dialog props in parent
+                        const displayName = res.data.commonName || 'Wood';
+                        setDialogProps(prev => ({
+                            ...prev,
+                            element: res.data,
+                            title: `Edit Wood '${displayName}'`
+                        }));
+                        
+                        // Update local title
+                        setLocalTitle(`Edit Wood '${displayName}'`);
+                        
+                        // Update form with new data that includes ID
+                        reset(res.data);
+                        setSavedMaterial(true);
+                    });
             }
         } else if (materialType === 'crystal') {
             if (existingMaterial) {
@@ -2240,13 +2262,12 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     .then(res => {
                         receiveResponse(res);
                         getData();
-                        onClose();
-                    })
+                    });
                 if (deletedUrls.length > 0) {
                     deleteImages(deletedUrls)
                         .then((res) => {
                             setDeletedUrls([]);
-                        })
+                        });
                 }
             } else {
                 createCrystal(
@@ -2261,8 +2282,22 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
                     .then(res => {
                         receiveResponse(res);
                         getData();
-                        onClose();
-                    })
+                        
+                        // Update dialog props in parent
+                        const displayName = res.data.crystalName || 'Crystal';
+                        setDialogProps(prev => ({
+                            ...prev,
+                            element: res.data,
+                            title: `Edit Stone/Crystal '${displayName}'`
+                        }));
+                        
+                        // Update local title
+                        setLocalTitle(`Edit Stone/Crystal '${displayName}'`);
+                        
+                        // Update form with new data that includes ID
+                        reset(res.data);
+                        setSavedMaterial(true);
+                    });
             }
         }
     };
@@ -2615,7 +2650,7 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle style={dialogTitleStyle}>
-                {title}
+                {localTitle}
                 <div style={{ float: 'right', display: 'flex' }}>
                     {materialType && <button
                         type="button"

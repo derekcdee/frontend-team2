@@ -460,6 +460,10 @@ export default function AdminPage() {
         setDialogOpen(true);
     };
 
+    const setDialogPropsHandler = (newProps) => {
+        setDialogProps(prev => ({ ...prev, ...newProps }));
+    };
+
     const handlePasswordDialogOpen = (props) => {
         setPasswordDialogProps({ ...props, title: 'Change Password' });
         setPasswordDialogOpen(true);
@@ -491,10 +495,10 @@ export default function AdminPage() {
             <div className='user-content'>
                 <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData || []} accessoryData={accessoryData || []} materialData={materialData || []} userData={userData || []} />
             </div>
-            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} cueData={cueData} materialData={materialData} {...dialogProps} />}
-            {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
-            {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
-            {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} getData={getData} {...dialogProps} />}
+            {adminPage === 'Cues' && <CueDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} cueData={cueData} materialData={materialData} {...dialogProps} />}
+            {adminPage === 'Accessories' && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
+            {adminPage === 'Materials' && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
+            {adminPage === 'Users' && <UserDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
             {passwordDialogOpen && <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} getData={getData} {...passwordDialogProps} />}
             {deleteDialogOpen && <DeleteDialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} getData={getData} adminPage={adminPage} {...deleteDialogProps} />}
         </div>
@@ -1895,14 +1899,21 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
     );
 }
 
-function AccessoryDialog({ open, onClose, title, getData, element = { name: '', description: '', price: '', accessoryNumber: '', status: '', imageUrls: [] } }) {
+function AccessoryDialog({ open, onClose, title: initialTitle, getData, setDialogProps, element = { name: '', description: '', price: '', accessoryNumber: '', status: '', imageUrls: [] } }) {
     const [deletedUrls, setDeletedUrls] = useState([]);
+    const [savedAccessory, setSavedAccessory] = useState(false);
+    const [localTitle, setLocalTitle] = useState(initialTitle);
     
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue, getValues } = useForm({
         defaultValues: element
     });
 
-    const existingAccessory = !!element._id;
+    // Update local title when prop changes
+    useEffect(() => {
+        setLocalTitle(initialTitle);
+    }, [initialTitle]);
+
+    const existingAccessory = savedAccessory || !!element._id;
     
     const formRef = useRef(null);
 
@@ -1910,6 +1921,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
         if (open) {
             reset(element);
             setDeletedUrls([]);
+            setSavedAccessory(!!element._id);
         }
     }, [open, reset]);
 
@@ -1919,7 +1931,6 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                 .then((res) => {
                     receiveResponse(res);
                     getData();
-                    onClose();
                 })
             if (deletedUrls.length > 0) {
                 deleteImages(deletedUrls)
@@ -1932,7 +1943,17 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
                 .then((res) => {
                     receiveResponse(res);
                     getData();
-                    onClose();
+
+                    setDialogProps(prev => ({
+                        ...prev,
+                        element: res.data,
+                        title: `Edit Accessory '${res.data.name}'`
+                    }));
+                    
+                    setLocalTitle(`Edit Accessory '${res.data.name}'`);
+
+                    reset(res.data);
+                    setSavedAccessory(true);
                 })
         }
     };
@@ -1952,7 +1973,7 @@ function AccessoryDialog({ open, onClose, title, getData, element = { name: '', 
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle style={dialogTitleStyle}>
-                {title}
+                {localTitle} {/* Use local title here */}
                 <div style={{ float: 'right', display: 'flex' }}>
                     <button
                         type="button"
@@ -2652,21 +2673,31 @@ function MaterialDialog({ open, onClose, title, getData, element = false }) {
     );
 }
 
-function UserDialog({ open, onClose, title, getData, element = { email: '', password: '', firstName: '', lastName: '' } }) {
+function UserDialog({ open, onClose, title: initialTitle, getData, setDialogProps, element = { email: '', password: '', firstName: '', lastName: '' } }) {
+    const [savedUser, setSavedUser] = useState(false);
+    const [localTitle, setLocalTitle] = useState(initialTitle);
+    
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm({
         defaultValues: element
     });
 
-    const existingUser = !!element._id;
+    // Update local title when prop changes
+    useEffect(() => {
+        setLocalTitle(initialTitle);
+    }, [initialTitle]);
+
+    const existingUser = savedUser || !!element._id;
 
     useEffect(() => {
         if (open) {
             reset(element);
+            setSavedUser(!!element._id);
         }
     }, [open, reset]);
 
     const onSubmit = (data) => {
         const userData = {
+            _id: data._id,
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
@@ -2680,14 +2711,26 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
                 .then((res) => {
                     receiveResponse(res);
                     getData();
-                    onClose();
+                    
+                    // Update dialog props in parent
+                    setDialogProps(prev => ({
+                        ...prev,
+                        element: res.data,
+                        title: `Edit User '${res.data.firstName || res.data.email}'`
+                    }));
+                    
+                    // Update local title
+                    setLocalTitle(`Edit User '${res.data.firstName || res.data.email}'`);
+                    
+                    // Update form with new data that includes ID
+                    reset(res.data);
+                    setSavedUser(true);
                 });
         } else {
-            editUser(element._id, userData.email, userData.firstName, userData.lastName)
+            editUser(userData._id, userData.email, userData.firstName, userData.lastName)
                 .then((res) => {
                     receiveResponse(res);
                     getData();
-                    onClose();
                 });
         }
     };
@@ -2708,7 +2751,7 @@ function UserDialog({ open, onClose, title, getData, element = { email: '', pass
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle style={dialogTitleStyle}>
-                {title}
+                {localTitle}
                 <div style={{ float: 'right', display: 'flex' }}>
                     <button
                         type="button"

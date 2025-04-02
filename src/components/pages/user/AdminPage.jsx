@@ -797,7 +797,7 @@ function UsersTable({ data, onEditClick, onPasswordEditClick, onDeleteClick }) {
 }
 
 // Add handleWrapColor to the CueDialog default element properties
-function CueDialog({ open, onClose, title, getData, cueData, materialData, element = {
+function CueDialog({ open, onClose, title, getData, cueData, materialData, setDialogProps, element = {
     cueNumber: new Date().getFullYear() + '-',
     name: '',
     description: '',
@@ -855,6 +855,13 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
     const [isCustomJointPinSize, setIsCustomJointPinSize] = useState(false);
     const [isCustomTipSize, setIsCustomTipSize] = useState(false);
     const [deletedUrls, setDeletedUrls] = useState([]);
+    const [savedCue, setSavedCue] = useState(false);
+    const [localTitle, setLocalTitle] = useState(title);
+
+    useEffect(() => {
+        setLocalTitle(title);
+    }, [title]);
+
     const woods = materialData?.filter(item => item.commonName && item.status === "Available") || [];
     const crystals = materialData?.filter(item => item.crystalName && item.status === "Available") || [];
     
@@ -907,6 +914,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                 setValue('cueNumber', nextCueNumber);
             }
             setDeletedUrls([]);
+            setSavedCue(!!element._id);
         }
     }, [open, reset]);
 
@@ -937,18 +945,17 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
         }
     }, [materialData, open, element._id]);
 
-    const existingCue = !!element._id;
+    const existingCue = savedCue || !!element._id;
 
     const onSubmit = (data) => {
         data.isFullSplice = buttType;
         data.includeWrap = includeWrap;
         console.log(data)
         if (existingCue) {
-            editCue(element._id, data)
+            editCue(data._id, data)
                 .then((res) => {
                     receiveResponse(res);
                     getData();
-                    onClose();
                 })
             if (deletedUrls.length > 0) {
                 deleteImages(deletedUrls)
@@ -962,7 +969,16 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
                 .then((res) => {
                     receiveResponse(res);
                     getData();
-                    onClose();
+                    setDialogProps(prev => ({
+                        ...prev,
+                        element: res.data,
+                        title: `Edit Cue '${res.data.name}'`
+                    }));
+
+                    setLocalTitle(`Edit Cue '${res.data.name}'`);
+                    
+                    reset(res.data);
+                    setSavedCue(true);
                 })
         }
     };
@@ -1221,7 +1237,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, eleme
     return (
         <Dialog open={open} onClose={onClose} fullScreen>
             <DialogTitle style={dialogTitleStyle}>
-                {title}
+                {localTitle}
                 <div style={{ float: 'right', display: 'flex' }}>
                     <button
                         type="button"

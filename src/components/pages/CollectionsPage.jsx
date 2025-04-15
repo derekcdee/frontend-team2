@@ -339,71 +339,70 @@ export default function CollectionsPage() {
         // Define collection-specific filters and sort options
         switch (collection) {
             case "cues":
-                setFilterOptions([
-                    {
-                        title: "Price",
-                        type: "priceRange",
-                        min: 0,
-                        max: 3500,
-                        paramPrefix: "price"
-                    },
-                    {
-                        title: "Availability",
-                        type: "checkbox",
-                        options: [
-                            { label: "Available", value: "available" },
-                            { label: "Upcoming", value: "upcoming" },
-                            { label: "Sold", value: "sold" }
-                        ]
-                    },
-                    {
-                        title: "Features",
-                        type: "checkbox",
-                        options: [
-                            { label: "Inlays", value: "inlays" },
-                            { label: "Points", value: "points" },
-                            { label: "Wrap", value: "wrap" }
-                        ]
-                    },
-                ]);
-                setSortOptions([
-                    { value: "newest", label: "Date: Newest First" },
-                    { value: "oldest", label: "Date: Oldest First" },
-                    { value: "price-asc", label: "Price: Low to High" },
-                    { value: "price-desc", label: "Price: High to Low" },
-                    { value: "alphabet-a-z", label: "Alphabetical: A-Z" },
-                    { value: "alphabet-z-a", label: "Alphabetical: Z-A" },
-                ]);
                 getCueCollection()
                     .then((res) => {
                         const data = [...res.data];
+                        
+                        // Calculate the highest price (round up to nearest 100)
+                        const highestPrice = data.length ? 
+                            Math.ceil(Math.max(...data.map(item => item.price || 0)) / 100) * 100 : 
+                            10000; // Default if no data
+                        
+                        setFilterOptions([
+                            {
+                                title: "Price",
+                                type: "priceRange",
+                                min: 0,
+                                max: highestPrice,
+                                paramPrefix: "price"
+                            },
+                            // Other filter options remain the same
+                            {
+                                title: "Availability",
+                                type: "checkbox",
+                                options: [
+                                    { label: "Available", value: "available" },
+                                    { label: "Upcoming", value: "upcoming" },
+                                    { label: "Sold", value: "sold" }
+                                ]
+                            },
+                            {
+                                title: "Features",
+                                type: "checkbox",
+                                options: [
+                                    { label: "Inlays", value: "inlays" },
+                                    { label: "Points", value: "points" },
+                                    { label: "Wrap", value: "wrap" }
+                                ]
+                            },
+                        ]);
+                        
                         setData(data);
-                        setFilteredData(data); // Initialize filtered data as well
+                        setFilteredData(data);
                     });
                 break;
                 
+            // Do the same for accessories and materials cases
             case "accessories":
-                setFilterOptions([
-                    {
-                        title: "Price",
-                        type: "priceRange",
-                        min: 0,
-                        max: 500,
-                        paramPrefix: "price"
-                    },
-                ]);
-                setSortOptions([
-                    { value: "newest", label: "Date: Newest First" },
-                    { value: "oldest", label: "Date: Oldest First" },
-                    { value: "price-asc", label: "Price: Low to High" },
-                    { value: "price-desc", label: "Price: High to Low" },
-                    { value: "alphabet-a-z", label: "Alphabetical: A-Z" },
-                    { value: "alphabet-z-a", label: "Alphabetical: Z-A" },
-                ]);
-                // Add dummy data for testing pagination
                 getAccessoryCollection()
                     .then((res) => {
                         const data = [...res.data];
+                        
+                        // Calculate highest price
+                        const highestPrice = data.length ? 
+                            Math.ceil(Math.max(...data.map(item => item.price || 0)) / 100) * 100 : 
+                            500;
+                            
+                        setFilterOptions([
+                            {
+                                title: "Price",
+                                type: "priceRange",
+                                min: 0,
+                                max: highestPrice,
+                                paramPrefix: "price"
+                            },
+                        ]);
+                        
                         setData(data);
                         setFilteredData(data);
                     });

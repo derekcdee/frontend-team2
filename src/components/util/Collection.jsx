@@ -1,13 +1,27 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Card } from "./Card";
+import { NavLink } from "react-router-dom";
 
 // Filter Dropdown Component that can accept either options or custom content
-const FilterDropdown = ({ title, options, customContent, onFilterChange, activeValues, isFirstFilter = false }) => {
-    const [isOpen, setIsOpen] = useState(isFirstFilter); // Only open if it's the first filter
+const FilterDropdown = ({ title, options, customContent, onFilterChange, activeValues, isFirstFilter = false, isExclusivePair = false }) => {
+    const [isOpen, setIsOpen] = useState(isFirstFilter);
 
     const handleCheckboxChange = (value) => {
         onFilterChange(value, !activeValues[value]);
     };
+
+    // Filter options to hide opposites of selected values
+    const filteredOptions = isExclusivePair 
+        ? options.filter(option => {
+            // If this is a negative option, check if the positive option is active
+            if (option.oppositeOf) {
+                return !activeValues[option.oppositeOf];
+            }
+            // For positive options, check if its negative counterpart is active
+            const oppositeOption = options.find(o => o.oppositeOf === option.value);
+            return oppositeOption ? !activeValues[oppositeOption.value] : true;
+        })
+        : options;
 
     return (
         <div className="filter-dropdown">
@@ -25,7 +39,7 @@ const FilterDropdown = ({ title, options, customContent, onFilterChange, activeV
                         customContent
                     ) : (
                         <ul>
-                            {options.map((option, index) => (
+                            {filteredOptions.map((option, index) => (
                                 <li key={index}>
                                     <label>
                                         <input 
@@ -96,16 +110,26 @@ const PriceRangeFilter = ({ min = 0, max = 3500, paramPrefix, onFilterChange, ac
     }, [minValue, maxValue, isDraggingMin, isDraggingMax]);
     
     const getPercentage = (value) => {
+        // Map the value from the [min, max] range to the [0, 100] range
+        const percentage = ((value - min) / (max - min)) * 100;
+        
+        // Add buffer only at the edges for better handle usability
         const buffer = 12;
         const bufferPercentage = (buffer / sliderRef.current?.clientWidth) * 100 || 0;
-        const rawPercentage = (value / max) * 100;
-        return bufferPercentage + rawPercentage * (100 - 2 * bufferPercentage) / 100;
+        
+        // For minimum value, return nearly 0 (with tiny buffer)
+        if (value === min) return 0;
+        // For maximum value, return nearly 100 (with tiny buffer)
+        if (value === max) return 100;
+        
+        // For values in between, apply buffer on both sides proportionally
+        return bufferPercentage + percentage * (100 - 2 * bufferPercentage) / 100;
     };
     
     const handleMinChange = (e) => {
-        const inputValue = e.target.value === '' ? 0 : parseInt(e.target.value);
+        const inputValue = e.target.value === '' ? min : parseInt(e.target.value);
         if (isNaN(inputValue)) return;
-        const constrainedValue = Math.max(0, Math.min(inputValue, maxValue - 50));
+        const constrainedValue = Math.max(min, Math.min(inputValue, maxValue - 50));
         setMinValue(constrainedValue);
     };
     
@@ -121,14 +145,14 @@ const PriceRangeFilter = ({ min = 0, max = 3500, paramPrefix, onFilterChange, ac
         
         const rect = sliderRef.current.getBoundingClientRect();
         const percentage = (e.clientX - rect.left) / rect.width;
-        const value = Math.round(percentage * max);
+        const value = Math.round(min + percentage * (max - min));
         
         // Determine whether to move min or max handle
         const minDistance = Math.abs(value - minValue);
         const maxDistance = Math.abs(value - maxValue);
         
         if (minDistance <= maxDistance) {
-            setMinValue(Math.min(value, maxValue - 50));
+            setMinValue(Math.max(min, Math.min(value, maxValue - 50)));
         } else {
             setMaxValue(Math.max(value, minValue + 50));
         }
@@ -148,14 +172,15 @@ const PriceRangeFilter = ({ min = 0, max = 3500, paramPrefix, onFilterChange, ac
         
         const rect = sliderRef.current.getBoundingClientRect();
         const percentage = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        const value = Math.round(percentage * max);
+        // This calculation doesn't account for the min value
+        const value = Math.round(min + percentage * (max - min));
         
         if (isDraggingMin) {
-            setMinValue(Math.min(value, maxValue - 50));
+            setMinValue(Math.max(min, Math.min(value, maxValue - 50)));
         } else if (isDraggingMax) {
             setMaxValue(Math.max(value, minValue + 50));
         }
-    }, [isDraggingMin, isDraggingMax, minValue, maxValue, max]);
+    }, [isDraggingMin, isDraggingMax, minValue, maxValue, max, min]);
     
     const handleMouseUp = useCallback(() => {
         setIsDraggingMin(false);
@@ -380,7 +405,8 @@ const FilterArea = ({ filterOptions, activeFilters, onFilterChange }) => {
                 <FilterDropdown 
                     key={index}
                     title={filter.title} 
-                    isFirstFilter={index === 0} // Only the first filter (index 0) gets true
+                    isFirstFilter={index === 0}
+                    isExclusivePair={filter.isExclusivePair}
                     customContent={
                         filter.type === "priceRange" 
                             ? <PriceRangeFilter 
@@ -410,7 +436,8 @@ export default function Collection({
     searchQuery = '',
     itemsPerPage = 12,
     currentPage = 1,
-    collection = '', // Add this new prop
+    collection = '',
+    loading = false, // New prop for loading state
     onFilterChange,
     onSortChange,
     onSearchChange,
@@ -525,41 +552,58 @@ export default function Collection({
 
                     {/* Product listing */}
                     <div className="collection-listing">
-                        <ul>
-                            {currentItems.map((item, index) => {
-                                // Fix the collection comparison and handle material title fields
-                                let title;
-                                let tag;
+                        {loading ? (
+                            <div className="collection-loading">
+                                <div className="loading-spinner"></div>
+                                <p>Loading items...</p>
+                            </div>
+                        ) : currentItems.length > 0 ? (
+                            <ul>
+                                {currentItems.map((item, index) => {
+                                    // Fix the collection comparison and handle material title fields
+                                    let title;
+                                    let tag;
 
-                                if (collection === 'cues' || collection === 'accessories') {
-                                    title = item.name;
-                                    tag = item.cueNumber || item.accessoryNumber;
-                                } else {
-                                    // For materials, handle both wood and crystal types
-                                    title = item.commonName || item.crystalName || item.name || 'Unknown';
-                                }
-                                
-                                return (
-                                    <li key={index}>
-                                        <Card 
-                                            image={item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : '/placeholder.png'}
-                                            title={title}
-                                            tag={tag}
-                                            price={item.price}
-                                            linkTo={`/${collection}/${item._id}`} // Generate link using collection name
-                                        />
-                                    </li>
-                                );
-                            })}
-                        </ul>
+                                    if (collection === 'cues' || collection === 'accessories') {
+                                        title = item.name;
+                                        tag = item.cueNumber || item.accessoryNumber;
+                                    } else {
+                                        // For materials, handle both wood and crystal types
+                                        title = item.commonName || item.crystalName || item.name || 'Unknown';
+                                    }
+                                    
+                                    return (
+                                        <li key={index}>
+                                            <Card 
+                                                image={item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : '/placeholder.png'}
+                                                title={title}
+                                                tag={tag}
+                                                price={item.price}
+                                                linkTo={`/${collection}/${item._id}`} // Generate link using collection name
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <div className="empty-collection-message">
+                                <p>No items found that match your current filters.</p>
+                                <p>
+                                    <NavLink to={`/${collection}`} className="return-link">
+                                        <i className="fa-solid fa-arrow-left"></i> Return to all {collection}
+                                    </NavLink>
+                                </p>
+                            </div>
+                        )}
                     </div>
                     
-                    {/* Pagination */}
-                    <Pagination 
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageButtonClick}
-                    />
+                    {!loading && currentItems.length > 0 && (
+                        <Pagination 
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageButtonClick}
+                        />
+                    )}
                 </div>
             </div>
         </div>

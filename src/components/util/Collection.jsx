@@ -1,6 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Card } from "./Card";
 import { NavLink } from "react-router-dom";
+import { Dialog, AppBar, Toolbar, IconButton, Typography, Slide, DialogActions } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { DefaultButton } from "./Buttons";
+
+// Create a transition component for the dialog
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 // Filter Dropdown Component that can accept either options or custom content
 const FilterDropdown = ({ title, options, customContent, onFilterChange, activeValues, isFirstFilter = false, isExclusivePair = false }) => {
@@ -336,7 +344,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
 // Add this component before the main Collection component
 
-const ActiveFilters = ({ filters, options, onFilterRemove, onClearAll }) => {
+const ActiveFilters = ({ filters, options, onFilterRemove, onClearAll, isMobile }) => {
     // Count active filters (excluding price range filters that are at their default values)
     const filterCount = Object.keys(filters).length;
     
@@ -347,12 +355,12 @@ const ActiveFilters = ({ filters, options, onFilterRemove, onClearAll }) => {
         // Skip undefined values
         if (value === undefined) return null;
         
-        // Handle price filters differently
+        // Handle price filters differently - keep short for both desktop and mobile
         if (key.endsWith('_min')) {
-            return `Price: Min $${value}`;
+            return isMobile ? `$${value}+` : `Price: Min $${value}`;
         }
         if (key.endsWith('_max')) {
-            return `Price: Max $${value}`;
+            return isMobile ? `$${value}` : `Price: Max $${value}`;
         }
         
         // Find which filter group this option belongs to and the option itself
@@ -360,7 +368,12 @@ const ActiveFilters = ({ filters, options, onFilterRemove, onClearAll }) => {
             if (group.type === 'checkbox') {
                 const option = group.options.find(opt => opt.value === key);
                 if (option) {
-                    // Return with category: label format
+                    // For mobile, return just the label without the category
+                    if (isMobile) {
+                        return option.label;
+                    }
+                    
+                    // For desktop, return with category: label format
                     const categoryName = group.title.replace(/:$/, ''); // Remove any trailing colon
                     return `${categoryName}: ${option.label}`;
                 }
@@ -444,6 +457,19 @@ export default function Collection({
     onItemsPerPageChange,
     onPageChange
 }) {
+    const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 770);
+    
+    // Track window width for responsive behavior
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 770);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const handleSearchInputChange = (e) => {
         onSearchChange(e.target.value);
     };
@@ -486,11 +512,69 @@ export default function Collection({
             onFilterChange(key, undefined);
         });
     };
-
+    
+    const toggleMobileFilters = () => {
+        setShowMobileFilters(!showMobileFilters);
+    };
+    
     return (
         <div className="collection-wrapper">
+            {/* Material UI Full Screen Dialog for Mobile Filters */}
+            {isMobile && (
+                <Dialog
+                    fullScreen
+                    open={showMobileFilters}
+                    onClose={toggleMobileFilters}
+                    TransitionComponent={Transition}
+                >
+                    <div className="mobile-filter-header" style={{ 
+                        borderBottom: '1px solid #eee',
+                        padding: '15px 20px',
+                        position: 'sticky',
+                        top: 0,
+                        backgroundColor: 'white',
+                        zIndex: 1000
+                    }}>
+                        <h1 className="dialog-header1">Filter By</h1>
+                        <button
+                            type="button"
+                            className="fa-solid fa-xmark admin-action-button"
+                            onClick={toggleMobileFilters}
+                            style={{ 
+                                fontSize: '1.8rem',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: "0 10px"
+                            }}
+                        />
+                    </div>
+                    <div className="dialog-filter-container">
+                        <FilterArea 
+                            filterOptions={filterOptions} 
+                            activeFilters={activeFilters}
+                            onFilterChange={onFilterChange}
+                        />
+                    </div>
+                    <DialogActions sx={{ 
+                        position: 'sticky', 
+                        bottom: 0, 
+                        bgcolor: 'white', 
+                        borderTop: '1px solid #eee',
+                        padding: '15px',
+                        display: 'flex',
+                        justifyContent: 'center'
+                    }}>
+                        <DefaultButton 
+                            text={`See ${data.length} Product(s)`}
+                            onClick={toggleMobileFilters}
+                        />
+                    </DialogActions>
+                </Dialog>
+            )}
+            
             <div className="collection-container">
-                {/* Filters Column */}
+                {/* Desktop Filters Column - hidden on mobile via CSS */}
                 <FilterArea 
                     filterOptions={filterOptions} 
                     activeFilters={activeFilters}
@@ -499,7 +583,7 @@ export default function Collection({
 
                 {/* Main content area */}
                 <div className="collection-content">
-                    {/* Search bar */}
+                    {/* Search bar - always at the top */}
                     <div className="collection-search">
                         <i className="fa-solid fa-magnifying-glass search-icon"></i>
                         <input 
@@ -510,37 +594,66 @@ export default function Collection({
                         />
                     </div>
                     
-                    {/* Product count and sorting */}
-                    <div className="collection-controls">
-                        <div className="product-count">
-                            {data.length} products
-                        </div>
-                        <div className="display-options">
-                            <div className="items-per-page">
-                                <select 
-                                    value={validItemsPerPageValues.includes(itemsPerPage) ? itemsPerPage : 12}
-                                    onChange={handleItemsPerPageChange}
-                                    className="show-select"
-                                >
-                                    <option value="12">Show 12</option>
-                                    <option value="24">Show 24</option>
-                                    <option value="48">Show 48</option>
-                                    {!validItemsPerPageValues.includes(itemsPerPage) && (
-                                        <option value={itemsPerPage}>Show {itemsPerPage}</option>
-                                    )}
-                                </select>
+                    {/* Mobile controls - Filter button and Sort dropdown */}
+                    {isMobile && (
+                        <>
+                            <div className="mobile-controls-row">
+                                <button className="filter-button" onClick={toggleMobileFilters}>
+                                    <i className="fa-solid fa-filter"></i>
+                                    Filter By
+                                </button>
+                                
+                                <div className="mobile-sorting-options">
+                                    <select value={activeSort} onChange={handleSortChange}>
+                                        {sortOptions.map((option, index) => (
+                                            <option key={index} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
-                            <div className="sorting-options">
-                                <select value={activeSort} onChange={handleSortChange}>
-                                    {sortOptions.map((option, index) => (
-                                        <option key={index} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
+                            
+                            {/* Product count for mobile */}
+                            <div className="mobile-product-count">
+                                {loading ? null : `${data.length} Products`}
+                            </div>
+                        </>
+                    )}
+                    
+                    {/* Desktop controls - only shown on desktop */}
+                    {!isMobile && (
+                        <div className="collection-controls">
+                            <div className="product-count">
+                                {loading ? null : `${data.length} products`}
+                            </div>
+                            <div className="display-options">
+                                <div className="items-per-page">
+                                    <select 
+                                        value={validItemsPerPageValues.includes(itemsPerPage) ? itemsPerPage : 12}
+                                        onChange={handleItemsPerPageChange}
+                                        className="show-select"
+                                    >
+                                        <option value="12">Show 12</option>
+                                        <option value="24">Show 24</option>
+                                        <option value="48">Show 48</option>
+                                        {!validItemsPerPageValues.includes(itemsPerPage) && (
+                                            <option value={itemsPerPage}>Show {itemsPerPage}</option>
+                                        )}
+                                    </select>
+                                </div>
+                                <div className="sorting-options">
+                                    <select value={activeSort} onChange={handleSortChange}>
+                                        {sortOptions.map((option, index) => (
+                                            <option key={index} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Active Filters */}
                     <ActiveFilters 
@@ -548,15 +661,13 @@ export default function Collection({
                         options={filterOptions}
                         onFilterRemove={handleFilterRemove}
                         onClearAll={handleClearAllFilters}
+                        isMobile={isMobile}
                     />
 
-                    {/* Product listing */}
+                    {/* Product listing - same for both mobile and desktop */}
                     <div className="collection-listing">
                         {loading ? (
-                            <div className="collection-loading">
-                                <div className="loading-spinner"></div>
-                                <p>Loading items...</p>
-                            </div>
+                            null
                         ) : currentItems.length > 0 ? (
                             <ul>
                                 {currentItems.map((item, index) => {
@@ -579,7 +690,7 @@ export default function Collection({
                                                 title={title}
                                                 tag={tag}
                                                 price={item.price}
-                                                linkTo={`/${collection}/${item._id}`} // Generate link using collection name
+                                                linkTo={`/${collection}/${item._id}`}
                                             />
                                         </li>
                                     );
@@ -587,12 +698,19 @@ export default function Collection({
                             </ul>
                         ) : (
                             <div className="empty-collection-message">
-                                <p>No items found that match your current filters.</p>
-                                <p>
-                                    <NavLink to={`/${collection}`} className="return-link">
-                                        <i className="fa-solid fa-arrow-left"></i> Return to all {collection}
-                                    </NavLink>
-                                </p>
+                                {Object.keys(activeFilters).length === 0 && !searchQuery ? (
+                                    <div>
+                                        <p>
+                                            There are currently no products in this collection, for additional information or requests visit the <NavLink to="/pages/contact" className="inline-link">contact us page</NavLink>.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p>
+                                            No products found that match your current filters. For additional information or requests visit the <NavLink to="/pages/contact" className="inline-link">contact us page</NavLink>.
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

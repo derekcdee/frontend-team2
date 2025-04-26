@@ -378,3 +378,15 @@ export function deleteImages(imageUrls) {
         data: { urls: imageUrls }
     });
 }
+
+
+/*==============================================================
+# Sitewide Search
+==============================================================*/
+
+export function searchSite(searchTerm, fullSearch = false) {
+    return _ajax({
+        url: `/search?query=${encodeURIComponent(searchTerm)}${fullSearch ? '&full=true' : ''}`,
+        method: "GET",
+    })
+}

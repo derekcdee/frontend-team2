@@ -3,7 +3,11 @@ import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 import { createFocusTrap } from "focus-trap";
 import { DrawerLoginButton, LoginButton } from "./util/Buttons";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Dialog, IconButton, InputBase, Box, Typography } from "@mui/material";
+import { Search, Close } from "@mui/icons-material";
+import { searchSite } from "../util/requests";
+import { Card } from "./util/Card"; // Import the Card component
 
 const options = {
     "Materials": [
@@ -32,6 +36,7 @@ export default function Header() {
     const [hasScrolled, setHasScrolled] = useState(false);
     const [focusTrap, setFocusTrap] = useState(null);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    const [searchOpen, setSearchOpen] = useState(false);
     const headerRef = useRef(null);
     const location = useLocation();
     
@@ -134,6 +139,14 @@ export default function Header() {
         setOpenDropdown(null);
     };
 
+    const handleSearchOpen = () => {
+        setSearchOpen(true);
+    };
+
+    const handleSearchClose = () => {
+        setSearchOpen(false);
+    };
+
     return (
         <header className="main-header sticky" ref={headerRef}>
             {openDrawer && <div className="overlay header-overlay" />}
@@ -193,10 +206,20 @@ export default function Header() {
 
             {/* Icons */}
             <div className="header-icons">
-                <button className="fa-solid fa-magnifying-glass header-icon" />
+                <button 
+                    className="fa-solid fa-magnifying-glass header-icon" 
+                    onClick={handleSearchOpen}
+                    aria-label="Search"
+                />
                 <LoginButton onClick={handleLinkClick} />
                 <button className="fa-solid fa-cart-shopping header-icon" />
             </div>
+
+            <SearchDialog 
+                open={searchOpen} 
+                onClose={handleSearchClose} 
+                hasScrolled={hasScrolled} 
+            />
         </header>
     );
 }
@@ -322,5 +345,310 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
                 </nav>
             </div>
         </div>
+    );
+}
+
+function SearchDialog({ open, onClose, hasScrolled }) {
+    const [searchResults, setSearchResults] = useState([]);
+    const [nothingFound, setNothingFound] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef(null);
+    const navigate = useNavigate();
+    
+    // Reset state when dialog closes
+    useEffect(() => {
+        if (!open) {
+            setSearchResults([]);
+            setNothingFound(false);
+            setSearchQuery('');
+            if (searchInputRef.current) {
+                searchInputRef.current.value = '';
+            }
+        }
+    }, [open]);
+    
+    useEffect(() => {
+        if (open && searchInputRef.current) {
+            setTimeout(() => {
+                searchInputRef.current.focus();
+            }, 100);
+        }
+    }, [open]);
+    
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/collections/search?search=${encodeURIComponent(searchQuery)}`);
+            onClose();
+        }
+    };
+
+    const handleSearchInput = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+
+        if (query.length === 0) {
+            setSearchResults([]);
+            setNothingFound(false);
+            return;
+        }
+
+        searchSite(query)
+            .then((response) => {
+                setSearchResults(response.data);
+                setNothingFound(response.data.length === 0);
+            });
+    }
+    
+    // Helper function to get appropriate display name and link
+    const getItemDetails = (item) => {
+        let name = '';
+        let link = '';
+        
+        if (item.name) {
+            name = item.name;
+            if (item.cueNumber) link = `/cues/${item._id}`;
+            else if (item.accessoryNumber) link = `/accessories/${item._id}`;
+        } else if (item.commonName) {
+            name = item.commonName;
+            link = `/materials/${item._id}`;
+        } else if (item.crystalName) {
+            name = item.crystalName;
+            link = `/materials/${item._id}`;
+        }
+        
+        return { name, link };
+    };
+    
+    return (
+        <Dialog
+            fullWidth
+            open={open}
+            onClose={onClose}
+            PaperProps={{
+                sx: {
+                    position: 'absolute',
+                    top: 0,
+                    margin: 0,
+                    width: '100%', 
+                    maxWidth: '100%',
+                    borderRadius: 0,
+                    bgcolor: searchResults.length > 0 || nothingFound ? 'white' : 'black', // Make entire dialog black when empty
+                    color: 'white',
+                    boxShadow: 'none',
+                    // Height handling for search results
+                    height: searchResults.length > 0 || nothingFound ? 'auto' : 'auto', // Let black background adjust to content
+                    minHeight: hasScrolled ? '70px' : '100px',
+                    // Use 95vh to take up almost the entire viewport while leaving a small margin
+                    maxHeight: searchResults.length > 0 || nothingFound ? '100vh' : 'auto',
+                    // Always maintain scroll capability
+                    overflowY: searchResults.length > 0 || nothingFound ? 'auto' : 'hidden',
+                    overflowX: 'hidden', // Prevent horizontal scrolling
+                    // Smooth transition for size changes
+                    transition: 'all 0.3s ease'
+                }
+            }}
+            BackdropProps={{
+                sx: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                }
+            }}
+        >
+            <Box
+                component="form"
+                onSubmit={handleSearchSubmit}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 'auto',
+                    width: '100%',
+                    boxSizing: 'border-box', // Ensure padding is included in width calculation
+                }}
+            >
+                {/* Black search bar section */}
+                <Box
+                    sx={{
+                        backgroundColor: 'black',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: hasScrolled ? '70px' : '100px',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        transition: 'height 0.3s ease',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '4px',
+                            padding: '5px 10px',
+                            width: {
+                                xs: '90%',
+                                sm: '70%',
+                                md: '50%',
+                                lg: '40%'
+                            },
+                            maxWidth: '1000px',
+                            boxSizing: 'border-box',
+                        }}
+                    >
+                        <Search sx={{ color: 'black', marginRight: 1, flexShrink: 0 }} />
+                        <InputBase
+                            placeholder="Search..."
+                            inputRef={searchInputRef}
+                            fullWidth
+                            onChange={handleSearchInput}
+                            sx={{
+                                color: 'black',
+                                flexGrow: 1,
+                                '& .MuiInputBase-input': {
+                                    fontSize: '1.2rem',
+                                    fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                                }
+                            }}
+                        />
+                        <IconButton 
+                            onClick={onClose} 
+                            sx={{ color: 'black', flexShrink: 0 }}
+                            aria-label="Close search"
+                        >
+                            <Close />
+                        </IconButton>
+                    </Box>
+                </Box>
+                
+                {/* White results section with improved styling to match collections */}
+                {searchResults.length > 0 && (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            backgroundColor: 'white',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            color: 'black',
+                            overflow: 'hidden',
+                            fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: {
+                                    xs: '90%',
+                                    sm: '70%',
+                                    md: '50%',
+                                    lg: '40%'
+                                },
+                                maxWidth: '1000px',
+                                padding: '20px 0',
+                            }}
+                        >
+                            <Box
+                                className="search-results-grid"
+                                sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: {
+                                        xs: 'repeat(2, minmax(0, 1fr))',
+                                        sm: 'repeat(3, minmax(0, 1fr))',
+                                        md: 'repeat(4, minmax(0, 1fr))'
+                                    },
+                                    gap: '15px',
+                                    width: '100%',
+                                    '& > div': {
+                                        // Force equal width and proper containment
+                                        minWidth: 0,
+                                        maxWidth: '100%',
+                                        overflow: 'hidden',
+                                        // Set fixed aspect ratio
+                                        aspectRatio: '1 / 1.2',
+                                        // Fix inner styling
+                                        '& .card-wrapper': {
+                                            width: '100%',
+                                            height: '100%',
+                                            boxSizing: 'border-box',
+                                        },
+                                        '& .card-image': {
+                                            width: '100%',
+                                            height: 'auto',
+                                            aspectRatio: '1 / 1',
+                                            overflow: 'hidden'
+                                        },
+                                        '& .card-image img': {
+                                            aspectRatio: '1 / 1',
+                                            objectFit: 'cover',
+                                            width: '100%',
+                                            height: '100%'
+                                        }
+                                    }
+                                }}
+                            >
+                                {searchResults.map((item, index) => {
+                                    const { name, link } = getItemDetails(item);
+                                    return (
+                                        <Card 
+                                            key={index}
+                                            title={name}
+                                            image={item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : '/placeholder.png'}
+                                            tag={item.cueNumber || item.accessoryNumber || ''}
+                                            price={item.price}
+                                            linkTo={link}
+                                        />
+                                    );
+                                })}
+                            </Box>
+                            
+                            <Box sx={{ textAlign: 'center', padding: '10px 0' }}>
+                                <Typography 
+                                    component={NavLink} 
+                                    to={`/search?query=${encodeURIComponent(searchQuery)}`}
+                                    onClick={onClose}
+                                    sx={{ 
+                                        color: 'inherit', 
+                                        textDecoration: 'underline',
+                                        '&:hover': { color: '#666' },
+                                        fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                                    }}
+                                >
+                                    View all results
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                )}
+                
+                {nothingFound && (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            backgroundColor: 'white',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            color: 'black',
+                            textAlign: 'center',
+                            fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: {
+                                    xs: '90%',
+                                    sm: '70%',
+                                    md: '50%',
+                                    lg: '40%'
+                                },
+                                maxWidth: '800px',
+                                padding: '20px 0',
+                            }}
+                        >
+                            <Typography sx={{ fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif" }}>
+                                No results found
+                            </Typography>
+                        </Box>
+                    </Box>
+                )}
+            </Box>
+        </Dialog>
     );
 }

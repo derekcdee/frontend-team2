@@ -40,12 +40,13 @@ body {
   font-size: 1.5rem;
   letter-spacing: 0.06rem;
   line-height: 1.8;
+  overflow-x: hidden; 
 }
 
 .jmiller-app {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 h1, h2, h3, h4 {

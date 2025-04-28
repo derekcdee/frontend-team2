@@ -6,7 +6,7 @@ import "../../css/buttons.css";
 
 export default function BuildACuePage() {
     const orbitRef = useRef(null);
-    
+
     //buttons
     const zoomIn = () => {
         const controls = orbitRef.current;
@@ -19,17 +19,19 @@ export default function BuildACuePage() {
         controls.dollyIn(1.1);
         controls.update();
     };
-    
+
     const resetView = () => {
         const controls = orbitRef.current;
         controls.reset();
     };
 
+
     return (
         <div className="BuildACue" style={{ display: "flex", flexDirection: "column" }}>
             <div className="BuildACueDisplay" style={{ flex: "1", width: "100%" }}>
                 <Canvas 
-                    camera={{ position: [2, -350, 0], fov: 50, near: 0, far: 3000, zoom: 0.7 }} 
+                    camera={{ position: [300, 0, 0], fov: 90, near: 0.01, far: 900 }}
+
                     orthographic={true}
                     style={{ height: "100%" }}
                 >
@@ -38,10 +40,7 @@ export default function BuildACuePage() {
                     <directionalLight position={[0, 0, 5]} color="white" />
                     <CueModelOne />
                 </Canvas>
-                <div className="controls" style={{ position: 'absolute', bottom: 30, left: '50%', 
-                    transform: 'translateX(-50%)', display: 'flex', gap: '12px', padding: '12px 16px', 
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', 
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000, backdropFilter: 'blur(8px)' }}>
+                <div className="controls" style={{ position: 'absolute', bottom: 30, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '12px', padding: '12px 16px', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000, backdropFilter: 'blur(8px)' }}>
                     <button className="control-btn" onClick={zoomIn}>Zoom In (+)</button>
                     <button className="control-btn" onClick={zoomOut}>Zoom Out (-)</button>
                     <button className="control-btn" onClick={resetView}>Reset View</button>

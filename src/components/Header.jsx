@@ -8,6 +8,7 @@ import { Dialog, IconButton, InputBase, Box, Typography } from "@mui/material";
 import { Search, Close } from "@mui/icons-material";
 import { searchSite } from "../util/requests";
 import { Card } from "./util/Card"; // Import the Card component
+import { SOCIAL_MEDIA_LINKS } from "../util/globalConstants";
 
 const options = {
     "Materials": [
@@ -175,8 +176,16 @@ export default function Header() {
                     <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
                         <DrawerLoginButton onClick={handleLinkClick} />
                         <div>
-                            <button className="fa-brands fa-instagram header-icon" />
-                            <button className="fa-brands fa-facebook header-icon" />
+                            {SOCIAL_MEDIA_LINKS.map((social) => (
+                                <a 
+                                    key={social.name}
+                                    href={social.url}
+                                    className={`header-icon ${social.icon}`}
+                                    aria-label={social.name}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -367,14 +376,6 @@ function SearchDialog({ open, onClose, hasScrolled }) {
         }
     }, [open]);
     
-    useEffect(() => {
-        if (open && searchInputRef.current) {
-            setTimeout(() => {
-                searchInputRef.current.focus();
-            }, 100);
-        }
-    }, [open]);
-    
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
@@ -407,14 +408,14 @@ function SearchDialog({ open, onClose, hasScrolled }) {
         
         if (item.name) {
             name = item.name;
-            if (item.cueNumber) link = `/cues/${item._id}`;
-            else if (item.accessoryNumber) link = `/accessories/${item._id}`;
+            if (item.cueNumber) link = `/cues/${item.guid}`;
+            else if (item.accessoryNumber) link = `/accessories/${item.guid}`;
         } else if (item.commonName) {
             name = item.commonName;
-            link = `/materials/${item._id}`;
+            link = `/materials/${item.guid}`;
         } else if (item.crystalName) {
             name = item.crystalName;
-            link = `/materials/${item._id}`;
+            link = `/materials/${item.guid}`;
         }
         
         return { name, link };
@@ -452,6 +453,9 @@ function SearchDialog({ open, onClose, hasScrolled }) {
                 sx: {
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 }
+            }}
+            TransitionProps={{
+                onEntered: () => searchInputRef.current?.focus(),
             }}
         >
             <Box

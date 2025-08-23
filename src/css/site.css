@@ -101,7 +101,37 @@ p {
   font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif !important;
   font-size: .8em;
   color: var(--miller-black) !important;
-  width: 30vw !important;
+  width: 40vw !important;
+}
+
+.Toastify__toast-container--top-center {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+  width: auto;
+}
+
+.Toastify__toast {
+  padding: 12px !important;
+}
+
+@media (max-width: 990px) {
+  .toast-class {
+    margin-top: 45px;
+    font-size: 0.8em;
+    width: 70vw !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .toast-class {
+    margin-top: 45px;
+    font-size: 0.55em;
+    width: 80vw !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: fixed !important;
+  }
 }
 
 .form-field-input[list],
@@ -298,6 +328,7 @@ select.form-field-input::-ms-expand {
   top: 100%;
   background-color: var(--miller-dark-grey);
   display: none;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 6px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 .dropdown-menu.open {
   display: block;
@@ -339,6 +370,7 @@ select.form-field-input::-ms-expand {
 }
 .header-icon,
 .drawer-login-icon {
+  color: var(--miller-white);
   width: 44px;
   height: 44px;
   padding: 0 !important;
@@ -381,8 +413,134 @@ select.form-field-input::-ms-expand {
 # Footer
 ==============================================================*/
 .main-footer {
+  border-top: 1px solid var(--miller-white);
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Main footer content - gray background */
+.footer-content {
+  background-color: var(--miller-dark-grey); /* Gray background */
+  padding: 1.5rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+/* Footer logo */
+.footer-logo {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-logo-img {
+  height: 60px;
+  width: auto;
+}
+
+.footer-contact-info {
+  color: var(--miller-white);
+  font-family: 'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif;
+}
+
+.footer-contact-info p {
+  margin: 0.2rem 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+/* Footer navigation */
+.footer-navigation {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-nav-list {
+  font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif;
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 1em;
+}
+
+/* Social media icons */
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.footer-social-link {
+  color: var(--miller-white);
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 12px;
+}
+
+.footer-social-link:hover {
+  transform: scale(1.25);
+}
+
+/* White separator line */
+.footer-separator {
+  height: 1px;
+  background-color: var(--miller-white);
+  width: 100%;
+}
+
+/* Copyright section - black background */
+.footer-copyright {
   background-color: var(--miller-black);
   color: var(--miller-white);
+  text-align: center;
+  padding: .5rem;
+}
+
+.footer-copyright p {
+  margin: 0;
+  font-family: 'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 3rem;
+    padding: 2rem 4rem 1.5rem 4rem;
+  }
+  
+  .footer-nav-list {
+    flex-direction: column;
+    gap: .8rem;
+    font-size: .9em;
+  }
+  
+  .footer-logo-img {
+    height: 50px;
+  }
+
+  .footer-logo {
+    padding-top: .5rem;
+  }
 }
 
 
@@ -415,8 +573,29 @@ select.form-field-input::-ms-expand {
 .miller-dialog-typography h1,
 .miller-dialog-typography h2,
 .miller-dialog-typography h3,
+.miller-dialog-typography h4,
+.miller-dialog-typography h5,
+.miller-dialog-typography h6,
 .miller-dialog-typography .MuiDialogTitle-root {
-  font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif;
+  font-family: 'bouwsma-uncial', system-ui, Helvetica, Arial, sans-serif !important;
+}
+
+/* Attribute labels should also use bouwsma-uncial */
+.miller-dialog-typography .MuiTypography-root[color="primary"] {
+  font-family: 'bouwsma-uncial', serif !important;
+}
+
+/* Body text should use VTGoblin Hand - target specific MUI classes */
+.miller-dialog-typography .MuiTypography-body1,
+.miller-dialog-typography .MuiTypography-body2,
+.miller-dialog-typography .MuiTypography-root.MuiTypography-body1,
+.miller-dialog-typography .MuiTypography-root.MuiTypography-body2 {
+  font-family: 'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif !important;
+}
+
+/* Ensure text.secondary colored elements use VTGoblin Hand */
+.miller-dialog-typography .MuiTypography-root[color="text.secondary"] {
+  font-family: 'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif !important;
 }
 
 /* Fix for Font Awesome icons - preserve their font */

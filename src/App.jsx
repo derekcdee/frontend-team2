@@ -16,17 +16,21 @@ import CreateAccountPage from "./components/pages/user/CreateAccountPage.jsx";
 import ProfilePage from "./components/pages/user/ProfilePage.jsx";
 import SettingsPage from "./components/pages/user/SettingsPage.jsx";
 import PasswordReset from "./components/pages/user/PasswordReset.jsx";
-import ContactPage from "./components/pages/ContactPage.jsx"
+import ContactUsPage from "./components/pages/ContactUsPage.jsx";
+import FAQPage from "./components/pages/FAQPage.jsx";
+import AboutUsPage from "./components/pages/AboutUsPage.jsx";
+import OrdersPage from "./components/pages/user/OrdersPage.jsx";
+import ReferencesPage from "./components/pages/ReferencesPage.jsx";
+import AdminPage from "./components/pages/user/AdminPage.jsx";
 
 import UserLayout from "./components/pages/user/UserLayout.jsx";
+import MaterialDialog from "./components/dialogs/MaterialDialog.jsx";
 
 import "./css/fontawesome/fontawesome.css";
 import "./css/fontawesome/brands.css";
 import "./css/fontawesome/solid.css";
 import "react-toastify/dist/ReactToastify.css";
-import OrdersPage from "./components/pages/user/OrdersPage.jsx";
-import AdminPage from "./components/pages/user/AdminPage.jsx";
-import SearchPage from "./components/pages/SearchPage.jsx";
+
 
 const GuestRoute = () => {
     const isAuthenticated = useSelector(state => !!state.user?.authenticated);
@@ -91,8 +95,8 @@ function App() {
                 stacked
                 pauseOnHover
                 toastClassName="toast-class"
-                className="toast-body-class"
             />
+            <MaterialDialog />
             <main className="jmiller-app">
                 <Header />
                 <Routes>
@@ -141,7 +145,10 @@ function App() {
                     */}
                     <Route path="/pages">
                         <Route index element={<Navigate to="/" replace />} />
-                        <Route path="contact" element={<ContactPage />} />
+                        <Route path="contact-us" element={<ContactUsPage />} />
+                        <Route path="references" element={<ReferencesPage />} />
+                        <Route path="faq" element={<FAQPage />} />
+                        <Route path="about-us" element={<AboutUsPage />} />
                     </Route>
 
                     <Route path="*" element={<NotFoundPage />} />

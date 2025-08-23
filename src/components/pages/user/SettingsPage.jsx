@@ -19,8 +19,8 @@ export default function SettingsPage() {
     const [loading, setLoading] = useState(false);
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
 
-    const { register, handleSubmit, formState: { errors }, reset, watch } = useForm();
-    const { register: pwRegister, handleSubmit: pwHandleSubmit, watch: pwWatch, formState: { errors: pwErrors }, reset: pwReset } = useForm({
+    const { register, handleSubmit, formState: { errors }, reset, watch, setFocus: set2FAFocus } = useForm();
+    const { register: pwRegister, handleSubmit: pwHandleSubmit, watch: pwWatch, formState: { errors: pwErrors }, reset: pwReset, setFocus: setPWFocus } = useForm({
             defaultValues: {
                 currPassword: "",
                 newPassword: "",
@@ -88,9 +88,7 @@ export default function SettingsPage() {
 
     return (
         <div className="user-content">
-            <AccountSection title="Password" onEdit={() => setIsPWModalOpen(true)}>
-                <p>password</p>
-            </AccountSection>
+            <AccountSection title="Password" onEdit={() => setIsPWModalOpen(true)}/>
             <AccountSection title="Two factor authentication" onEdit={!userData.TFAEnabled && onGenerate}>
                 {userData.TFAEnabled ? (
                     <p>Two Factor Authentication is Setup!</p>
@@ -99,9 +97,7 @@ export default function SettingsPage() {
                     <p>No 2FA</p>
                 )}
             </AccountSection>
-            <AccountSection title="Notifications">
-                <p>notifications</p>
-            </AccountSection>
+            <AccountSection title="Notifications"/>
 
            {/* Modal */}
            <Dialog 
@@ -111,6 +107,7 @@ export default function SettingsPage() {
                 maxWidth="sm" 
                 className="miller-dialog-typography"
                 PaperProps={{ className: "miller-dialog-typography" }}
+                TransitionProps={{ onEntered: () => set2FAFocus("verCode") }}
             >
                 <DialogTitle>
                     Setup Two-Factor Authentication
@@ -186,6 +183,7 @@ export default function SettingsPage() {
                 maxWidth="sm" 
                 className="miller-dialog-typography"
                 PaperProps={{ className: "miller-dialog-typography" }}
+                TransitionProps={{ onEntered: () => setPWFocus("currPassword") }}
             >
                 <DialogTitle>
                     Change your Password:

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FormField } from "../../util/Inputs";
 import { useForm } from "react-hook-form";
 import { DefaultButton } from "../../util/Buttons";
@@ -10,17 +10,22 @@ import { Dialog, DialogTitle, DialogContent, useForkRef } from "@mui/material";
 
 export default function LoginPage () {
     const navigate = useNavigate();
-    const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    const { register, handleSubmit, watch, formState: { errors }, setFocus: setLoginFocus } = useForm({
         defaultValues: {
             email: "",
             password: "",
         }
     });
-    const { register: verRegister, handleSubmit: verHandleSubmit, watch: verWatch, formState: { errors: verErrors }, reset: verReset } = useForm({
+    const { register: verRegister, handleSubmit: verHandleSubmit, watch: verWatch, formState: { errors: verErrors }, reset: verReset, setFocus: setVerifyFocus } = useForm({
         defaultValues: {
             verCode: "",
         }
     });
+
+    useEffect(() => {
+        const t = setTimeout(() => setLoginFocus("email"), 0);
+        return () => clearTimeout(t);
+    }, [setLoginFocus]);
 
     //2FA Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +43,7 @@ export default function LoginPage () {
             .then((res) => {
                 receiveResponse(res);
 
-                if(res.data[0] == true)
+                if(res.data[0] === true)
                 {
                     setTempToken(res.data[1]);
                     setIV(res.data[2]);
@@ -84,6 +89,7 @@ export default function LoginPage () {
                 {/* FIELDS */}
                 <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
                     <FormField 
+                        autoFocus
                         title="Email"
                         type="text"
                         value={email}
@@ -127,6 +133,7 @@ export default function LoginPage () {
                     maxWidth="sm" 
                     className="miller-dialog-typography"
                     PaperProps={{ className: "miller-dialog-typography" }}
+                    TransitionProps={{ onEntered: () => setVerifyFocus("verCode") }}
                 >
                     <DialogTitle>
                         Enter Your Authentication Code :
@@ -135,11 +142,9 @@ export default function LoginPage () {
                     <DialogContent>
                         <form onSubmit={verHandleSubmit(handle2FAVerify)}>
                             <div className="form-column" style={{ width: '100%' }}>
-                                <div className="form-row" style={{ width: '100%' }}>
-                                    <div className="flex-1">
                                         <FormField
                                             title="Code"
-                                            type="verCode"
+                                            type="password"
                                             value={verCode}
                                             error={verErrors.verCode && verErrors.verCode?.message}
                                             {...verRegister("verCode", { 
@@ -150,9 +155,6 @@ export default function LoginPage () {
                                                 }
                                             })}
                                         />
-                                        
-                                    </div>
-                                </div>
 
                                 <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
                                     <span 

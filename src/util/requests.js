@@ -51,6 +51,44 @@ export function test() {
         method: "GET",
     });
 }
+/*==============================================================
+# Collections
+==============================================================*/
+export function getCueCollection() {
+    return _ajax({
+        url: "/cues",
+        method: "GET",
+    });
+}
+
+export function getAccessoryCollection() {
+    return _ajax({
+        url: "/accessories",
+        method: "GET",
+    });
+}
+
+export function getMaterialCollection() {
+    return _ajax({
+        url: "/materials",
+        method: "GET",
+    });
+}
+
+export function getWoodByGuid(guid) {
+    return _ajax({
+        url: `/materials/wood/${guid}`,
+        method: "GET",
+    });
+}
+
+export function getCrystalByGuid(guid) {
+    return _ajax({
+        url: `/materials/crystal/${guid}`,
+        method: "GET",
+    });
+}
+
 
 /*==============================================================
 # Users
@@ -117,6 +155,14 @@ export function verify2FALogin(token_data, code, iv){
         url: "/account/verify2FALogin",
         method: "POST",
         data: {token_data, code, iv}
+    })
+}
+
+export function userChangePassword(currPw, newPw){
+    return _ajax({
+        url: "/user/userChangePassword",
+        method: "PUT",
+        data: {currPw, newPw}
     })
 }
 
@@ -345,4 +391,16 @@ export function deleteImages(imageUrls) {
         method: "POST",
         data: { urls: imageUrls }
     });
+}
+
+
+/*==============================================================
+# Sitewide Search
+==============================================================*/
+
+export function searchSite(searchTerm, fullSearch = false) {
+    return _ajax({
+        url: `/search?query=${encodeURIComponent(searchTerm)}${fullSearch ? '&full=true' : ''}`,
+        method: "GET",
+    })
 }

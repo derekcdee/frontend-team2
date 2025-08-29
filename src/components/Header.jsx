@@ -3,24 +3,30 @@ import { useOutsideClick } from "../util/hooks";
 import logo from "../images/white_logo.jpg";
 import { createFocusTrap } from "focus-trap";
 import { DrawerLoginButton, LoginButton } from "./util/Buttons";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Dialog, IconButton, InputBase, Box, Typography } from "@mui/material";
+import { Search, Close } from "@mui/icons-material";
+import { searchSite } from "../util/requests";
+import { Card } from "./util/Card"; // Import the Card component
+import { SOCIAL_MEDIA_LINKS } from "../util/globalConstants";
 
 const options = {
     "Materials": [
-        { text: "Woods", link: "/collections/materials" },
-        { text: "Stones and Crystals", link: "/collections/materials" },
+        { text: "Woods", link: "/collections/materials?wood=true" },
+        { text: "Stones and Crystals", link: "/collections/materials?crystal=true" },
         { text: "View All Materials", link: "/collections/materials" }
     ],
     "Cues": [
-        { text: "Available Cues", link: "/collections/available" },
-        { text: "Upcoming Cues", link: "/collections/coming-soon" },
-        { text: "View All Cues", link: "/collections/available" },
+        { text: "Available Cues", link: "/collections/cues?available=true" },
+        { text: "Upcoming Cues", link: "/collections/cues?upcoming=true" },
+        { text: "Sold Cues", link: "/collections/cues?sold=true" },
+        { text: "View All Cues", link: "/collections/cues" },
     ]
 };
 
 const navItems = [
     { text: "Cues", options: options["Cues"] },
-    { text: "Accessories", link: "/collections/available" },
+    { text: "Accessories", link: "/collections/accessories" },
     { text: "Build-A-Cue", link: "/build-a-cue" },
     { text: "Materials", options: options["Materials"] }
 ];
@@ -31,6 +37,7 @@ export default function Header() {
     const [hasScrolled, setHasScrolled] = useState(false);
     const [focusTrap, setFocusTrap] = useState(null);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    const [searchOpen, setSearchOpen] = useState(false);
     const headerRef = useRef(null);
     const location = useLocation();
     
@@ -133,6 +140,14 @@ export default function Header() {
         setOpenDropdown(null);
     };
 
+    const handleSearchOpen = () => {
+        setSearchOpen(true);
+    };
+
+    const handleSearchClose = () => {
+        setSearchOpen(false);
+    };
+
     return (
         <header className="main-header sticky" ref={headerRef}>
             {openDrawer && <div className="overlay header-overlay" />}
@@ -161,8 +176,16 @@ export default function Header() {
                     <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
                         <DrawerLoginButton onClick={handleLinkClick} />
                         <div>
-                            <button className="fa-brands fa-instagram header-icon" />
-                            <button className="fa-brands fa-facebook header-icon" />
+                            {SOCIAL_MEDIA_LINKS.map((social) => (
+                                <a 
+                                    key={social.name}
+                                    href={social.url}
+                                    className={`header-icon ${social.icon}`}
+                                    aria-label={social.name}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -192,18 +215,27 @@ export default function Header() {
 
             {/* Icons */}
             <div className="header-icons">
-                <button className="fa-solid fa-magnifying-glass header-icon" />
+                <button 
+                    className="fa-solid fa-magnifying-glass header-icon" 
+                    onClick={handleSearchOpen}
+                    aria-label="Search"
+                />
                 <LoginButton onClick={handleLinkClick} />
                 <button className="fa-solid fa-cart-shopping header-icon" />
             </div>
+
+            <SearchDialog 
+                open={searchOpen} 
+                onClose={handleSearchClose} 
+                hasScrolled={hasScrolled} 
+            />
         </header>
     );
 }
 
 function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=false, onLinkClick}) {
-    const ref = useRef(null); // Create a ref for the dropdown container
+    const ref = useRef(null);
 
-    // Use the custom hook to handle outside clicks
     useOutsideClick(ref, (e) => {
         if (!isOpen) return;
 
@@ -220,27 +252,40 @@ function HeaderNavItem({text, isDropdown, isOpen, onToggle, options=false, link=
 
     return (
         <div className="header-nav-item" ref={isDropdown ? ref : null}>
-            <NavLink 
-              onClick={isDropdown ? () => onToggle(text) : onLinkClick}
-              onKeyDown={isDropdown ? handleKeyDown : undefined}
-              tabIndex={0} 
-              to={link}
-              className={isOpen ? "main-nav-text open" : "main-nav-text"}
-              id={text}
-            >
-                {text}
-                {isDropdown && 
-                    <button 
-                      className={isOpen ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down"} 
-                      tabIndex={-1}
-                      id={text}
+            {isDropdown ? (
+                <div 
+                    onClick={() => onToggle(text)}
+                    onKeyDown={handleKeyDown}
+                    tabIndex={0}
+                    className={isOpen ? "main-nav-text open" : "main-nav-text"}
+                    id={text}
+                    role="button"
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                >
+                    {text}
+                    <span 
+                        className={isOpen ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down"} 
+                        aria-hidden="true"
+                        id={text}
                     />
-                }
-            </NavLink>
+                </div>
+            ) : (
+                <NavLink 
+                    onClick={onLinkClick}
+                    onKeyDown={handleKeyDown}
+                    tabIndex={0} 
+                    to={link}
+                    className="main-nav-text"
+                    id={text}
+                    style={{ display: 'flex', alignItems: 'center', height: '100%' }}
+                >
+                    {text}
+                </NavLink>
+            )}
             
             {/* DROPDOWN MENU */}
             <div className={isOpen ? "dropdown-menu open" : "dropdown-menu"}>
-                {/* Dropdown content goes here */}
                 <ul className="header-list-sub-menu">
                     {options?.length && options.map((option) => {
                         const {text, link} = option;
@@ -309,5 +354,305 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
                 </nav>
             </div>
         </div>
+    );
+}
+
+function SearchDialog({ open, onClose, hasScrolled }) {
+    const [searchResults, setSearchResults] = useState([]);
+    const [nothingFound, setNothingFound] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef(null);
+    const navigate = useNavigate();
+    
+    // Reset state when dialog closes
+    useEffect(() => {
+        if (!open) {
+            setSearchResults([]);
+            setNothingFound(false);
+            setSearchQuery('');
+            if (searchInputRef.current) {
+                searchInputRef.current.value = '';
+            }
+        }
+    }, [open]);
+    
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/collections/search?search=${encodeURIComponent(searchQuery)}`);
+            onClose();
+        }
+    };
+
+    const handleSearchInput = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+
+        if (query.length === 0) {
+            setSearchResults([]);
+            setNothingFound(false);
+            return;
+        }
+
+        searchSite(query)
+            .then((response) => {
+                setSearchResults(response.data);
+                setNothingFound(response.data.length === 0);
+            });
+    }
+    
+    // Helper function to get appropriate display name and link
+    const getItemDetails = (item) => {
+        let name = '';
+        let link = '';
+        
+        if (item.name) {
+            name = item.name;
+            if (item.cueNumber) link = `/cues/${item.guid}`;
+            else if (item.accessoryNumber) link = `/accessories/${item.guid}`;
+        } else if (item.commonName) {
+            name = item.commonName;
+            link = `/materials/${item.guid}`;
+        } else if (item.crystalName) {
+            name = item.crystalName;
+            link = `/materials/${item.guid}`;
+        }
+        
+        return { name, link };
+    };
+    
+    return (
+        <Dialog
+            fullWidth
+            open={open}
+            onClose={onClose}
+            PaperProps={{
+                sx: {
+                    position: 'absolute',
+                    top: 0,
+                    margin: 0,
+                    width: '100%', 
+                    maxWidth: '100%',
+                    borderRadius: 0,
+                    bgcolor: searchResults.length > 0 || nothingFound ? 'white' : 'black', // Make entire dialog black when empty
+                    color: 'white',
+                    boxShadow: 'none',
+                    // Height handling for search results
+                    height: searchResults.length > 0 || nothingFound ? 'auto' : 'auto', // Let black background adjust to content
+                    minHeight: hasScrolled ? '70px' : '100px',
+                    // Use 95vh to take up almost the entire viewport while leaving a small margin
+                    maxHeight: searchResults.length > 0 || nothingFound ? '100vh' : 'auto',
+                    // Always maintain scroll capability
+                    overflowY: searchResults.length > 0 || nothingFound ? 'auto' : 'hidden',
+                    overflowX: 'hidden', // Prevent horizontal scrolling
+                    // Smooth transition for size changes
+                    transition: 'all 0.3s ease'
+                }
+            }}
+            BackdropProps={{
+                sx: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                }
+            }}
+            TransitionProps={{
+                onEntered: () => searchInputRef.current?.focus(),
+            }}
+        >
+            <Box
+                component="form"
+                onSubmit={handleSearchSubmit}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 'auto',
+                    width: '100%',
+                    boxSizing: 'border-box', // Ensure padding is included in width calculation
+                }}
+            >
+                {/* Black search bar section */}
+                <Box
+                    sx={{
+                        backgroundColor: 'black',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: hasScrolled ? '70px' : '100px',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        transition: 'height 0.3s ease',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '4px',
+                            padding: '5px 10px',
+                            width: {
+                                xs: '90%',
+                                sm: '70%',
+                                md: '50%',
+                                lg: '40%'
+                            },
+                            maxWidth: '1000px',
+                            boxSizing: 'border-box',
+                        }}
+                    >
+                        <Search sx={{ color: 'black', marginRight: 1, flexShrink: 0 }} />
+                        <InputBase
+                            placeholder="Search..."
+                            inputRef={searchInputRef}
+                            fullWidth
+                            onChange={handleSearchInput}
+                            sx={{
+                                color: 'black',
+                                flexGrow: 1,
+                                '& .MuiInputBase-input': {
+                                    fontSize: '1.2rem',
+                                    fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                                }
+                            }}
+                        />
+                        <IconButton 
+                            onClick={onClose} 
+                            sx={{ color: 'black', flexShrink: 0 }}
+                            aria-label="Close search"
+                        >
+                            <Close />
+                        </IconButton>
+                    </Box>
+                </Box>
+                
+                {/* White results section with improved styling to match collections */}
+                {searchResults.length > 0 && (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            backgroundColor: 'white',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            color: 'black',
+                            overflow: 'hidden',
+                            fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: {
+                                    xs: '90%',
+                                    sm: '70%',
+                                    md: '50%',
+                                    lg: '40%'
+                                },
+                                maxWidth: '1000px',
+                                padding: '20px 0',
+                            }}
+                        >
+                            <Box
+                                className="search-results-grid"
+                                sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: {
+                                        xs: 'repeat(2, minmax(0, 1fr))',
+                                        sm: 'repeat(3, minmax(0, 1fr))',
+                                        md: 'repeat(4, minmax(0, 1fr))'
+                                    },
+                                    gap: '15px',
+                                    width: '100%',
+                                    '& > div': {
+                                        // Force equal width and proper containment
+                                        minWidth: 0,
+                                        maxWidth: '100%',
+                                        overflow: 'hidden',
+                                        // Set fixed aspect ratio
+                                        aspectRatio: '1 / 1.2',
+                                        // Fix inner styling
+                                        '& .card-wrapper': {
+                                            width: '100%',
+                                            height: '100%',
+                                            boxSizing: 'border-box',
+                                        },
+                                        '& .card-image': {
+                                            width: '100%',
+                                            height: 'auto',
+                                            aspectRatio: '1 / 1',
+                                            overflow: 'hidden'
+                                        },
+                                        '& .card-image img': {
+                                            aspectRatio: '1 / 1',
+                                            objectFit: 'cover',
+                                            width: '100%',
+                                            height: '100%'
+                                        }
+                                    }
+                                }}
+                            >
+                                {searchResults.map((item, index) => {
+                                    const { name, link } = getItemDetails(item);
+                                    return (
+                                        <Card 
+                                            key={index}
+                                            title={name}
+                                            image={item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : '/placeholder.png'}
+                                            tag={item.cueNumber || item.accessoryNumber || ''}
+                                            price={item.price}
+                                            linkTo={link}
+                                        />
+                                    );
+                                })}
+                            </Box>
+                            
+                            <Box sx={{ textAlign: 'center', padding: '10px 0' }}>
+                                <Typography 
+                                    component={NavLink} 
+                                    to={`/search?query=${encodeURIComponent(searchQuery)}`}
+                                    onClick={onClose}
+                                    sx={{ 
+                                        color: 'inherit', 
+                                        textDecoration: 'underline',
+                                        '&:hover': { color: '#666' },
+                                        fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                                    }}
+                                >
+                                    View all results
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                )}
+                
+                {nothingFound && (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            backgroundColor: 'white',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            color: 'black',
+                            textAlign: 'center',
+                            fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: {
+                                    xs: '90%',
+                                    sm: '70%',
+                                    md: '50%',
+                                    lg: '40%'
+                                },
+                                maxWidth: '800px',
+                                padding: '20px 0',
+                            }}
+                        >
+                            <Typography sx={{ fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif" }}>
+                                No results found
+                            </Typography>
+                        </Box>
+                    </Box>
+                )}
+            </Box>
+        </Dialog>
     );
 }

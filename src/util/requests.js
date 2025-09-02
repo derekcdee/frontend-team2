@@ -36,7 +36,6 @@ export function _ajax(settings = {}) {
             return response;
         })
         .catch((err) => {
-            console.log(err);
             const response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
             receiveResponse(response);
 
@@ -85,6 +84,20 @@ export function getWoodByGuid(guid) {
 export function getCrystalByGuid(guid) {
     return _ajax({
         url: `/materials/crystal/${guid}`,
+        method: "GET",
+    });
+}
+
+export function getCueByGuid(guid) {
+    return _ajax({
+        url: `/cues/${guid}`,
+        method: "GET",
+    });
+}
+
+export function getAccessoryByGuid(guid) {
+    return _ajax({
+        url: `/accessories/${guid}`,
         method: "GET",
     });
 }

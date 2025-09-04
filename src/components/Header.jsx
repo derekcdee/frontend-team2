@@ -7,8 +7,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Dialog, IconButton, InputBase, Box, Typography } from "@mui/material";
 import { Search, Close } from "@mui/icons-material";
 import { searchSite } from "../util/requests";
-import { Card } from "./util/Card"; // Import the Card component
+import { Card, MaterialCard } from "./util/Card"; // Import the Card component
 import { SOCIAL_MEDIA_LINKS } from "../util/globalConstants";
+import { showMaterialDialog } from "./dialogs/MaterialDialog";
 
 const options = {
     "Materials": [
@@ -68,7 +69,8 @@ export default function Header() {
             document.body.style.overflow = 'auto';
         }
 
-        if (openDrawer && screenWidth <= 990) {
+        // Only create focus trap if drawer is open, screen is mobile, and search dialog is NOT open
+        if (openDrawer && screenWidth <= 990 && !searchOpen) {
             const trap = createFocusTrap('.main-header', {
                 onActivate: () => document.body.classList.add('trap-is-active'),
                 onDeactivate: () => document.body.classList.remove('trap-is-active'),
@@ -96,7 +98,7 @@ export default function Header() {
             }
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [openDrawer, screenWidth]);
+    }, [openDrawer, screenWidth, searchOpen]); // Added searchOpen to dependencies
 
     useEffect(() => {
         const height = headerRef.current?.offsetHeight;
@@ -138,9 +140,15 @@ export default function Header() {
     const handleLinkClick = () => {
         setOpenDrawer(false);
         setOpenDropdown(null);
+        if (focusTrap) {
+            focusTrap.deactivate();
+        }
     };
 
     const handleSearchOpen = () => {
+        if (focusTrap) {
+            focusTrap.deactivate();
+        }
         setSearchOpen(true);
     };
 
@@ -226,7 +234,8 @@ export default function Header() {
 
             <SearchDialog 
                 open={searchOpen} 
-                onClose={handleSearchClose} 
+                onClose={handleSearchClose}
+                handleLinkClick={handleLinkClick}
                 hasScrolled={hasScrolled} 
             />
         </header>
@@ -357,7 +366,7 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
     );
 }
 
-function SearchDialog({ open, onClose, hasScrolled }) {
+function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
     const [searchResults, setSearchResults] = useState([]);
     const [nothingFound, setNothingFound] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -381,6 +390,7 @@ function SearchDialog({ open, onClose, hasScrolled }) {
         if (searchQuery.trim()) {
             navigate(`/collections/search?search=${encodeURIComponent(searchQuery)}`);
             onClose();
+            handleLinkClick();
         }
     };
 
@@ -420,6 +430,15 @@ function SearchDialog({ open, onClose, hasScrolled }) {
         
         return { name, link };
     };
+
+    const handleMaterialClick = (material) => {
+        showMaterialDialog(material);
+    };
+
+    const handleProductClick = () => {
+        onLinkClick();
+        onClose();
+    }
     
     return (
         <Dialog
@@ -559,45 +578,33 @@ function SearchDialog({ open, onClose, hasScrolled }) {
                                         md: 'repeat(4, minmax(0, 1fr))'
                                     },
                                     gap: '15px',
-                                    width: '100%',
-                                    '& > div': {
-                                        // Force equal width and proper containment
-                                        minWidth: 0,
-                                        maxWidth: '100%',
-                                        overflow: 'hidden',
-                                        // Set fixed aspect ratio
-                                        aspectRatio: '1 / 1.2',
-                                        // Fix inner styling
-                                        '& .card-wrapper': {
-                                            width: '100%',
-                                            height: '100%',
-                                            boxSizing: 'border-box',
-                                        },
-                                        '& .card-image': {
-                                            width: '100%',
-                                            height: 'auto',
-                                            aspectRatio: '1 / 1',
-                                            overflow: 'hidden'
-                                        },
-                                        '& .card-image img': {
-                                            aspectRatio: '1 / 1',
-                                            objectFit: 'cover',
-                                            width: '100%',
-                                            height: '100%'
-                                        }
-                                    }
+                                    width: '100%'
                                 }}
                             >
                                 {searchResults.map((item, index) => {
                                     const { name, link } = getItemDetails(item);
+                                    // If material (wood or crystal), use MaterialCard and open dialog
+                                    if (item.commonName || item.crystalName) {
+                                        return (
+                                            <MaterialCard
+                                                key={index}
+                                                title={name}
+                                                images={item.imageUrls}
+                                                material={item}
+                                                onClick={handleMaterialClick}
+                                            />
+                                        );
+                                    }
+                                    // Otherwise, use Card as before
                                     return (
                                         <Card 
                                             key={index}
                                             title={name}
-                                            image={item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : '/placeholder.png'}
+                                            images={item.imageUrls}
                                             tag={item.cueNumber || item.accessoryNumber || ''}
                                             price={item.price}
                                             linkTo={link}
+                                            onClick={handleProductClick}
                                         />
                                     );
                                 })}
@@ -606,7 +613,7 @@ function SearchDialog({ open, onClose, hasScrolled }) {
                             <Box sx={{ textAlign: 'center', padding: '10px 0' }}>
                                 <Typography 
                                     component={NavLink} 
-                                    to={`/search?query=${encodeURIComponent(searchQuery)}`}
+                                    to={`/collections/search?search=${encodeURIComponent(searchQuery)}`}
                                     onClick={onClose}
                                     sx={{ 
                                         color: 'inherit', 

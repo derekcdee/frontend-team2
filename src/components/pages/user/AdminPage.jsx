@@ -468,7 +468,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
     ferruleMaterial: 'Juma',
     shaftMaterial: 'Hard Maple',
     shaftTaper: 'Pro-Taper',
-    jointPinSize: '3/8-10 Modified',
+    jointPinSize: '3/8-10 in Modified',
     jointPinMaterial: 'Stainless Steel',
     jointCollarMaterial: 'Black Juma',
     forearmMaterial: '',
@@ -708,7 +708,6 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
     const onSubmit = (data) => {
         data.isFullSplice = buttType;
         data.includeWrap = includeWrap;
-        console.log(data)
         if (existingCue) {
             editCue(data._id, data)
                 .then((res) => {
@@ -787,7 +786,6 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
     const forearmInlayDescription = watch("forearmInlayDescription");
     const handleInlayDescription = watch("handleInlayDescription");
     const buttsleeveInlayDescription = watch("buttsleeveInlayDescription");
-    // Add these new watches
     const ringType = watch("ringType");
     const ringsDescription = watch("ringsDescription");
     const forearmInlayMaterial = watch("forearmInlayMaterial");
@@ -1191,7 +1189,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                 value={ferruleMaterial}
                                                 options={CUE_BASIC_MATERIAL_OPTIONS}
                                                 displayKey="commonName"
-                                                valueKey="_id"
+                                                valueKey="guid"
                                                 {...register("ferruleMaterial")}
                                             />
                                         )}
@@ -1277,7 +1275,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                         value={jointCollarMaterial}
                                                         options={[...CUE_BASIC_MATERIAL_OPTIONS, ...woods]}
                                                         displayKey="commonName"
-                                                        valueKey="_id"
+                                                        valueKey="guid"
                                                         {...register("jointCollarMaterial")}
                                                     />
                                                 )}
@@ -1300,7 +1298,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                         value={buttCapMaterial}
                                                         options={CUE_BASIC_MATERIAL_OPTIONS}
                                                         displayKey="commonName"
-                                                        valueKey="_id"
+                                                        valueKey="guid"
                                                         {...register("buttCapMaterial")}
                                                     />
                                                 )}
@@ -1320,7 +1318,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                     value={forearmMaterial}
                                                     options={woods}
                                                     displayKey="commonName"
-                                                    valueKey="_id"
+                                                    valueKey="guid"
                                                     {...register("forearmMaterial", {
                                                         setValueAs: value => {
                                                             return typeof value === 'object' && value?._id ? value._id : value;
@@ -1362,7 +1360,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                         value={forearmInlayMaterial}
                                                         options={crystals}
                                                         displayKey="crystalName"
-                                                        valueKey="_id"
+                                                        valueKey="guid"
                                                         {...register("forearmInlayMaterial", {
                                                             setValueAs: value => {
                                                                 return typeof value === 'object' && value?._id ? value._id : value;
@@ -1432,7 +1430,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                             value={forearmPointInlayMaterial}
                                                             options={crystals}
                                                             displayKey="crystalName"
-                                                            valueKey="_id"
+                                                            valueKey="guid"
                                                             {...register("forearmPointInlayMaterial", {
                                                                 setValueAs: value => {
                                                                     return typeof value === 'object' && value?._id ? value._id : value;
@@ -1527,7 +1525,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                     value={handleMaterial}
                                                     options={woods}
                                                     displayKey="commonName"
-                                                    valueKey="_id"
+                                                    valueKey="guid"
                                                     {...register("handleMaterial", {
                                                         setValueAs: value => {
                                                             return typeof value === 'object' && value?._id ? value._id : value;
@@ -1584,7 +1582,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                     value={handleInlayMaterial}
                                                     options={crystals}
                                                     displayKey="crystalName"
-                                                    valueKey="_id"
+                                                    valueKey="guid"
                                                     {...register("handleInlayMaterial", {
                                                         setValueAs: value => {
                                                             return typeof value === 'object' && value?._id ? value._id : value;
@@ -1619,7 +1617,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                     value={buttSleeveMaterial}
                                                     options={woods}
                                                     displayKey="commonName"
-                                                    valueKey="_id"
+                                                    valueKey="guid"
                                                     {...register("buttSleeveMaterial", {
                                                         setValueAs: value => {
                                                             return typeof value === 'object' && value?._id ? value._id : value;
@@ -1661,7 +1659,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                         value={buttSleeveInlayMaterial}
                                                         options={crystals}
                                                         displayKey="crystalName"
-                                                        valueKey="_id"
+                                                        valueKey="guid"
                                                         {...register("buttSleeveInlayMaterial", {
                                                             setValueAs: value => {
                                                                 return typeof value === 'object' && value?._id ? value._id : value;
@@ -1732,7 +1730,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                                             value={buttSleevePointInlayMaterial}
                                                             options={crystals}
                                                             displayKey="crystalName"
-                                                            valueKey="_id"
+                                                            valueKey="guid"
                                                             {...register("buttSleevePointInlayMaterial", {
                                                                 setValueAs: value => {
                                                                     return typeof value === 'object' && value?._id ? value._id : value;

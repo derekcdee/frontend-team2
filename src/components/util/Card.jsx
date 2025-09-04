@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 
-export function Card({title, price, tag, linkTo="#", images}) {
+export function Card({title, price, tag, linkTo="#", image, images, onClick}) {
     const hasPrice = price !== undefined && price !== null && price !== "";
     const hasTag = tag !== undefined && tag !== null && tag !== "";
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     
-    // Get image array from images prop
-    const imageArray = images || [];
+    // Get image array from images prop or use single image
+    const imageArray = images || (image ? [image] : []);
     const hasMultipleImages = imageArray.length > 1;
     
     const handleMouseEnter = () => {
@@ -23,7 +23,7 @@ export function Card({title, price, tag, linkTo="#", images}) {
     };
     
     return (
-        <NavLink to={linkTo} className="card-link">
+        <NavLink to={linkTo} className="card-link" onClick={onClick}>
             <div 
                 className="card-wrapper"
                 onMouseEnter={handleMouseEnter}
@@ -34,9 +34,6 @@ export function Card({title, price, tag, linkTo="#", images}) {
                     <img 
                         src={imageArray[currentImageIndex]} 
                         alt={title}
-                        style={{
-                            transition: 'opacity 0.3s ease-in-out'
-                        }}
                     />
                 </div>
                 {/* Card Content */}
@@ -57,17 +54,17 @@ export function Card({title, price, tag, linkTo="#", images}) {
     );
 }
 
-export function MaterialCard({ title, price, tag, material, images }) {
+export function MaterialCard({ title, price, tag, material, image, images, onClick }) {
     const hasPrice = price !== undefined && price !== null && price !== "";
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     
-    // Get image array from images prop or material
-    const imageArray = images || material?.imageUrls || [];
+    // Get image array from images prop, material, or use single image
+    const imageArray = images || material?.imageUrls || (image ? [image] : []);
     const hasMultipleImages = imageArray.length > 1;
 
     const handleClick = () => {
-        if (window.openMaterialDialog && material) {
-            window.openMaterialDialog(material);
+        if (onClick && material) {
+            onClick(material);
         }
     };
     
@@ -97,9 +94,6 @@ export function MaterialCard({ title, price, tag, material, images }) {
                     <img 
                         src={imageArray[currentImageIndex]} 
                         alt={title}
-                        style={{
-                            transition: 'opacity 0.3s ease-in-out'
-                        }}
                     />
                 </div>
                 {/* Card Content */}

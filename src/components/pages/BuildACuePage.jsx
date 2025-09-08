@@ -1,13 +1,23 @@
 import React, { useRef } from "react";
+import { useState } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import "../../css/buttons.css";
 import { FullSpliceCue_v1 } from "../util/FullSPliceCue_v1";
 import { StandardCue_v2 } from "../util/StandardCue_v2";
 
+// Model map definition
+const models = {
+    model1: StandardCue_v2,
+    model2: FullSpliceCue_v1,
+};
 
 export default function BuildACuePage() {
     const orbitRef = useRef(null);
+
+    // Used to switch between models
+    const [activeModel, setActiveModel] = useState('model1');
+    const ActiveModelComponent = models[activeModel];
 
     //buttons
     const zoomIn = () => {
@@ -27,25 +37,45 @@ export default function BuildACuePage() {
         controls.reset();
     };
 
-
+// Render scene with the pool cue model
     return (
         <div className="BuildACue" style={{ display: "flex", flexDirection: "column" }}>
             <div className="BuildACueDisplay" style={{ flex: "1", width: "100%" }}>
                 <Canvas 
-                    camera={{ position: [300, 0, 0], fov: 90, near: 0.01, far: 900 }}
-
+                    camera={{ position: [1200, 0, 0], fov: 200, near: 0.000001, far: 2000 }}
                     orthographic={true}
-                    style={{ height: "100%" }}
-                >
+                    style={{ height: "100%" }}>
+
                     <OrbitControls ref={orbitRef} maxZoom={6} minZoom={0.5} minDistance={2} />
-                    <ambientLight intensity={2.0} />
-                    <directionalLight position={[0, 0, 5]} color="white" />
-                    <FullSpliceCue_v1 />
+                    <ambientLight intensity={4.0} />
+                    <directionalLight castShadow position={[500, 1000, 5]} shadow-mapSize={[1024,1024]} 
+                        color='white' intensity={2.0}>
+                        <orthographicCamera attach="shadow-camera" args={[-10, 10, 10, -10]} />
+                    </directionalLight>
+                  
+                        {ActiveModelComponent && <ActiveModelComponent />}
+
                 </Canvas>
-                <div className="controls" style={{ position: 'absolute', bottom: 30, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '12px', padding: '12px 16px', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000, backdropFilter: 'blur(8px)' }}>
+                <div className="controls" style={{ position: 'fixed', top: 110, left: '50%', 
+                    transform: 'translateX(-50%)', display: 'flex', gap: '8px', padding: '8px 10px', 
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', 
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000, justifyContent: "center", 
+                    backdropFilter: 'blur(8px)'}}>
+
+                    < button onClick={() => setActiveModel('model1')}>Standard Cue</button>
+                    < button onClick={() => setActiveModel('model2')}>Full Splice Cue</button>
+
+                </div>
+                <div className="controls" style={{ position:'fixed', bottom: 250, left: '50%', 
+                    transform: 'translateX(-50%)', display: 'flex', gap: '8px', padding: '8px 10px', 
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', 
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000, backdropFilter: 'blur(8px)', 
+                    ustifyContent: "center" }}>
+
                     <button className="control-btn" onClick={zoomIn}>Zoom In (+)</button>
                     <button className="control-btn" onClick={zoomOut}>Zoom Out (-)</button>
                     <button className="control-btn" onClick={resetView}>Reset View</button>
+
                 </div>
             </div>
         </div>

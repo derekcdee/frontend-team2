@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { receiveResponse} from './notifications';
+import { setCartItems } from './redux/actionCreators';
 import { isValidElement } from 'react';
 
 
@@ -50,6 +51,53 @@ export function test() {
         method: "GET",
     });
 }
+
+/*==============================================================
+# Cart
+==============================================================*/
+export function getCart() {
+    return _ajax({
+        url: "/cart",
+        method: "GET",
+    }).then(response => {
+        // Update Redux store with fresh cart data
+        if (response && response.data) {
+            setCartItems(response.data.items || []);
+        }
+        return response;
+    });
+}
+
+export function addToCart(itemGuid, itemType, quantity = 1) {
+    return _ajax({
+        url: "/cart/add",
+        method: "POST",
+        data: { itemGuid, itemType, quantity }
+    });
+}
+
+export function updateCartItem(itemGuid, quantity) {
+    return _ajax({
+        url: `/cart/update/${itemGuid}`,
+        method: "PUT",
+        data: { quantity }
+    });
+}
+
+export function removeFromCart(itemGuid) {
+    return _ajax({
+        url: `/cart/remove/${itemGuid}`,
+        method: "DELETE",
+    });
+}
+
+export function clearCart() {
+    return _ajax({
+        url: "/cart/clear",
+        method: "DELETE",
+    });
+}
+
 /*==============================================================
 # Collections
 ==============================================================*/

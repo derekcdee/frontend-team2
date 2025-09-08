@@ -3,8 +3,6 @@ import { useState } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import "../../css/buttons.css";
-import { FullSpliceCue_v1 } from "../util/FullSPliceCue_v1";
-import { StandardCue_v2 } from "../util/StandardCue_v2";
 import { FullSpliceCue } from "../util/FullSpliceCue";
 import { StandardCue } from "../util/StandardCue";
 

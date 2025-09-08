@@ -5,11 +5,13 @@ import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import "../../css/buttons.css";
 import { FullSpliceCue_v1 } from "../util/FullSPliceCue_v1";
 import { StandardCue_v2 } from "../util/StandardCue_v2";
+import { FullSpliceCue } from "../util/FullSpliceCue";
+import { StandardCue } from "../util/StandardCue";
 
 // Model map definition
 const models = {
-    model1: StandardCue_v2,
-    model2: FullSpliceCue_v1,
+    model1: StandardCue,
+    model2: FullSpliceCue,
 };
 
 export default function BuildACuePage() {

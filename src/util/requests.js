@@ -227,6 +227,13 @@ export function userChangePassword(currPw, newPw){
     })
 }
 
+export function getUserOrders() {
+    return _ajax({
+        url: "/user/orders",
+        method: "GET"
+    });
+}
+
 /*==============================================================
 # Products
 ==============================================================*/
@@ -454,6 +461,44 @@ export function deleteImages(imageUrls) {
     });
 }
 
+
+/*==============================================================
+# Payment
+==============================================================*/
+
+export function createCheckoutSession(cartItems, email, shippingCountry = null, cartTotal = 0) {
+    // Extract cue GUIDs from cart items (cues are always quantity 1)
+    const cueGuids = cartItems
+        .filter(item => item.itemType === 'cue')
+        .map(item => item.itemDetails.guid);
+    
+    // Extract accessory items with quantities
+    const accessoryItems = cartItems
+        .filter(item => item.itemType === 'accessory')
+        .map(item => ({
+            guid: item.itemDetails.guid,
+            quantity: item.quantity
+        }));
+    
+    return _ajax({
+        url: "/order/payment/create-checkout-session",
+        method: "POST",
+        data: { 
+            cueGuids: cueGuids,
+            accessoryItems: accessoryItems,
+            email: email,
+            shippingCountry: shippingCountry,
+            cartTotal: cartTotal
+        }
+    });
+}
+
+export function verifyPaymentSession(sessionId) {
+    return _ajax({
+        url: `/order/payment/verify-session/${sessionId}`,
+        method: "GET",
+    });
+}
 
 /*==============================================================
 # Sitewide Search

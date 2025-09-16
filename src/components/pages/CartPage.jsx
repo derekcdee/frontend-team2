@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { DefaultButton } from "../util/Buttons";
-import { updateCartItem, removeFromCart, clearCart } from "../../util/requests";
+import { FormSelect } from "../util/Inputs";
+import { updateCartItem, removeFromCart, clearCart, createCheckoutSession } from "../../util/requests";
 import { receiveResponse } from "../../util/notifications";
 import { setCartItems, updateCartItemRedux, removeCartItemRedux, clearCartRedux } from "../../util/redux/actionCreators";
+import countryList from "react-select-country-list";
 
 export default function CartPage() {
     const navigate = useNavigate();
@@ -12,9 +14,20 @@ export default function CartPage() {
     // Get cart data from Redux
     const cartItems = useSelector(state => state.cart.items);
     const totalItems = useSelector(state => state.cart.totalItems);
+    
+    // Get user data from Redux
+    const user = useSelector(state => state.user);
+    const isAuthenticated = !!user?.authenticated;
 
-    // Remove the useEffect and loadCart since we're using Redux
-    // The cart should already be loaded in Redux from the authentication flow
+    // State for country selection
+    const [selectedCountry, setSelectedCountry] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    // Get country options using react-select-country-list
+    const countryOptions = countryList().getData().map(country => ({
+        label: country.label,
+        value: country.value // This gives us the 2-letter country code (e.g., "US", "CA", "GB")
+    }));
 
     const handleUpdateQuantity = async (itemGuid, newQuantity) => {
         if (newQuantity < 1) return;
@@ -55,6 +68,65 @@ export default function CartPage() {
             })
             .catch(() => {
                 // Errors are already handled by the request system
+            });
+    };
+
+    const handleCheckout = () => {
+        if (!isAuthenticated) {
+            // Redirect to login if not authenticated
+            navigate("/login");
+            return;
+        }
+
+        if (!user.email) {
+            receiveResponse({
+                status: "error",
+                errors: ["User email not found. Please try logging in again."]
+            });
+            return;
+        }
+
+        if (!selectedCountry) {
+            receiveResponse({
+                status: "error",
+                errors: ["Please select a country for shipping."]
+            });
+            return;
+        }
+
+        // Check if there are any items that can be purchased through Stripe
+        const purchasableItems = cartItems.filter(item => 
+            item.itemDetails?.price && item.itemDetails?.status === "Available"
+        );
+        
+        if (purchasableItems.length === 0) {
+            receiveResponse({
+                status: "error", 
+                errors: ["No purchasable items in cart. Items must have prices and be available for checkout."]
+            });
+            return;
+        }
+
+        setLoading(true);
+        
+        // Calculate cart total
+        const cartTotal = cartItems.reduce((total, item) => {
+            const price = item.itemDetails?.price || 0;
+            return total + (price * item.quantity);
+        }, 0);
+
+        // Create checkout session with just the country
+        createCheckoutSession(cartItems, user.email, selectedCountry, cartTotal)
+            .then((response) => {
+                receiveResponse(response);
+                
+                if (response && response.data) {
+                    // Redirect to Stripe checkout page
+                    window.location.href = response.data;
+                }
+            })
+            .catch((error) => {
+                setLoading(false);
             });
     };
 
@@ -130,9 +202,23 @@ export default function CartPage() {
                             </div>
                             
                             <div className="summary-line total">
-                                <span>Total:</span>
+                                <span>Subtotal:</span>
                                 <span>{hasItemsWithoutPrice() ? "Contact for pricing" : `$${total.toFixed(2)}`}</span>
                             </div>
+
+                            {/* Country Selection */}
+                            {!hasItemsWithoutPrice() && (
+                                <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                                    <FormSelect
+                                        title="Shipping Country"
+                                        value={selectedCountry}
+                                        onChange={(e) => setSelectedCountry(e.target.value)}
+                                        options={countryOptions}
+                                        displayKey="label"
+                                        valueKey="value"
+                                    />
+                                </div>
+                            )}
 
                             {hasItemsWithoutPrice() ? (
                                 <DefaultButton 
@@ -142,9 +228,10 @@ export default function CartPage() {
                                 />
                             ) : (
                                 <DefaultButton 
-                                    text="Proceed to Checkout" 
-                                    onClick={() => navigate("/checkout")}
+                                    text={loading ? "Processing..." : "Proceed to Checkout"}
+                                    onClick={handleCheckout}
                                     className="full-width-btn"
+                                    disabled={!selectedCountry || loading}
                                 />
                             )}
                             

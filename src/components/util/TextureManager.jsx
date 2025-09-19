@@ -53,7 +53,8 @@ export function useTextureLibrary() {
     const loadedTextures = {};
 
     for(const name in TEXTURE_LIBRARY){
-        const textures = useTexture(Object.values(TEXTURE_LIBRARY[name]));
+        const texturePaths = Object.values(TEXTURE_LIBRARY[name]);
+        const textures = useTexture(texturePaths);
 
         const textureSet = {};
         Object.keys(TEXTURE_LIBRARY[name]).forEach((key, index) => {

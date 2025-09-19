@@ -98,6 +98,18 @@ export function clearCart() {
     });
 }
 
+export function getAllowedShippingCountries() {
+    return _ajax({
+        url: "/order/payment/shipping-countries",
+        method: "GET"
+    }).then(response => {
+        if (response && Array.isArray(response.data)) {
+            return response.data;
+        }
+        return [];
+    });
+}
+
 /*==============================================================
 # Collections
 ==============================================================*/
@@ -227,6 +239,20 @@ export function userChangePassword(currPw, newPw){
     })
 }
 
+export function getUserOrders() {
+    return _ajax({
+        url: "/user/orders",
+        method: "GET"
+    });
+}
+
+export function getUserOrderById(orderId) {
+    return _ajax({
+        url: `/user/orders/${orderId}`,
+        method: "GET"
+    });
+}
+
 /*==============================================================
 # Products
 ==============================================================*/
@@ -241,6 +267,13 @@ export function userChangePassword(currPw, newPw){
 export function getAdminUsers() {
     return _ajax({
         url: "/admin/users",
+        method: "GET",
+    });
+}
+
+export function getAdminOrders() {
+    return _ajax({
+        url: "/admin/orders",
         method: "GET",
     });
 }
@@ -279,6 +312,14 @@ export function deleteUser(id) {
     return _ajax({
         url: "/admin/users/" + id,
         method: "DELETE",
+    });
+}
+
+export function editOrder(id, orderData) {
+    return _ajax({
+        url: "/admin/orders/" + id,
+        method: "PATCH",
+        data: orderData
     });
 }
 
@@ -454,6 +495,44 @@ export function deleteImages(imageUrls) {
     });
 }
 
+
+/*==============================================================
+# Payment
+==============================================================*/
+
+export function createCheckoutSession(cartItems, email, shippingCountry = null, cartTotal = 0) {
+    // Extract cue GUIDs from cart items (cues are always quantity 1)
+    const cueGuids = cartItems
+        .filter(item => item.itemType === 'cue')
+        .map(item => item.itemDetails.guid);
+    
+    // Extract accessory items with quantities
+    const accessoryItems = cartItems
+        .filter(item => item.itemType === 'accessory')
+        .map(item => ({
+            guid: item.itemDetails.guid,
+            quantity: item.quantity
+        }));
+    
+    return _ajax({
+        url: "/order/payment/create-checkout-session",
+        method: "POST",
+        data: { 
+            cueGuids: cueGuids,
+            accessoryItems: accessoryItems,
+            email: email,
+            shippingCountry: shippingCountry,
+            cartTotal: cartTotal
+        }
+    });
+}
+
+export function verifyPaymentSession(sessionId) {
+    return _ajax({
+        url: `/order/payment/verify-session/${sessionId}`,
+        method: "GET",
+    });
+}
 
 /*==============================================================
 # Sitewide Search

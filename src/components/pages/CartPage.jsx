@@ -7,6 +7,7 @@ import { updateCartItem, removeFromCart, clearCart, createCheckoutSession } from
 import { receiveResponse } from "../../util/notifications";
 import { setCartItems, updateCartItemRedux, removeCartItemRedux, clearCartRedux } from "../../util/redux/actionCreators";
 import countryList from "react-select-country-list";
+import { getAllowedShippingCountries } from "../../util/requests";
 
 export default function CartPage() {
     const navigate = useNavigate();
@@ -23,11 +24,30 @@ export default function CartPage() {
     const [selectedCountry, setSelectedCountry] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Get country options using react-select-country-list
-    const countryOptions = countryList().getData().map(country => ({
+    // State for allowed countries
+    const [allowedCountries, setAllowedCountries] = useState([]);
+
+    // Get all country options
+    const allCountryOptions = countryList().getData().map(country => ({
         label: country.label,
         value: country.value // This gives us the 2-letter country code (e.g., "US", "CA", "GB")
     }));
+
+    // Filter country options to only allowed countries
+    const countryOptions = allowedCountries.length > 0
+        ? allCountryOptions.filter(opt => allowedCountries.includes(opt.value))
+        : allCountryOptions;
+
+    // Fetch allowed shipping countries from backend on mount
+    useEffect(() => {
+        getAllowedShippingCountries()
+            .then((countries) => {
+                setAllowedCountries(countries);
+            })
+            .catch(() => {
+                setAllowedCountries([]); // fallback: show all countries if error
+            });
+    }, []);
 
     const handleUpdateQuantity = async (itemGuid, newQuantity) => {
         if (newQuantity < 1) return;
@@ -154,7 +174,7 @@ export default function CartPage() {
                             <p>Add some cues or accessories to get started!</p>
                             <DefaultButton 
                                 text="Shop Cues" 
-                                onClick={() => navigate("/collections/cues")}
+                                onClick={() => navigate("/collections/cues?available=true")}
                             />
                         </div>
                     </div>
@@ -208,7 +228,7 @@ export default function CartPage() {
 
                             {/* Country Selection */}
                             {!hasItemsWithoutPrice() && (
-                                <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                                <div style={{ marginTop: '1.6rem', marginBottom: '.1rem' }}>
                                     <FormSelect
                                         title="Shipping Country"
                                         value={selectedCountry}
@@ -230,17 +250,16 @@ export default function CartPage() {
                                 <DefaultButton 
                                     text={loading ? "Processing..." : "Proceed to Checkout"}
                                     onClick={handleCheckout}
-                                    className="full-width-btn"
+                                    className={`full-width-btn${!selectedCountry ? ' disabled' : ''}`}
                                     disabled={!selectedCountry || loading}
                                 />
                             )}
-                            
-                            <button 
-                                className="continue-shopping-btn"
-                                onClick={() => navigate("/collections/cues")}
-                            >
-                                Continue Shopping
-                            </button>
+
+                            <DefaultButton
+                                text="Continue Shopping"
+                                onClick={() => navigate("/collections/cues?available=true")}
+                                className="continue-shopping-btn full-width-btn"
+                            />
                         </div>
                     </div>
                 </div>

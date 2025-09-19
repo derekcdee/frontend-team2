@@ -98,6 +98,18 @@ export function clearCart() {
     });
 }
 
+export function getAllowedShippingCountries() {
+    return _ajax({
+        url: "/order/payment/shipping-countries",
+        method: "GET"
+    }).then(response => {
+        if (response && Array.isArray(response.data)) {
+            return response.data;
+        }
+        return [];
+    });
+}
+
 /*==============================================================
 # Collections
 ==============================================================*/
@@ -234,6 +246,13 @@ export function getUserOrders() {
     });
 }
 
+export function getUserOrderById(orderId) {
+    return _ajax({
+        url: `/user/orders/${orderId}`,
+        method: "GET"
+    });
+}
+
 /*==============================================================
 # Products
 ==============================================================*/
@@ -248,6 +267,13 @@ export function getUserOrders() {
 export function getAdminUsers() {
     return _ajax({
         url: "/admin/users",
+        method: "GET",
+    });
+}
+
+export function getAdminOrders() {
+    return _ajax({
+        url: "/admin/orders",
         method: "GET",
     });
 }
@@ -286,6 +312,14 @@ export function deleteUser(id) {
     return _ajax({
         url: "/admin/users/" + id,
         method: "DELETE",
+    });
+}
+
+export function editOrder(id, orderData) {
+    return _ajax({
+        url: "/admin/orders/" + id,
+        method: "PATCH",
+        data: orderData
     });
 }
 

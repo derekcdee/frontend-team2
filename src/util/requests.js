@@ -239,6 +239,13 @@ export function userChangePassword(currPw, newPw){
     })
 }
 
+export function userToggleNotifications(){
+    return _ajax({
+        url: "/user/toggleNotifications",
+        method: "PUT"
+    })
+}
+
 export function getUserOrders() {
     return _ajax({
         url: "/user/orders",
@@ -257,6 +264,79 @@ export function getUserOrderById(orderId) {
 # Products
 ==============================================================*/
 
+/*==============================================================
+# Emailer
+==============================================================*/
+export function emailContactUs(subject, message, attachments) {
+    const formData = new FormData();
+    if (subject) formData.append("subject", subject);
+    if (message) formData.append("message", message);
+
+    if (attachments && attachments.length) {
+        attachments.forEach((file, idx) => {
+            formData.append("attachments", file); 
+        });
+    }
+
+    return _ajax({
+        url: "/email/contactus",
+        method: "POST",
+        data: formData,
+    });
+}
+
+
+export function emailResetPassword( email ) {
+    return _ajax({
+        url: "/email/resetPassword",
+        method: "POST",
+        data: { email }
+    });
+}
+
+export function emailNotification(subject, message, attachments) {
+    const formData = new FormData();
+    if (subject) formData.append("subject", subject);
+    if (message) formData.append("message", message);
+
+    if (attachments && attachments.length) {
+        attachments.forEach((file, idx) => {
+            formData.append("attachments", file); 
+        });
+    }
+
+    return _ajax({
+        url: "/email/notification",
+        method: "POST",
+        data: formData,
+    });
+}
+
+export function emailAnnouncement(subject, message, attachments) {
+    const formData = new FormData();
+    if (subject) formData.append("subject", subject);
+    if (message) formData.append("message", message);
+
+    if (attachments && attachments.length) {
+        attachments.forEach((file, idx) => {
+            formData.append("attachments", file); 
+        });
+    }
+
+    return _ajax({
+        url: "/email/announcement",
+        method: "POST",
+        data: formData,
+    });
+}
+
+export function emailOrderConfirm( email, userOrder  ) {
+    return _ajax({
+        url: "/email/orderconfirm",
+        method: "POST",
+        data: { email, userOrder  }
+    });
+}
 
 /*==============================================================
 # Admin

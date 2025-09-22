@@ -260,6 +260,14 @@ export function getUserOrderById(orderId) {
     });
 }
 
+export function contactUs(payload){
+    return _ajax({
+        url: "/email/contactus",
+        method: "POST",
+        data: payload
+})
+}
+
 /*==============================================================
 # Products
 ==============================================================*/
@@ -284,7 +292,6 @@ export function emailContactUs(subject, message, attachments) {
         data: formData,
     });
 }
-
 
 export function emailResetPassword( email ) {
     return _ajax({

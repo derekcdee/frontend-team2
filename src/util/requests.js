@@ -267,13 +267,13 @@ export function getUserOrderById(orderId) {
 /*==============================================================
 # Emailer
 ==============================================================*/
-export function emailContactUs(subject, message, attachments) {
+export function contactUs(payload) {
     const formData = new FormData();
-    if (subject) formData.append("subject", subject);
-    if (message) formData.append("message", message);
+    if (payload.subject) formData.append("subject", payload.subject);
+    if (payload.message) formData.append("message", payload.message);
 
-    if (attachments && attachments.length) {
-        attachments.forEach((file, idx) => {
+    if (payload.attachments && payload.attachments.length) {
+        payload.attachments.forEach((file, idx) => {
             formData.append("attachments", file); 
         });
     }
@@ -285,48 +285,11 @@ export function emailContactUs(subject, message, attachments) {
     });
 }
 
-
 export function emailResetPassword( email ) {
     return _ajax({
         url: "/email/resetPassword",
         method: "POST",
         data: { email }
-    });
-}
-
-export function emailNotification(subject, message, attachments) {
-    const formData = new FormData();
-    if (subject) formData.append("subject", subject);
-    if (message) formData.append("message", message);
-
-    if (attachments && attachments.length) {
-        attachments.forEach((file, idx) => {
-            formData.append("attachments", file); 
-        });
-    }
-
-    return _ajax({
-        url: "/email/notification",
-        method: "POST",
-        data: formData,
-    });
-}
-
-export function emailAnnouncement(subject, message, attachments) {
-    const formData = new FormData();
-    if (subject) formData.append("subject", subject);
-    if (message) formData.append("message", message);
-
-    if (attachments && attachments.length) {
-        attachments.forEach((file, idx) => {
-            formData.append("attachments", file); 
-        });
-    }
-
-    return _ajax({
-        url: "/email/announcement",
-        method: "POST",
-        data: formData,
     });
 }
 
@@ -544,6 +507,26 @@ export function deleteCue(id) {
     return _ajax({
         url: "/admin/cues/" + id,
         method: "DELETE",
+    });
+}
+
+// Admin emailer section
+
+export function emailAnnouncement(subject, message, attachments) {
+    const formData = new FormData();
+    if (subject) formData.append("subject", subject);
+    if (message) formData.append("message", message);
+
+    if (attachments && attachments.length) {
+        attachments.forEach((file, idx) => {
+            formData.append("attachments", file); 
+        });
+    }
+
+    return _ajax({
+        url: "/admin/email/announcement",
+        method: "POST",
+        data: formData,
     });
 }
 

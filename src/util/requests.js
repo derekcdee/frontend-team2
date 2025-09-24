@@ -260,21 +260,6 @@ export function getUserOrderById(orderId) {
     });
 }
 
-export function contactUs(payload){
-    return _ajax({
-        url: "/email/contactus",
-        method: "POST",
-        data: payload
-})
-}
-
-/*==============================================================
-# Products
-==============================================================*/
-
-/*==============================================================
-# Emailer
-==============================================================*/
 export function contactUs(payload) {
     const formData = new FormData();
     if (payload.subject) formData.append("subject", payload.subject);
@@ -292,6 +277,14 @@ export function contactUs(payload) {
         data: formData,
     });
 }
+
+/*==============================================================
+# Products
+==============================================================*/
+
+/*==============================================================
+# Emailer
+==============================================================*/
 
 export function emailResetPassword( email ) {
     return _ajax({

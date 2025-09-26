@@ -1,0 +1,169 @@
+.build-a-cue-page {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 32px 24px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.build-a-cue-card {
+    background: var(--miller-white);
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1 1 380px;
+}
+
+.build-a-cue-options {
+    max-width: 360px;
+    flex: 1 1 320px;
+}
+
+.build-a-cue-preview {
+    flex: 2 1 520px;
+    min-width: 520px;
+}
+
+.build-a-cue-card__header h2 {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+    text-transform: lowercase;
+    letter-spacing: 0.08em;
+}
+
+.build-a-cue-card__header p {
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: #656565;
+}
+
+.build-a-cue-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.build-a-cue-field label {
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.build-a-cue-select {
+    padding: 10px 14px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background-color: #f9f9f9;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.build-a-cue-select:focus {
+    outline: none;
+    border-color: var(--miller-dark-grey);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.build-a-cue-materials h3 {
+    font-size: 1.6rem;
+    text-transform: lowercase;
+    margin-bottom: 4px;
+}
+
+.build-a-cue-materials p {
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #787878;
+    margin-bottom: 12px;
+}
+
+.build-a-cue-material-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.build-a-cue-canvas {
+    background: linear-gradient(180deg, #f7f7f7 0%, #f1f1f1 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    min-height: 360px;
+}
+
+.build-a-cue-canvas canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.build-a-cue-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+.build-a-cue-control-btn {
+    background: var(--miller-black);
+    color: var(--miller-white);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.build-a-cue-control-btn:hover {
+    transform: translateY(-1px);
+    background: var(--miller-dark-grey);
+}
+
+.build-a-cue-control-btn.reset {
+    background: var(--miller-red);
+}
+
+.build-a-cue-control-btn.reset:hover {
+    background: #d53d35;
+}
+
+@media (max-width: 1100px) {
+    .build-a-cue-preview {
+        min-width: 0;
+        flex-basis: 100%;
+    }
+
+    .build-a-cue-options {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .build-a-cue-page {
+        padding: 24px 16px 60px;
+    }
+
+    .build-a-cue-card {
+        padding: 24px;
+    }
+
+    .build-a-cue-material-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 540px) {
+    .build-a-cue-material-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .build-a-cue-control-btn {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+}

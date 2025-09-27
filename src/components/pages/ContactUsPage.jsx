@@ -36,9 +36,11 @@ export default function ContactUsPage() {
                     <b>Client Email:</b> ${data.email}<br>
                     <b>Client Phone:</b> ${String(data.phone || '')}<br>
                     <b>Message:</b><br>${data.comment}
-                    `,
-            email: data.email
+                    `
         };
+        if (attachment) {
+            payload.attachments = [attachment];
+        }
         contactUs(payload)
             .then(response => {
                 // reset form
@@ -114,10 +116,12 @@ export default function ContactUsPage() {
                             <div className="form-column flex-1">
                                 <FormField
                                     type="text"
-                                    title="Subject"
+                                    title="Subject*"
                                     value={subject}
                                     error={errors.subject && errors.subject.message}
-                                    {...register("subject")}
+                                    {...register("subject", {
+                                        required: "Subject is required"
+                                    })}
                                 />
                             </div>
                         </div>

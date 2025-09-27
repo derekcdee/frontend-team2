@@ -294,11 +294,11 @@ export function emailResetPassword( email ) {
     });
 }
 
-export function emailOrderConfirm( email, userOrder  ) {
+export function emailOrderConfirm( email, orderID ) {
     return _ajax({
         url: "/email/orderconfirm",
         method: "POST",
-        data: { email, userOrder  }
+        data: { email, orderID }
     });
 }
 
@@ -306,20 +306,12 @@ export function emailOrderConfirm( email, userOrder  ) {
 # Admin
 ==============================================================*/
 
-export function sendAnnouncement(subject, message, attachments) {
-    const formData = new FormData();
-    if (subject) formData.append("subject", subject);
-    if (message) formData.append("message", message);
-    if (attachments && attachments.length) {
-        attachments.forEach((file) => {
-            formData.append("attachments", file);
-        });
-    }
+export function sendAnnouncement(subject, html) {
     return _ajax({
-        url: "/email/announcement",
-        method: "POST",
-        data: formData,
-    });
+    url: "/admin/email/announcement",
+    method: "POST",
+    data: { subject, html },
+  });
 }
 
 export function getAdminUsers() {

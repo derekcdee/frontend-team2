@@ -5,7 +5,7 @@ import { set, useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages, getAdminOrders, editOrder, sendAnnouncement } from '../../../util/requests';
-import { receiveResponse } from '../../../util/notifications';
+import { receiveErrors, receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
 import { ImageUploader } from '../../util/Util';
@@ -3684,42 +3684,74 @@ const dialogContentStyle = {
     marginTop: '24px'
 };
 
-// EmailTab: Placeholder file uploader and upload button for sending emails to everyone
 function EmailTab() {
     const [selectedFile, setSelectedFile] = useState(null);
+    const fileInputRef = React.useRef(null);
     const [uploading, setUploading] = useState(false);
+    const [subject, setSubject] = useState("");
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
 
+    const handleSubjectChange = (e) => {
+        setSubject(e.target.value);
+    };
+
     const handleUpload = () => {
         setUploading(true);
-        const subject = selectedFile ? selectedFile.name : 'Announcement';
-        const message = 'This is a test announcement.';
-        const attachments = selectedFile ? [selectedFile] : [];
-            sendAnnouncement(subject, message, attachments)
+        if (!subject) {
+            setUploading(false);
+            receiveErrors(['Subject is required.']);
+            return;
+        }
+        if (!selectedFile) {
+            setUploading(false);
+            receiveErrors(['No file selected.']);
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const html = e.target.result;
+            sendAnnouncement(subject, html)
                 .then((res) => {
                     setUploading(false);
+                    setSubject("");
+                    setSelectedFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
                     receiveResponse(res);
                 })
                 .catch(() => {
                     setUploading(false);
+                    setSelectedFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
                 });
+        };
+        reader.readAsText(selectedFile);
     };
 
     return (
         <div>
             <h3 className="admin-page-header">Email</h3>
-            <input type="file" onChange={handleFileChange} style={{ marginBottom: '1rem', display: 'block' }} />
-            <button
-                className="admin-button"
+            <FormField
+                title="Subject*"
+                value={subject}
+                onChange={handleSubjectChange}
+                style={{ marginBottom: '.5rem', width: '355px' }}
+            />
+            <input
+                type="file"
+                accept=".html,text/html"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                style={{ marginBottom: '1rem', display: 'block' }}
+            />
+            <DefaultButton
+                text={uploading ? 'Uploading...' : 'Upload & Send Email'}
                 onClick={handleUpload}
-                disabled={!selectedFile || uploading}
-                style={{ marginTop: '0.5rem', display: 'inline-block' }}
-            >
-                {uploading ? 'Uploading...' : 'Upload & Send Email'}
-            </button>
+                disabled={uploading || !subject || !selectedFile}
+                className="admin-button"
+            />
             {selectedFile && <div style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Selected file: {selectedFile.name}</div>}
         </div>
     );

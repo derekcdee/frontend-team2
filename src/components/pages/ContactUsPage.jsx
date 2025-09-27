@@ -36,7 +36,8 @@ export default function ContactUsPage() {
                     <b>Client Email:</b> ${data.email}<br>
                     <b>Client Phone:</b> ${String(data.phone || '')}<br>
                     <b>Message:</b><br>${data.comment}
-                    `
+                    `,
+            email: data.email
         };
         contactUs(payload)
             .then(response => {

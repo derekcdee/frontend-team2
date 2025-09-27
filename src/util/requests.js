@@ -264,6 +264,7 @@ export function contactUs(payload) {
     const formData = new FormData();
     if (payload.subject) formData.append("subject", payload.subject);
     if (payload.message) formData.append("message", payload.message);
+    if (payload.email) formData.append("email", payload.email);
 
     if (payload.attachments && payload.attachments.length) {
         payload.attachments.forEach((file, idx) => {

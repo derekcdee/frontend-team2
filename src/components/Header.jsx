@@ -332,13 +332,13 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
             >
                 {isLeft ?
                 <>
-                    <button className="fa-solid fa-arrow-left" tabIndex={-1} />
+                    <button className="fa-solid fa-arrow-left drawer-arrow" tabIndex={-1} />
                     {text}
                 </>
                 :
                 <>
                     {text}
-                    {!link && <button className="fa-solid fa-arrow-right" tabIndex={-1} />}
+                    {!link && <button className="fa-solid fa-arrow-right drawer-arrow" tabIndex={-1} />}
                 </>
                 }
                 
@@ -460,7 +460,7 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                     height: searchResults.length > 0 || nothingFound ? 'auto' : 'auto', // Let black background adjust to content
                     minHeight: hasScrolled ? '70px' : '100px',
                     // Use 95vh to take up almost the entire viewport while leaving a small margin
-                    maxHeight: searchResults.length > 0 || nothingFound ? '100vh' : 'auto',
+                    maxHeight: searchResults.length > 0 || nothingFound ? '100dvh' : 'auto',
                     // Always maintain scroll capability
                     overflowY: searchResults.length > 0 || nothingFound ? 'auto' : 'hidden',
                     overflowX: 'hidden', // Prevent horizontal scrolling

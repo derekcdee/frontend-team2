@@ -4,8 +4,8 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { set, useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages, getAdminOrders, editOrder } from '../../../util/requests';
-import { receiveResponse } from '../../../util/notifications';
+import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages, getAdminOrders, editOrder, sendAnnouncement } from '../../../util/requests';
+import { receiveErrors, receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
 import { ImageUploader } from '../../util/Util';
@@ -178,7 +178,7 @@ export default function AdminPage() {
 }
 
 function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
-    const pages = ['Cues', 'Accessories', 'Materials', 'Users', 'Orders'];
+    const pages = ['Cues', 'Accessories', 'Materials', 'Users', 'Orders', 'Email'];
 
     const handlePlusClick = () => {
         let title = '';
@@ -245,6 +245,8 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
             return <UsersTable data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} onDeleteClick={onDeleteClick} />;
         case 'Orders':
             return <OrdersTable data={orderData} onEditClick={onEditClick} />;
+        case 'Email':
+            return <EmailTab />;
         default:
             return null;
     }
@@ -271,6 +273,11 @@ function CuesTable({ data, onEditClick, onDeleteClick }) {
             accessorKey: 'status',
             header: 'Status',
             id: 'cueStatus',
+        },
+        {
+            header: 'Featured',
+            accessorFn: (row) => row.featured ? 'Yes' : 'No',
+            id: 'cueFeatured',
         },
         {
             id: 'actions1',
@@ -570,6 +577,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
     buttLength: '',
     buttCapMaterial: 'Juma',
     status: '',
+    featured: false,
     forearmInlayQuantity: '',
     forearmInlaySize: '',
     forearmInlayMaterial: '',
@@ -612,6 +620,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
     const [isCustomFerruleMaterial, setIsCustomFerruleMaterial] = useState(false);
     const [isCustomJointCollarMaterial, setIsCustomJointCollarMaterial] = useState(false);
     const [isCustomButtCapMaterial, setIsCustomButtCapMaterial] = useState(false);
+    const [featured, setFeatured] = useState(false);
 
     useEffect(() => {
         setLocalTitle(title);
@@ -652,6 +661,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
             reset(element);
             setButtType(element.isFullSplice || false);
             setIncludeWrap(!!element.handleWrapType || !!element.handleWrapColor);
+            setFeatured(element.featured || false);
 
             // Check all forearm inlay related fields
             setIncludeForearmInlay(
@@ -796,6 +806,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
     const onSubmit = (data) => {
         data.isFullSplice = buttType;
         data.includeWrap = includeWrap;
+        data.featured = featured;
         if (existingCue) {
             editCue(data._id, data)
                 .then((res) => {
@@ -1170,7 +1181,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                 <div className="form-row">
                                     <div className="flex-1">
                                         <FormField
-                                            title="Price"
+                                            title="Price (USD)"
                                             type="number"
                                             value={price}
                                             {...register("price")}
@@ -1203,17 +1214,29 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                                     value={notes}
                                     {...register("notes")}
                                 />
-                                <FormSelect
-                                    title="Status*"
-                                    value={status}
-                                    error={errors.status && errors.status.message}
-                                    options={STATUS_OPTIONS_CUE}
-                                    displayKey="label"
-                                    valueKey="label"
-                                    {...register("status", {
-                                        required: "Status is required"
-                                    })}
-                                />
+                                <div className="form-row">
+                                    <div className="flex-1">
+                                        <FormSelect
+                                            title="Status*"
+                                            value={status}
+                                            error={errors.status && errors.status.message}
+                                            options={STATUS_OPTIONS_CUE}
+                                            displayKey="label"
+                                            valueKey="label"
+                                            {...register("status", {
+                                                required: "Status is required"
+                                            })}
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <DefaultToggle 
+                                            titleOn={"Featured"} 
+                                            titleOff={"Not Featured"} 
+                                            onChange={setFeatured} 
+                                            value={featured} 
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -2036,7 +2059,7 @@ function AccessoryDialog({ open, onClose, title: initialTitle, getData, setDialo
                             })}
                         />
                         <FormField
-                            title="Price*"
+                            title="Price* (USD)"
                             type="number"
                             value={price}
                             error={errors.price && errors.price.message}
@@ -3166,7 +3189,7 @@ function DialogImageSection({ folder = 'general', existingItem, imageUrls = [], 
                                 sx={{
                                     overflow: 'hidden',
                                     borderRadius: '4px',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                                     cursor: 'grab',
                                     transition: 'all 0.2s ease',
                                     '&.image-over': {
@@ -3681,3 +3704,76 @@ const dialogTitleStyle = {
 const dialogContentStyle = {
     marginTop: '24px'
 };
+
+function EmailTab() {
+    const [selectedFile, setSelectedFile] = useState(null);
+    const fileInputRef = React.useRef(null);
+    const [uploading, setUploading] = useState(false);
+    const [subject, setSubject] = useState("");
+
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
+    const handleSubjectChange = (e) => {
+        setSubject(e.target.value);
+    };
+
+    const handleUpload = () => {
+        setUploading(true);
+        if (!subject) {
+            setUploading(false);
+            receiveErrors(['Subject is required.']);
+            return;
+        }
+        if (!selectedFile) {
+            setUploading(false);
+            receiveErrors(['No file selected.']);
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const html = e.target.result;
+            sendAnnouncement(subject, html)
+                .then((res) => {
+                    setUploading(false);
+                    setSubject("");
+                    setSelectedFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                    receiveResponse(res);
+                })
+                .catch(() => {
+                    setUploading(false);
+                    setSelectedFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                });
+        };
+        reader.readAsText(selectedFile);
+    };
+
+    return (
+        <div>
+            <h3 className="admin-page-header">Email</h3>
+            <FormField
+                title="Subject*"
+                value={subject}
+                onChange={handleSubjectChange}
+                style={{ marginBottom: '.5rem', width: '355px' }}
+            />
+            <input
+                type="file"
+                accept=".html,text/html"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                style={{ marginBottom: '1rem', display: 'block' }}
+            />
+            <DefaultButton
+                text={uploading ? 'Uploading...' : 'Upload & Send Email'}
+                onClick={handleUpload}
+                disabled={uploading || !subject || !selectedFile}
+                className="admin-button"
+            />
+            {selectedFile && <div style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Selected file: {selectedFile.name}</div>}
+        </div>
+    );
+}

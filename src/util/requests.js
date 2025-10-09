@@ -37,9 +37,20 @@ export function _ajax(settings = {}) {
             return response;
         })
         .catch((err) => {
-            const response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
+            let response;
+            
+            // Handle network errors (connection refused, timeout, etc.)
+            if (!err.responseJSON) {
+                response = {
+                    errors: [`Internal server error. Please try again later.`],
+                };
+            } else {
+                // Handle server errors with JSON response
+                response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
+            }
+            
+            // Automatically display errors/logs notifications from response
             receiveResponse(response);
-
             return Promise.reject(response);
         });
 }
@@ -120,6 +131,13 @@ export function getCueCollection() {
     });
 }
 
+export function getFeaturedCues() {
+    return _ajax({
+        url: "/cues/featured",
+        method: "GET",
+    });
+}
+
 export function getAccessoryCollection() {
     return _ajax({
         url: "/accessories",
@@ -181,11 +199,11 @@ export function logout() {
     });
 }
 
-export function registerUser(email, password, fName, lName){
+export function registerUser(email, password, fName, lName, emailNotos) {
     return _ajax({
         url: "/account/register",
         method: "POST",
-        data: {email, password, fName, lName}    
+        data: {email, password, fName, lName, emailNotos}    
     });
 }
 
@@ -239,6 +257,13 @@ export function userChangePassword(currPw, newPw){
     })
 }
 
+export function userToggleNotifications(){
+    return _ajax({
+        url: "/user/toggleNotifications",
+        method: "PUT"
+    })
+}
+
 export function getUserOrders() {
     return _ajax({
         url: "/user/orders",
@@ -253,16 +278,59 @@ export function getUserOrderById(orderId) {
     });
 }
 
+export function contactUs(payload) {
+    const formData = new FormData();
+    if (payload.subject) formData.append("subject", payload.subject);
+    if (payload.message) formData.append("message", payload.message);
+
+    if (payload.attachments && Array.isArray(payload.attachments) && payload.attachments.length) {
+        payload.attachments.forEach((file) => {
+            if (file) formData.append("attachments", file);
+        });
+    }
+
+    return _ajax({
+        url: "/email/contactus",
+        method: "POST",
+        data: formData,
+    });
+}
+
 /*==============================================================
 # Products
 ==============================================================*/
 
+/*==============================================================
+# Emailer
+==============================================================*/
+
+export function emailResetPassword( email ) {
+    return _ajax({
+        url: "/email/resetPassword",
+        method: "POST",
+        data: { email }
+    });
+}
+
+export function emailOrderConfirm( email, orderID ) {
+    return _ajax({
+        url: "/email/orderconfirm",
+        method: "POST",
+        data: { email, orderID }
+    });
+}
 
 /*==============================================================
 # Admin
 ==============================================================*/
 
-// admin users sections
+export function sendAnnouncement(subject, html) {
+    return _ajax({
+    url: "/admin/email/announcement",
+    method: "POST",
+    data: { subject, html },
+  });
+}
 
 export function getAdminUsers() {
     return _ajax({
@@ -464,6 +532,26 @@ export function deleteCue(id) {
     return _ajax({
         url: "/admin/cues/" + id,
         method: "DELETE",
+    });
+}
+
+// Admin emailer section
+
+export function emailAnnouncement(subject, message, attachments) {
+    const formData = new FormData();
+    if (subject) formData.append("subject", subject);
+    if (message) formData.append("message", message);
+
+    if (attachments && attachments.length) {
+        attachments.forEach((file, idx) => {
+            formData.append("attachments", file); 
+        });
+    }
+
+    return _ajax({
+        url: "/admin/email/announcement",
+        method: "POST",
+        data: formData,
     });
 }
 

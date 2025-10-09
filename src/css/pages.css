@@ -1,3 +1,57 @@
+/* Ensure checkbox and text are always side-by-side, even on desktop */
+.email-notos-label {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.3em !important;
+    cursor: pointer;
+    width: 100%;
+    flex-wrap: nowrap;
+}
+
+.email-notos-row {
+    margin: -0.5em 0 0.3em 0;
+}
+
+.email-notos-checkbox {
+    accent-color: #007bff;
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.5em;
+    min-width: 1.2em;
+    min-height: 1.2em;
+    border-radius: 4px;
+    border: 1px solid #cfd8dc;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+}
+
+.email-notos-checkbox:focus {
+    outline: 2px solid #007bff;
+    box-shadow: 0 0 0 2px #e3e6ee;
+}
+
+.email-notos-text {
+    font-size: 15px;
+    color: #222;
+}
+
+@media (max-width: 600px) {
+    .email-notos-row {
+        margin: -0.2em 0 0.5em 0;
+    }
+    .email-notos-label {
+        font-size: 0.95rem;
+        gap: 0.5em;
+    }
+    .email-notos-label {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.7em;
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+}
 /* Unified h4 styling for order details page */
 .order-detail-page h4 {
     margin: 0;
@@ -889,11 +943,11 @@
         max-width: calc(100vw - 10px);
     }
     
-    .checkout-result-container h1 {
+    .checkout-result_container h1 {
         font-size: 1.5rem;
     }
     
-    .checkout-result-container p {
+    .checkout-result_container p {
         font-size: 0.95rem;
     }
     
@@ -2748,17 +2802,43 @@
     background-color: #f8f9fa;
     cursor: pointer;
     transition: border-color 0.2s ease;
+    color: var(--miller-black); /* Add this line */
 }
 
 .file-upload-input:hover {
     border-color: var(--miller-dark-grey);
 }
 
-.file-selected {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #28a745;
-    font-weight: bold;
+/* Style the file input placeholder text */
+.file-upload-input::file-selector-button {
+    background-color: var(--miller-dark-grey);
+    color: var(--miller-white) !important;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 0.75rem;
+    font-family: inherit;
+}
+
+.file-upload-input::file-selector-button:hover {
+    background-color: var(--miller-black);
+}
+
+/* For WebKit browsers */
+.file-upload-input::-webkit-file-upload-button {
+    background-color: var(--miller-dark-grey);
+    color: var(--miller-black);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 0.75rem;
+    font-family: inherit;
+}
+
+.file-upload-input::-webkit-file-upload-button:hover {
+    background-color: var(--miller-black);
 }
 
 .file-upload-help {
@@ -2959,10 +3039,6 @@
     color: #333;
     font-size: 1rem;
     text-align: justify;
-}
-
-.references-footer p:last-child {
-    margin-bottom: 0;
 }
 
 /*==============================================================
@@ -3210,4 +3286,75 @@
     width: 100%;
     max-width: 180px;
   }
+}
+
+/* Mobile optimizations for file upload */
+@media (max-width: 768px) {
+    .file-upload-section {
+        margin: 1.5rem 0;
+    }
+    
+    .file-upload-label {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+    
+    .file-upload-input {
+        padding: 1.25rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    
+    .file-selected {
+        font-size: 0.95rem;
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+        background-color: #d4edda;
+        border-radius: 6px;
+        border: 1px solid #c3e6cb;
+        text-align: center;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .file-upload-help {
+        font-size: 0.9rem;
+        margin-top: 0.75rem;
+        text-align: center;
+        padding: 0 0.5rem;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 480px) {
+    .file-upload-section {
+        margin: 1.25rem 0;
+    }
+    
+    .file-upload-label {
+        font-size: 0.95rem;
+    }
+    
+    .file-upload-input {
+        padding: 1.5rem 1rem;
+        min-height: 70px;
+        font-size: 0.95rem;
+    }
+    
+    .file-selected {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+    
+    .file-upload-help {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
 }

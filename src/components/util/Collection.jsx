@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Card, MaterialCard } from "./Card";
+import { SkeletonCard } from "./SkeletonCard";
 import { NavLink } from "react-router-dom";
 import { Dialog, Slide, DialogActions } from "@mui/material";
 import { DefaultButton } from "./Buttons";
@@ -686,7 +687,14 @@ export default function Collection({
                     {/* Product listing - same for both mobile and desktop */}
                     <div className="collection-listing">
                         {loading ? (
-                            null
+                            <ul>
+                                {/* Show 8 skeleton cards while loading */}
+                                {Array.from({ length: 8 }, (_, index) => (
+                                    <li key={`skeleton-${index}`}>
+                                        <SkeletonCard />
+                                    </li>
+                                ))}
+                            </ul>
                         ) : currentItems.length > 0 ? (
                             <ul>
                                 {currentItems.map((item, index) => {
@@ -733,18 +741,18 @@ export default function Collection({
                         ) : (
                             <div className="empty-collection-message">
                                         {isSearchCollection ? (<div>
-                                            <p>No products found for "{searchQuery}". Try a different search term. For additional information or requests visit the <NavLink to="/pages/contact" className="inline-link">contact us page</NavLink>.</p>
+                                            <p>No products found for "{searchQuery}". Try a different search term. For additional information or requests visit the <NavLink to="/pages/contact-us" className="inline-link">contact us page</NavLink>.</p>
                                             </div>
                                 ) : Object.keys(activeFilters).length === 0 && !searchQuery ? (
                                     <div>
                                         <p>
-                                            There are currently no products in this collection, for additional information or requests visit the <NavLink to="/pages/contact" className="inline-link">contact us page</NavLink>.
+                                            There are currently no products in this collection, for additional information or requests visit the <NavLink to="/pages/contact-us" className="inline-link">contact us page</NavLink>.
                                         </p>
                                     </div>
                                 ) : (
                                     <div>
                                         <p>
-                                            No products found that match your current filters. For additional information or requests visit the <NavLink to="/pages/contact" className="inline-link">contact us page</NavLink>.
+                                            No products found that match your current filters. For additional information or requests visit the <NavLink to="/pages/contact-us" className="inline-link">contact us page</NavLink>.
                                         </p>
                                     </div>
                                 )}

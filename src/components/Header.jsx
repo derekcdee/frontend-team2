@@ -332,13 +332,13 @@ function DrawerNavItem({ openDropdown, text, isDropdown, isOpen, onToggle, optio
             >
                 {isLeft ?
                 <>
-                    <button className="fa-solid fa-arrow-left" tabIndex={-1} />
+                    <button className="fa-solid fa-arrow-left drawer-arrow" tabIndex={-1} />
                     {text}
                 </>
                 :
                 <>
                     {text}
-                    {!link && <button className="fa-solid fa-arrow-right" tabIndex={-1} />}
+                    {!link && <button className="fa-solid fa-arrow-right drawer-arrow" tabIndex={-1} />}
                 </>
                 }
                 
@@ -460,7 +460,7 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                     height: searchResults.length > 0 || nothingFound ? 'auto' : 'auto', // Let black background adjust to content
                     minHeight: hasScrolled ? '70px' : '100px',
                     // Use 95vh to take up almost the entire viewport while leaving a small margin
-                    maxHeight: searchResults.length > 0 || nothingFound ? '100vh' : 'auto',
+                    maxHeight: searchResults.length > 0 || nothingFound ? '100dvh' : 'auto',
                     // Always maintain scroll capability
                     overflowY: searchResults.length > 0 || nothingFound ? 'auto' : 'hidden',
                     overflowX: 'hidden', // Prevent horizontal scrolling
@@ -505,40 +505,55 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            backgroundColor: 'white',
-                            borderRadius: '4px',
-                            padding: '5px 10px',
+                            justifyContent: 'center',
+                            gap: 0, // Add gap between input box and close button
                             width: {
                                 xs: '90%',
                                 sm: '70%',
-                                md: '50%',
-                                lg: '40%'
+                                md: '60%',
+                                lg: '60%'
                             },
                             maxWidth: '1000px',
                             boxSizing: 'border-box',
                         }}
                     >
-                        <Search sx={{ color: 'black', marginRight: 1, flexShrink: 0 }} />
-                        <InputBase
-                            placeholder="Search..."
-                            inputRef={searchInputRef}
-                            fullWidth
-                            onChange={handleSearchInput}
+                        <Box
                             sx={{
-                                color: 'black',
+                                display: 'flex',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                borderRadius: 0,
+                                padding: '5px 10px',
                                 flexGrow: 1,
-                                '& .MuiInputBase-input': {
-                                    fontSize: '1.2rem',
-                                    fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
-                                }
+                                boxSizing: 'border-box',
                             }}
-                        />
+                        >
+                            <Search sx={{ color: 'black', marginRight: 1, flexShrink: 0 }} />
+                            <InputBase
+                                placeholder="Search..."
+                                inputRef={searchInputRef}
+                                fullWidth
+                                onChange={handleSearchInput}
+                                sx={{
+                                    color: 'black',
+                                    flexGrow: 1,
+                                    '& .MuiInputBase-input': {
+                                        fontSize: '1.2rem',
+                                        fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif"
+                                    }
+                                }}
+                            />
+                        </Box>
                         <IconButton 
                             onClick={onClose} 
-                            sx={{ color: 'black', flexShrink: 0 }}
+                            sx={{ 
+                                color: 'white', 
+                                fontSize: '2.1rem',
+                                padding: '12px 12px',
+                            }}
                             aria-label="Close search"
                         >
-                            <Close />
+                            <Close sx={{ fontSize: '2.2rem' }} />
                         </IconButton>
                     </Box>
                 </Box>
@@ -561,8 +576,8 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                                 width: {
                                     xs: '90%',
                                     sm: '70%',
-                                    md: '50%',
-                                    lg: '40%'
+                                    md: '60%',
+                                    lg: '60%'
                                 },
                                 maxWidth: '1000px',
                                 padding: '20px 0',
@@ -646,8 +661,8 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                                 width: {
                                     xs: '90%',
                                     sm: '70%',
-                                    md: '50%',
-                                    lg: '40%'
+                                    md: '60%',
+                                    lg: '60%'
                                 },
                                 maxWidth: '800px',
                                 padding: '20px 0',

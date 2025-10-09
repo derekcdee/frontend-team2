@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FormField, FormTextArea } from "../util/Inputs";
 import { useForm } from "react-hook-form";
 import { DefaultButton } from "../util/Buttons";
+import { contactUs } from "../../util/requests";
+import { receiveResponse } from "../../util/notifications";
 
 export default function ContactUsPage() {
     const { register, handleSubmit, watch, formState: { errors }, reset, setFocus } = useForm({
@@ -27,15 +29,27 @@ export default function ContactUsPage() {
     };
 
     const onSubmit = (data) => {
-        console.log('Form submitted:', { ...data, attachment });
-        // add API call here
-
-
-        // reset form
-        reset();
-        setAttachment(null);
-        const fileInput = document.querySelector('input[type="file"]');
-        if (fileInput) fileInput.value = '';
+        const payload = {
+            subject: data.subject,
+            message: `
+                    <b>Client Name:</b> ${data.name}<br>
+                    <b>Client Email:</b> ${data.email}<br>
+                    <b>Client Phone:</b> ${String(data.phone || '')}<br>
+                    <b>Message:</b><br>${data.comment}
+                    `
+        };
+        if (attachment) {
+            payload.attachments = [attachment];
+        }
+        contactUs(payload)
+            .then(response => {
+                // reset form
+                receiveResponse(response);
+                reset();
+                setAttachment(null);
+                const fileInput = document.querySelector('input[type="file"]');
+                if (fileInput) fileInput.value = '';
+            })
     };
 
     const name = watch("name");
@@ -102,10 +116,12 @@ export default function ContactUsPage() {
                             <div className="form-column flex-1">
                                 <FormField
                                     type="text"
-                                    title="Subject"
+                                    title="Subject*"
                                     value={subject}
                                     error={errors.subject && errors.subject.message}
-                                    {...register("subject")}
+                                    {...register("subject", {
+                                        required: "Subject is required"
+                                    })}
                                 />
                             </div>
                         </div>

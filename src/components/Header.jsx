@@ -33,6 +33,75 @@ const navItems = [
     { text: "Materials", options: options["Materials"] }
 ];
 
+function AnnouncementBanner({ announcements }) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    
+    useEffect(() => {
+        if (announcements.length <= 1) return;
+        
+        const interval = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % announcements.length);
+        }, 10000);
+        
+        return () => clearInterval(interval);
+    }, [announcements.length]);
+    
+    const handleDotClick = (index) => {
+        setCurrentIndex(index);
+    };
+    
+    const handlePrevClick = () => {
+        setCurrentIndex(prev => prev === 0 ? announcements.length - 1 : prev - 1);
+    };
+    
+    const handleNextClick = () => {
+        setCurrentIndex(prev => (prev + 1) % announcements.length);
+    };
+    
+    if (!announcements || announcements.length === 0) return null;
+    
+    return (
+        <div className="announcement-banner">
+            <div className="announcement-banner-inner">
+                {announcements.length > 1 && (
+                    <button 
+                        className="announcement-control announcement-control-prev fa-solid fa-angle-left"
+                        onClick={handlePrevClick}
+                        aria-label="Previous announcement"
+                    />
+                )}
+                
+                <div className="announcement-message-container">
+                    <span className="announcement-message">
+                        {announcements[currentIndex]?.message}
+                    </span>
+                </div>
+                
+                {announcements.length > 1 && (
+                    <>
+                        <button 
+                            className="announcement-control announcement-control-next fa-solid fa-angle-right"
+                            onClick={handleNextClick}
+                            aria-label="Next announcement"
+                        />
+                        
+                        <div className="announcement-dots">
+                            {announcements.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`announcement-dot ${index === currentIndex ? 'active' : ''}`}
+                                    onClick={() => handleDotClick(index)}
+                                    aria-label={`Go to announcement ${index + 1}`}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}
+
 export default function Header() {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [openDrawer, setOpenDrawer] = useState(false);
@@ -166,16 +235,8 @@ export default function Header() {
     return (
         <>
             {/* Announcement Banner */}
-            {!location.pathname.startsWith('/account') && !openDrawer && !searchOpen && !announcementsLoading && activeAnnouncements && activeAnnouncements.length > 0 && (
-                <div className="announcement-banner">
-                    <div className="announcement-banner-inner">
-                        {activeAnnouncements.map((a, idx) => (
-                            <span key={a.guid || idx} className="announcement-message">
-                                {a.message}
-                            </span>
-                        ))}
-                    </div>
-                </div>
+            {!location.pathname.startsWith('/account') && !openDrawer && !searchOpen && !announcementsLoading && (
+                <AnnouncementBanner announcements={activeAnnouncements || []} />
             )}
 
             {/* Existing Header Content */}

@@ -253,20 +253,36 @@ const MaterialDialog = () => {
             <Box
                 sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'space-between',
                     p: 2,
                     borderBottom: '1px solid',
                     borderColor: 'divider'
                 }}
             >
-                <Typography variant="h4" component="h2" sx={{ 
-                    fontWeight: 600,
-                    fontFamily: "'bouwsma-uncial', serif !important"
-                }}>
-                    {loading ? 'Loading...' : error ? 'Error' : displayName}
-                </Typography>
-                <IconButton onClick={handleClose} size="small">
+                <Box sx={{ flex: 1, pr: 2 }}>
+                    <Typography variant="h4" component="h2" sx={{ 
+                        fontWeight: 600,
+                        fontFamily: "'bouwsma-uncial', serif !important",
+                        mb: 1
+                    }}>
+                        {loading ? 'Loading...' : error ? 'Error' : displayName}
+                    </Typography>
+                    <Typography 
+                        variant="body2" 
+                        sx={{ 
+                            fontSize: '0.8rem',
+                            color: 'text.secondary',
+                            fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif !important",
+                            lineHeight: 1.3,
+                            fontStyle: 'italic'
+                        }}
+                    >
+                        Please note: Some materials are subject to availability. If needed, 
+                        contact us for specific material availability and potential lead times.
+                    </Typography>
+                </Box>
+                <IconButton onClick={handleClose} size="small" sx={{ mt: 0.5 }}>
                     <CloseIcon />
                 </IconButton>
             </Box>

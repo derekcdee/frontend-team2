@@ -10,6 +10,7 @@ import { searchSite } from "../util/requests";
 import { Card, MaterialCard } from "./util/Card"; // Import the Card component
 import { SOCIAL_MEDIA_LINKS } from "../util/globalConstants";
 import { showMaterialDialog } from "./dialogs/MaterialDialog";
+import { useSelector } from "react-redux";
 
 const options = {
     "Materials": [
@@ -156,89 +157,111 @@ export default function Header() {
         setSearchOpen(false);
     };
 
+    // Get announcements from redux
+    const { items: announcements, loading: announcementsLoading } = useSelector(state => state.announcements);
+
+    // Only show active announcements
+    const activeAnnouncements = announcements?.filter(a => a.active);
+
     return (
-        <header className="main-header sticky" ref={headerRef}>
-            {openDrawer && <div className="overlay header-overlay" />}
-            {/* Drawer */}
-            <div className="header-drawer">
-                <button className={openDrawer ? "fa-solid fa-xmark header-icon" : "fa-solid fa-bars header-icon"} onClick={() => setOpenDrawer(!openDrawer)}/>
+        <>
+            {/* Announcement Banner */}
+            {!location.pathname.startsWith('/account') && !openDrawer && !searchOpen && !announcementsLoading && activeAnnouncements && activeAnnouncements.length > 0 && (
+                <div className="announcement-banner">
+                    <div className="announcement-banner-inner">
+                        {activeAnnouncements.map((a, idx) => (
+                            <span key={a.guid || idx} className="announcement-message">
+                                {a.message}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
 
-                {/* MENU DRAWER HERE*/}
-                <div className={openDrawer ? "header-drawer-menu open" : "header-drawer-menu"}>
-                    
-                    {/* MENU DRAWER NAV*/}
-                    <nav className="drawer-nav">
-                        <ul className="list-menu">
-                            {navItems.map((navItem) => {
-                                const { text, link, options } = navItem;
+            {/* Existing Header Content */}
+            <header className="main-header sticky" ref={headerRef}>
+                {openDrawer && <div className="overlay header-overlay" />}
+                {/* Drawer */}
+                <div className="header-drawer">
+                    <button className={openDrawer ? "fa-solid fa-xmark header-icon" : "fa-solid fa-bars header-icon"} onClick={() => setOpenDrawer(!openDrawer)}/>
 
-                                return (
-                                    <li key={text}>
-                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown} onLinkClick={handleLinkClick}/>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </nav>
-                    {/* MENU DRAWER FOOTER*/}
-                    <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
-                        <DrawerLoginButton onClick={handleLinkClick} />
-                        <div>
-                            {SOCIAL_MEDIA_LINKS.map((social) => (
-                                <a 
-                                    key={social.name}
-                                    href={social.url}
-                                    className={`header-icon ${social.icon}`}
-                                    aria-label={social.name}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                />
-                            ))}
+                    {/* MENU DRAWER HERE*/}
+                    <div className={openDrawer ? "header-drawer-menu open" : "header-drawer-menu"}>
+                        
+                        {/* MENU DRAWER NAV*/}
+                        <nav className="drawer-nav">
+                            <ul className="list-menu">
+                                {navItems.map((navItem) => {
+                                    const { text, link, options } = navItem;
+
+                                    return (
+                                        <li key={text}>
+                                            <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown} onLinkClick={handleLinkClick}/>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </nav>
+                        {/* MENU DRAWER FOOTER*/}
+                        <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
+                            <DrawerLoginButton onClick={handleLinkClick} />
+                            <div>
+                                {SOCIAL_MEDIA_LINKS.map((social) => (
+                                    <a 
+                                        key={social.name}
+                                        href={social.url}
+                                        className={`header-icon ${social.icon}`}
+                                        aria-label={social.name}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Main Heading */}
-            <div className="header-heading">
-                <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" } onClick={handleLinkClick}>
-                    <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
-                </NavLink>
-            </div>
+                {/* Main Heading */}
+                <div className="header-heading">
+                    <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" } onClick={handleLinkClick}>
+                        <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
+                    </NavLink>
+                </div>
 
-            {/* Nav Section w/ Dropdown Menu*/}
-            <nav className="header-navigation">
-                <ul className="header-list-menu list-menu">
-                    {navItems.map((navItem) => {
-                        const { text, link, options } = navItem;
+                {/* Nav Section w/ Dropdown Menu*/}
+                <nav className="header-navigation">
+                    <ul className="header-list-menu list-menu">
+                        {navItems.map((navItem) => {
+                            const { text, link, options } = navItem;
 
-                        return (
-                            <li key={text}>
-                                <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} onLinkClick={handleLinkClick}/>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
+                            return (
+                                <li key={text}>
+                                    <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} onLinkClick={handleLinkClick}/>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </nav>
 
-            {/* Icons */}
-            <div className="header-icons">
-                <button 
-                    className="fa-solid fa-magnifying-glass header-icon" 
-                    onClick={handleSearchOpen}
-                    aria-label="Search"
+                {/* Icons */}
+                <div className="header-icons">
+                    <button 
+                        className="fa-solid fa-magnifying-glass header-icon" 
+                        onClick={handleSearchOpen}
+                        aria-label="Search"
+                    />
+                    <LoginButton onClick={handleLinkClick} />
+                    <CartButton onClick={handleLinkClick} />
+                </div>
+
+                <SearchDialog 
+                    open={searchOpen} 
+                    onClose={handleSearchClose}
+                    handleLinkClick={handleLinkClick}
+                    hasScrolled={hasScrolled} 
                 />
-                <LoginButton onClick={handleLinkClick} />
-                <CartButton onClick={handleLinkClick} />
-            </div>
-
-            <SearchDialog 
-                open={searchOpen} 
-                onClose={handleSearchClose}
-                handleLinkClick={handleLinkClick}
-                hasScrolled={hasScrolled} 
-            />
-        </header>
+            </header>
+        </>
     );
 }
 

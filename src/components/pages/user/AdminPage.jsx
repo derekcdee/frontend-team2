@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import { set, useForm } from 'react-hook-form';
-import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
+import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect, FormDatePicker } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
 import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages, getAdminOrders, editOrder, sendAnnouncement, getAdminAnnouncements, createAnnouncement, editAnnouncement, deleteAnnouncement } from '../../../util/requests';
 import { receiveErrors, receiveResponse } from '../../../util/notifications';
@@ -578,7 +578,7 @@ function AnnouncementsTable({ data, onEditClick, onDeleteClick }) {
             header: 'Message',
             id: 'message',
             Cell: ({ row }) => (
-                <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ maxWidth: '325px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {row.original.message}
                 </div>
             ),
@@ -609,17 +609,6 @@ function AnnouncementsTable({ data, onEditClick, onDeleteClick }) {
                 return '';
             },
             id: 'endAt',
-        },
-        {
-            header: 'Created',
-            accessorFn: (row) => {
-                if (row.createdOn) {
-                    const date = new Date(row.createdOn);
-                    return date.toLocaleDateString();
-                }
-                return '';
-            },
-            id: 'createdOn',
         },
         {
             id: 'actions',
@@ -3036,8 +3025,9 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
     const [localTitle, setLocalTitle] = useState(initialTitle);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
-        defaultValues: element
+    const { register, handleSubmit, watch, formState: { errors }, reset, setValue, setError, clearErrors } = useForm({
+        defaultValues: element,
+        mode: "onChange"
     });
 
     // Update local title when prop changes
@@ -3056,7 +3046,20 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
     }, [open]);
 
     const onSubmit = (data) => {
-        setIsLoading(true);
+        if (data.startAt && !data.endAt) {
+            setError("endAt", { type: "manual", message: "End Date is required if Start Date is set." });
+            clearErrors("startAt");
+            setIsLoading(false);
+            return;
+        }
+        if (!data.startAt && data.endAt) {
+            setError("startAt", { type: "manual", message: "Start Date is required if End Date is set." });
+            clearErrors("endAt");
+            setIsLoading(false);
+            return;
+        }
+        clearErrors("startAt");
+        clearErrors("endAt");
 
         // Convert date strings to proper format if they exist
         if (data.startAt) {
@@ -3144,8 +3147,8 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
                         <div className="form-row">
                             <div className="flex-1">
                                 <DefaultToggle
-                                    titleOn={"Active"}
-                                    titleOff={"Inactive"}
+                                    titleOn={"Status*: Active"}
+                                    titleOff={"Status*: Inactive"}
                                     onChange={(value) => setValue("active", value)}
                                     value={active}
                                 />
@@ -3154,16 +3157,20 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
 
                         <div className="form-row">
                             <div className="flex-1">
-                                <FormField
-                                    title="Start Date (Optional)"
-                                    value={startAt ? new Date(startAt).toISOString().slice(0, 16) : ''}
+                                <FormDatePicker
+                                    title={endAt || startAt ? "Start Date*" : "Start Date"}
+                                    value={startAt}
+                                    onChange={e => setValue("startAt", e.target.value)}
+                                    error={errors.startAt && errors.startAt.message}
                                     {...register("startAt")}
                                 />
                             </div>
                             <div className="flex-1">
-                                <FormField
-                                    title="End Date (Optional)"
-                                    value={endAt ? new Date(endAt).toISOString().slice(0, 16) : ''}
+                                <FormDatePicker
+                                    title={startAt || endAt ? "End Date*" : "End Date"}    
+                                    value={endAt}
+                                    onChange={e => setValue("endAt", e.target.value)}
+                                    error={errors.endAt && errors.endAt.message}
                                     {...register("endAt")}
                                 />
                             </div>

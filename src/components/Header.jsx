@@ -35,27 +35,59 @@ const navItems = [
 
 function AnnouncementBanner({ announcements }) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [slideDirection, setSlideDirection] = useState('right');
     
     useEffect(() => {
         if (announcements.length <= 1) return;
         
         const interval = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % announcements.length);
-        }, 10000);
+            setSlideDirection('right');
+            setIsAnimating(true);
+            setTimeout(() => {
+                setCurrentIndex(prev => (prev + 1) % announcements.length);
+                setIsAnimating(false);
+            }, 300);
+        }, 12000);
         
         return () => clearInterval(interval);
     }, [announcements.length]);
     
     const handleDotClick = (index) => {
-        setCurrentIndex(index);
+        if (index === currentIndex || isAnimating) return;
+        
+        const direction = index > currentIndex ? 'right' : 'left';
+        setSlideDirection(direction);
+        setIsAnimating(true);
+        
+        setTimeout(() => {
+            setCurrentIndex(index);
+            setIsAnimating(false);
+        }, 300);
     };
     
     const handlePrevClick = () => {
-        setCurrentIndex(prev => prev === 0 ? announcements.length - 1 : prev - 1);
+        if (isAnimating) return;
+        
+        setSlideDirection('left');
+        setIsAnimating(true);
+        
+        setTimeout(() => {
+            setCurrentIndex(prev => prev === 0 ? announcements.length - 1 : prev - 1);
+            setIsAnimating(false);
+        }, 300);
     };
     
     const handleNextClick = () => {
-        setCurrentIndex(prev => (prev + 1) % announcements.length);
+        if (isAnimating) return;
+        
+        setSlideDirection('right');
+        setIsAnimating(true);
+        
+        setTimeout(() => {
+            setCurrentIndex(prev => (prev + 1) % announcements.length);
+            setIsAnimating(false);
+        }, 300);
     };
     
     if (!announcements || announcements.length === 0) return null;
@@ -68,11 +100,15 @@ function AnnouncementBanner({ announcements }) {
                         className="announcement-control announcement-control-prev fa-solid fa-angle-left"
                         onClick={handlePrevClick}
                         aria-label="Previous announcement"
+                        disabled={isAnimating}
                     />
                 )}
                 
                 <div className="announcement-message-container">
-                    <span className="announcement-message">
+                    <span 
+                        className={`announcement-message ${isAnimating ? `slide-${slideDirection}` : ''}`}
+                        key={currentIndex}
+                    >
                         {announcements[currentIndex]?.message}
                     </span>
                 </div>
@@ -83,6 +119,7 @@ function AnnouncementBanner({ announcements }) {
                             className="announcement-control announcement-control-next fa-solid fa-angle-right"
                             onClick={handleNextClick}
                             aria-label="Next announcement"
+                            disabled={isAnimating}
                         />
                         
                         <div className="announcement-dots">
@@ -92,6 +129,7 @@ function AnnouncementBanner({ announcements }) {
                                     className={`announcement-dot ${index === currentIndex ? 'active' : ''}`}
                                     onClick={() => handleDotClick(index)}
                                     aria-label={`Go to announcement ${index + 1}`}
+                                    disabled={isAnimating}
                                 />
                             ))}
                         </div>

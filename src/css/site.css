@@ -699,6 +699,7 @@ a.header-icon:active {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   animation: fadeInBanner 0.7s;
   border-radius: 0; /* square corners */
+  overflow: hidden;
 }
 
 @keyframes fadeInBanner {
@@ -730,10 +731,57 @@ a.header-icon:active {
     text-shadow: 0 1px 2px rgba(0,0,0,0.08);
     background: rgba(0,0,0,0.08);
     margin: 2px 0;
-    border-radius: 3px; /* square corners */
+    border-radius: 0; /* square corners */
     word-break: break-word;
     font-size: 1em;
     text-align: center;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.announcement-message.slide-right {
+    animation: slideOutRight 0.3s ease-in-out forwards;
+}
+
+.announcement-message.slide-left {
+    animation: slideOutLeft 0.3s ease-in-out forwards;
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    51% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    51% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .announcement-control {
@@ -760,6 +808,16 @@ a.header-icon:active {
     margin: 0;
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 900 !important;
+}
+
+.announcement-control:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.announcement-dot:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 /* Remove the nested i element styling since we're using FontAwesome classes directly */

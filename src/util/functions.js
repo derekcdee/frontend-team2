@@ -1,5 +1,5 @@
-import { checkAuth, getFeaturedCues } from "./requests";
-import { updateUser, setCartItems, setFeaturedCues, setFeaturedCuesLoading } from "./redux/actionCreators";
+import { checkAuth, getFeaturedCues, getActiveAnnouncements } from "./requests";
+import { updateUser, setCartItems, setFeaturedCues, setFeaturedCuesLoading, setAnnouncements, setAnnouncementsLoading } from "./redux/actionCreators";
 
 export function checkUserAuth() {
     checkAuth()
@@ -40,5 +40,20 @@ export function getAndCacheFeaturedCues() {
         })
         .catch((err) => {
             setFeaturedCues([]);
+        });
+}
+
+export function getAndCacheAnnouncements() {
+    setAnnouncementsLoading(true);
+    getActiveAnnouncements()
+        .then((response) => {
+            if (response && response.data) {
+                setAnnouncements(response.data);
+            } else {
+                setAnnouncements([]);
+            }
+        })
+        .catch((err) => {
+            setAnnouncements([]);
         });
 }

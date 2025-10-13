@@ -65,3 +65,20 @@ export function setFeaturedCuesLoading(loading) {
         loading
     });
 }
+
+/*==============================================================
+# Announcements
+==============================================================*/
+export function setAnnouncements(items) {
+    store.dispatch({
+        type: actionTypes.SET_ANNOUNCEMENTS,
+        items
+    });
+}
+
+export function setAnnouncementsLoading(loading) {
+    store.dispatch({
+        type: actionTypes.SET_ANNOUNCEMENTS_LOADING,
+        loading
+    });
+}

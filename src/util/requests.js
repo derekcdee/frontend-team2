@@ -300,10 +300,6 @@ export function contactUs(payload) {
 }
 
 /*==============================================================
-# Products
-==============================================================*/
-
-/*==============================================================
 # Emailer
 ==============================================================*/
 
@@ -320,6 +316,17 @@ export function emailOrderConfirm( email, orderID ) {
         url: "/email/orderconfirm",
         method: "POST",
         data: { email, orderID }
+    });
+}
+
+/*==============================================================
+# Announcements
+==============================================================*/
+
+export function getActiveAnnouncements() {
+    return _ajax({
+        url: "/announcements",
+        method: "GET",
     });
 }
 
@@ -534,6 +541,38 @@ export function editCue(id, cueData) {
 export function deleteCue(id) {
     return _ajax({
         url: "/admin/cues/" + id,
+        method: "DELETE",
+    });
+}
+
+// admin announcements section
+
+export function getAdminAnnouncements() {
+    return _ajax({
+        url: "/admin/announcements",
+        method: "GET",
+    });
+}
+
+export function createAnnouncement(active, message, startAt, endAt) {
+    return _ajax({
+        url: "/admin/announcements",
+        method: "POST",
+        data: { active, message, startAt, endAt }
+    });
+}
+
+export function editAnnouncement(id, active, message, startAt, endAt) {
+    return _ajax({
+        url: "/admin/announcements/" + id,
+        method: "PATCH",
+        data: { active, message, startAt, endAt }
+    });
+}
+
+export function deleteAnnouncement(id) {
+    return _ajax({
+        url: "/admin/announcements/" + id,
         method: "DELETE",
     });
 }

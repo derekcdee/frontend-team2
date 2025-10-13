@@ -4,7 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { set, useForm } from 'react-hook-form';
 import { FormField, FormTextArea, FormSelect, DefaultToggle, FormMultiSelect } from '../../util/Inputs';
 import { DefaultButton } from '../../util/Buttons';
-import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages, getAdminOrders, editOrder, sendAnnouncement } from '../../../util/requests';
+import { getAdminUsers, createUser, editUser, changePassword, deleteUser, getAdminAccessories, createAccessory, editAccessory, deleteAccessory, getAdminMaterials, createWood, editWood, createCrystal, editCrystal, deleteCrystal, deleteWood, getAdminCues, createCue, editCue, deleteCue, deleteImages, getAdminOrders, editOrder, sendAnnouncement, getAdminAnnouncements, createAnnouncement, editAnnouncement, deleteAnnouncement } from '../../../util/requests';
 import { receiveErrors, receiveResponse } from '../../../util/notifications';
 import { AdminSkeletonLoader } from '../../util/Util';
 import { useSelector } from 'react-redux';
@@ -50,6 +50,7 @@ export default function AdminPage() {
     const [materialData, setMaterialData] = useState(null);
     const [userData, setUserData] = useState(null);
     const [orderData, setOrderData] = useState(null);
+    const [announcementData, setAnnouncementData] = useState(null);
 
     const getData = async (pageOverride = null) => {
         setLoading(true);
@@ -107,6 +108,16 @@ export default function AdminPage() {
                         setLoading(false);
                     });
                 break;
+            case 'Announcements':
+                getAdminAnnouncements()
+                    .then((res) => {
+                        setLoading(false);
+                        setAnnouncementData(res.data);
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                    });
+                break;
             default:
                 setLoading(false);
                 break;
@@ -120,7 +131,8 @@ export default function AdminPage() {
             (adminPage === 'Accessories' && accessoryData === null) ||
             (adminPage === 'Materials' && materialData === null) ||
             (adminPage === 'Users' && userData === null) ||
-            (adminPage === 'Orders' && orderData === null)
+            (adminPage === 'Orders' && orderData === null) || 
+            (adminPage === 'Announcements' && announcementData === null)
         ) {
             getData();
         }
@@ -164,13 +176,14 @@ export default function AdminPage() {
         <div className='admin-wrapper'>
             <AdminHeader setAdminPage={setAdminPage} adminPage={adminPage} loading={loading} onPlusClick={handleDialogOpen} />
             <div className='user-content'>
-                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData || []} accessoryData={accessoryData || []} materialData={materialData || []} userData={userData || []} orderData={orderData || []} />
+                <AdminContent adminPage={adminPage} loading={loading} onEditClick={handleDialogOpen} onPasswordEditClick={handlePasswordDialogOpen} onDeleteClick={handleDeleteDialogOpen} cueData={cueData || []} accessoryData={accessoryData || []} materialData={materialData || []} userData={userData || []} orderData={orderData || []} announcementData={announcementData || []} />
             </div>
             {adminPage === 'Cues' && dialogOpen && <CueDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} cueData={cueData} materialData={materialData} {...dialogProps} />}
             {adminPage === 'Accessories' && dialogOpen && <AccessoryDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
             {adminPage === 'Materials' && dialogOpen && <MaterialDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
             {adminPage === 'Users' && dialogOpen && <UserDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
             {adminPage === 'Orders' && dialogOpen && <OrderDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
+            {adminPage === 'Announcements' && dialogOpen && <AnnouncementDialog open={dialogOpen} onClose={handleDialogClose} setDialogProps={setDialogPropsHandler} getData={getData} {...dialogProps} />}
             {passwordDialogOpen && <PasswordDialog open={passwordDialogOpen} onClose={handlePasswordDialogClose} getData={getData} {...passwordDialogProps} />}
             {deleteDialogOpen && <DeleteDialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} getData={getData} adminPage={adminPage} {...deleteDialogProps} />}
         </div>
@@ -178,7 +191,7 @@ export default function AdminPage() {
 }
 
 function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
-    const pages = ['Cues', 'Accessories', 'Materials', 'Users', 'Orders', 'Email'];
+    const pages = ['Cues', 'Accessories', 'Materials', 'Users', 'Orders', 'Email', 'Announcements'];
 
     const handlePlusClick = () => {
         let title = '';
@@ -195,6 +208,12 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
                 break;
             case 'Users':
                 title = 'New User';
+                break;
+            case 'Announcements':
+                title = 'New Announcement';
+                break;
+            default:
+                title = 'New Item';
                 break;
         }
 
@@ -229,7 +248,7 @@ function AdminHeader({ setAdminPage, adminPage, loading, onPlusClick }) {
     );
 }
 
-function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, onDeleteClick, cueData, accessoryData, materialData, userData, orderData }) {
+function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, onDeleteClick, cueData, accessoryData, materialData, userData, orderData, announcementData }) {
     if (loading) {
         return <AdminSkeletonLoader />;
     }
@@ -245,6 +264,8 @@ function AdminContent({ adminPage, loading, onEditClick, onPasswordEditClick, on
             return <UsersTable data={userData} onEditClick={onEditClick} onPasswordEditClick={onPasswordEditClick} onDeleteClick={onDeleteClick} />;
         case 'Orders':
             return <OrdersTable data={orderData} onEditClick={onEditClick} />;
+        case 'Announcements':
+            return <AnnouncementsTable data={announcementData} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />;
         case 'Email':
             return <EmailTab />;
         default:
@@ -541,6 +562,86 @@ function OrdersTable({ data, onEditClick }) {
     return (
         <div>
             <h3 className="admin-page-header">Orders</h3>
+            <MaterialReactTable
+                columns={columns}
+                data={data}
+                {...tableProps}
+            />
+        </div>
+    );
+}
+
+function AnnouncementsTable({ data, onEditClick, onDeleteClick }) {
+    const columns = [
+        {
+            accessorKey: 'message',
+            header: 'Message',
+            id: 'message',
+            Cell: ({ row }) => (
+                <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {row.original.message}
+                </div>
+            ),
+        },
+        {
+            header: 'Active',
+            accessorFn: (row) => row.active ? 'Yes' : 'No',
+            id: 'active',
+        },
+        {
+            header: 'Start Date',
+            accessorFn: (row) => {
+                if (row.startAt) {
+                    const date = new Date(row.startAt);
+                    return date.toLocaleDateString();
+                }
+                return '';
+            },
+            id: 'startAt',
+        },
+        {
+            header: 'End Date',
+            accessorFn: (row) => {
+                if (row.endAt) {
+                    const date = new Date(row.endAt);
+                    return date.toLocaleDateString();
+                }
+                return '';
+            },
+            id: 'endAt',
+        },
+        {
+            header: 'Created',
+            accessorFn: (row) => {
+                if (row.createdOn) {
+                    const date = new Date(row.createdOn);
+                    return date.toLocaleDateString();
+                }
+                return '';
+            },
+            id: 'createdOn',
+        },
+        {
+            id: 'actions',
+            header: 'Actions',
+            Cell: ({ row }) => (
+                <div className='admin-actions'>
+                    <button
+                        className='fa-solid fa-pencil admin-action-button'
+                        onClick={() => onEditClick({ element: row.original, title: `Edit Announcement` })}
+                    />
+                    <button
+                        className='fa-solid fa-trash admin-action-button'
+                        onClick={() => onDeleteClick({ element: row.original, title: `Delete Announcement` })}
+                    />
+                </div>
+            ),
+        },
+    ];
+
+    return (
+        <div>
+            <h3 className="admin-page-header">Announcements</h3>
             <MaterialReactTable
                 columns={columns}
                 data={data}
@@ -2930,6 +3031,150 @@ function UserDialog({ open, onClose, title: initialTitle, getData, setDialogProp
     );
 }
 
+function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDialogProps, element = { message: '', active: false, startAt: '', endAt: '' } }) {
+    const [savedAnnouncement, setSavedAnnouncement] = useState(false);
+    const [localTitle, setLocalTitle] = useState(initialTitle);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm({
+        defaultValues: element
+    });
+
+    // Update local title when prop changes
+    useEffect(() => {
+        setLocalTitle(initialTitle);
+    }, [initialTitle]);
+
+    const existingAnnouncement = savedAnnouncement || !!element._id;
+
+    const formRef = useRef(null);
+
+    useEffect(() => {
+        if (open) {
+            reset(element);
+        }
+    }, [open]);
+
+    const onSubmit = (data) => {
+        setIsLoading(true);
+
+        // Convert date strings to proper format if they exist
+        if (data.startAt) {
+            data.startAt = new Date(data.startAt).toISOString();
+        }
+        if (data.endAt) {
+            data.endAt = new Date(data.endAt).toISOString();
+        }
+
+        if (existingAnnouncement) {
+            editAnnouncement(element._id, data.active, data.message, data.startAt, data.endAt)
+                .then((response) => {
+                    receiveResponse(response);
+                    setLocalTitle(`Edit Announcement`);
+                    getData();
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    setIsLoading(false);
+                })
+        } else {
+            createAnnouncement(data.active, data.message, data.startAt, data.endAt)
+                .then((response) => {
+                    receiveResponse(response);
+                    setSavedAnnouncement(true);
+                    setLocalTitle(`Edit Announcement`);
+                    setDialogProps({ element: response.data });
+                    getData();
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    setIsLoading(false);
+                })
+        }
+    };
+
+    const handleSaveClick = () => {
+        if (formRef.current && !isLoading) {
+            formRef.current.requestSubmit();
+        }
+    };
+
+    const message = watch("message");
+    const active = watch("active");
+    const startAt = watch("startAt");
+    const endAt = watch("endAt");
+
+    return (
+        <Dialog open={open} onClose={isLoading ? () => { } : onClose} fullScreen>
+            <DialogTitle style={dialogTitleStyle}>
+                {localTitle}
+                <div style={{ float: 'right', display: 'flex' }}>
+                    <button
+                        type="button"
+                        className={isLoading ? 'fa-solid fa-spinner fa-spin admin-action-button' : 'fa-solid fa-floppy-disk admin-action-button'}
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', marginRight: '20px' }}
+                        onClick={handleSaveClick}
+                        disabled={isLoading}
+                    />
+                    <button
+                        type="button"
+                        className='fa-solid fa-xmark admin-action-button'
+                        style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', opacity: isLoading ? 0.5 : 1 }}
+                        onClick={isLoading ? () => { } : onClose}
+                        disabled={isLoading}
+                    />
+                </div>
+            </DialogTitle>
+            <DialogContent style={dialogContentStyle}>
+                <form className="announcement-form" onSubmit={handleSubmit(onSubmit)} ref={formRef}>
+                    <div className="form-column">
+                        <FormTextArea
+                            title="Message*"
+                            value={message}
+                            error={errors.message && errors.message.message}
+                            {...register("message", {
+                                required: "Message is required",
+                                maxLength: {
+                                    value: 500,
+                                    message: "Message must be at most 500 characters long"
+                                }
+                            })}
+                        />
+
+                        <div className="form-row">
+                            <div className="flex-1">
+                                <DefaultToggle
+                                    titleOn={"Active"}
+                                    titleOff={"Inactive"}
+                                    onChange={(value) => setValue("active", value)}
+                                    value={active}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="flex-1">
+                                <FormField
+                                    title="Start Date (Optional)"
+                                    value={startAt ? new Date(startAt).toISOString().slice(0, 16) : ''}
+                                    {...register("startAt")}
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <FormField
+                                    title="End Date (Optional)"
+                                    value={endAt ? new Date(endAt).toISOString().slice(0, 16) : ''}
+                                    {...register("endAt")}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
     const handleDeleteImages = (imageUrls) => {
         if (imageUrls && imageUrls.length > 0) {
@@ -2983,6 +3228,14 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
                 break;
             case 'Users':
                 deleteUser(element._id)
+                    .then((res) => {
+                        receiveResponse(res);
+                        getData();
+                        onClose();
+                    });
+                break;
+            case 'Announcements':
+                deleteAnnouncement(element._id)
                     .then((res) => {
                         receiveResponse(res);
                         getData();

@@ -38,17 +38,20 @@ export function _ajax(settings = {}) {
         })
         .catch((err) => {
             let response;
-            
             // Handle network errors (connection refused, timeout, etc.)
             if (!err.responseJSON) {
                 response = {
                     errors: [`Internal server error. Please try again later.`],
+                    status: 'unexpectedFailure', // Backend response status
+                    httpStatus: err.status || 500, // HTTP status code
                 };
             } else {
                 // Handle server errors with JSON response
                 response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
+                // Add HTTP status code to the response (don't overwrite backend's status field)
+                response.httpStatus = err.status;
             }
-            
+
             // Automatically display errors/logs notifications from response
             receiveResponse(response);
             return Promise.reject(response);

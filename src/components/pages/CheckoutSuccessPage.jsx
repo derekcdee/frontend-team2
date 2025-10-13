@@ -35,7 +35,6 @@ export default function CheckoutSuccessPage() {
             })
             .catch((error) => {
                 const errorMessage = error.errors?.[0] || "Failed to verify payment. Please contact support if you were charged.";
-                
                 navigate(`/checkout/failure?session_id=${sessionId}&error=${encodeURIComponent(errorMessage)}`);
                 setLoading(false);
             });

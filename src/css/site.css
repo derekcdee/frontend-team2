@@ -677,18 +677,11 @@ a.header-icon:active {
 
 .announcement-banner {
   /* More sophisticated gradient with smoother transitions and better color flow */
-  background: linear-gradient(135deg,
-      var(--miller-black) 0%,
-      var(--miller-black) 10%,
-      var(--miller-dark-grey) 25%,
-      var(--miller-red) 40%,
-      #ff6b63 48%,
-      #ff6b63 52%,
-      var(--miller-red) 60%,
-      var(--miller-dark-grey) 75%,
-      var(--miller-black) 90%,
-      var(--miller-black) 100%
-  );
+  background: var(--miller-dark-grey);
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+  background-size: 20px 20px;
   color: #fff;
   font-family: 'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif;
   font-size: 1.1rem;

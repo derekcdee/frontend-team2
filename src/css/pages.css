@@ -1134,7 +1134,6 @@
     
     /* Enhanced border with gradient */
     border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 10px; /* More rounded corners */
     
     /* Cool multi-layered shadow */
     box-shadow: 
@@ -1183,7 +1182,6 @@
         font-size: 0.85rem; /* Smaller font size */
         text-align: center;
         white-space: nowrap;
-        border-radius: 6px; /* Smaller radius on mobile */
         font-weight: 500;
         letter-spacing: 0.2px; /* Reduced letter spacing */
     }
@@ -1193,7 +1191,6 @@
     .user-nav-item a {
         padding: 8px 4px; /* Even more compact on small screens */
         font-size: 0.75rem; /* Smaller font */
-        border-radius: 4px;
         letter-spacing: 0.1px; /* Minimal letter spacing */
     }
 }

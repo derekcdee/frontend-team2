@@ -28,6 +28,8 @@ import {
     LEATHER_COLOR_OPTIONS,
     RING_TYPE_OPTIONS
 } from '../../../util/globalConstants';
+import { getAndCacheAnnouncements, getAndCacheFeaturedCues } from '../../../util/functions';
+import { get } from 'jquery';
 
 export default function AdminPage() {
     const user = useSelector(state => state.user);
@@ -904,6 +906,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                 .then((res) => {
                     receiveResponse(res);
                     getData();
+                    getAndCacheFeaturedCues();
                     setIsLoading(false); // Add this line
                 })
                 .catch(() => setIsLoading(false)); // Add this line
@@ -919,6 +922,7 @@ function CueDialog({ open, onClose, title, getData, cueData, materialData, setDi
                 .then((res) => {
                     receiveResponse(res);
                     getData();
+                    getAndCacheFeaturedCues();
                     setDialogProps(prev => ({
                         ...prev,
                         element: res.data,
@@ -3075,6 +3079,7 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
                     receiveResponse(response);
                     setLocalTitle(`Edit Announcement`);
                     getData();
+                    getAndCacheAnnouncements();
                     setIsLoading(false);
                 })
                 .catch((err) => {
@@ -3088,6 +3093,7 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
                     setLocalTitle(`Edit Announcement`);
                     setDialogProps({ element: response.data });
                     getData();
+                    getAndCacheAnnouncements();
                     setIsLoading(false);
                 })
                 .catch((err) => {
@@ -3197,6 +3203,7 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
                         handleDeleteImages(element?.imageUrls);
                         receiveResponse(res);
                         getData();
+                        getAndCacheFeaturedCues();
                         onClose();
                     });
                 break;
@@ -3246,6 +3253,7 @@ function DeleteDialog({ open, onClose, title, adminPage, getData, element }) {
                     .then((res) => {
                         receiveResponse(res);
                         getData();
+                        getAndCacheAnnouncements();
                         onClose();
                     });
                 break;

@@ -273,9 +273,11 @@ export default function Header() {
     return (
         <>
             {/* Announcement Banner */}
-            {!location.pathname.startsWith('/account') && !openDrawer && !searchOpen && !announcementsLoading && (
-                <AnnouncementBanner announcements={activeAnnouncements || []} />
-            )}
+            <div>
+                {!location.pathname.startsWith('/account') && !openDrawer && !searchOpen && !announcementsLoading && (
+                    <AnnouncementBanner announcements={activeAnnouncements || []} />
+                )}
+            </div>
 
             {/* Existing Header Content */}
             <header className="main-header sticky" ref={headerRef}>

@@ -19,8 +19,8 @@ export default function ReferencesPage() {
         {
             name: "Ethan",
             description: "Backend developer focused on server infrastructure and data management. Specializes in API design, database architecture, and backend performance optimization.",
-            url: "https://linkedin.com/in/ethan-dev",
-            email: "ethan@jmillercues.com",
+            url: "https://www.linkedin.com/in/ethankeyser",
+            email: "ethan.keyser2004@gmail.com",
             category: "Backend Developer"
         }
     ];

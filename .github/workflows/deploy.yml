@@ -23,52 +23,34 @@ jobs:
 
       - name: Deploy Frontend
         run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" 'exec 2>&1; bash -x << "DEPLOY_EOF"
-          set -e
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" \
+            "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" <<'DEPLOY_EOF'
+          set -eux  # -e: exit on error, -u: fail on unset vars, -x: show each command
+
           echo "=== Starting deployment ==="
-          echo "Current user: $(whoami)"
-          echo "Current directory: $(pwd)"
-          
-          echo "=== Checking if frontend directory exists ==="
-          if [ ! -d "/srv/app-frontend/frontend" ]; then
-            echo "ERROR: Directory /srv/app-frontend/frontend does not exist"
-            echo "Available directories in /srv:"
-            ls -la /srv/ || echo "Cannot list /srv"
+          echo "User: $(whoami)"
+          echo "Dir:  $(pwd)"
+
+          if [ ! -d /srv/app-frontend/frontend ]; then
+            echo "Directory /srv/app-frontend/frontend not found"
+            ls -la /srv/
             exit 1
           fi
-          
-          echo "=== Changing to frontend directory ==="
+
           cd /srv/app-frontend/frontend
-          pwd
-          
-          echo "=== Git status ==="
-          git status
-          git log --oneline -5
-          
-          echo "=== Fetching from origin ==="
-          git fetch origin
-          
-          echo "=== Checkout and reset ==="
-          git checkout ${{ github.event.inputs.ref || 'main' }}
-          git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
-          
-          echo "=== Clearing caches ==="
-          rm -rf node_modules dist .next .nuxt build
-          npm cache clean --force
-          
-          echo "=== Installing dependencies ==="
+          echo "PWD after cd: $(pwd)"
+
+          git fetch origin main
+          git reset --hard origin/main
+          echo "Commit deployed: $(git rev-parse --short HEAD)"
+
+          node -v || true
+          npm -v  || true
           npm ci
-          
-          echo "=== Building ==="
           npm run build
-          
-          echo "=== Syncing files ==="
-          sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
-          
-          echo "=== Reloading nginx ==="
+
+          sudo rsync -av --delete dist/ /var/www/app/
           sudo systemctl reload nginx
-          
-          echo "=== Deployment completed ==="
-          git log --oneline -1
-          echo "Deployed commit: $(git rev-parse HEAD)"
-          DEPLOY_EOF'
+          echo "=== Deployment complete ==="
+          DEPLOY_EOF
+

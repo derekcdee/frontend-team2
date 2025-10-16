@@ -27,7 +27,7 @@ jobs:
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           script: |
             set -e
-            cd "$FRONTEND_DIR"
+            cd /srv/app-frontend/frontend/dist/
             git pull
             npm ci
             npm run build

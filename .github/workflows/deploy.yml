@@ -17,36 +17,46 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy over SSH
+      - name: Deploy Frontend
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          script_stop: true          # fail fast on any error
-          request_pty: true          # stream output nicely
+          script_stop: true
+          request_pty: true
           command_timeout: 30m
           script: |
             set -euxo pipefail
-            # silence Ubuntu login banner
-            : > ~/.hushlogin || true
+            : > ~/.hushlogin || true  # silence MOTD
 
-            # ensure Node is on PATH (supports nvm or system node)
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            [ -s "/usr/local/nvm/nvm.sh" ] && . "/usr/local/nvm/nvm.sh"
-            command -v nvm >/dev/null && nvm use --silent 20 || true
+            # --- SAFE NVM/NODE SETUP (won't fail if files are missing) ---
             export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+            if [ -s "$HOME/.nvm/nvm.sh" ]; then
+              . "$HOME/.nvm/nvm.sh"
+            elif [ -s "/usr/local/nvm/nvm.sh" ]; then
+              . "/usr/local/nvm/nvm.sh"
+            fi
+
+            if command -v nvm >/dev/null 2>&1; then
+              # use whatever default is installed; fall back silently if not
+              nvm use --silent >/dev/null 2>&1 || true
+            fi
+
+            echo "node: $(command -v node || echo 'not found')"
+            node -v || true
+            echo "npm:  $(command -v npm || echo 'not found')"
+            npm -v  || true
+            # --------------------------------------------------------------
 
             cd /srv/app-frontend/frontend
 
-            # deterministic update & visible commit
             git fetch origin ${{ github.event.inputs.ref || 'main' }}
             git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
             echo "DEPLOY COMMIT: $(git rev-parse --short HEAD)"
 
-            node -v; npm -v
             npm ci
             npm run build
 

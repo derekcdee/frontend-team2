@@ -25,11 +25,11 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          debug: true
           script: |
+            exec > >(tee -a /tmp/deploy.log) 2>&1
             set -e
             echo "=== Current directory and git status ==="
-            cd /srv/app-frontend/frontend
+            cd /srv/app-frontend/frontend || { echo "Directory /srv/app-frontend/frontend does not exist"; exit 1; }
             pwd
             git status
             git log --oneline -5
@@ -70,3 +70,17 @@ jobs:
             echo "=== Deployment completed ==="
             git log --oneline -1
             echo "Deployed commit: $(git rev-parse HEAD)"
+            
+            echo "=== Deploy log written to /tmp/deploy.log ==="
+
+      - name: Show deployment log
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          script: |
+            echo "=== DEPLOYMENT LOG ==="
+            cat /tmp/deploy.log
+            rm -f /tmp/deploy.log

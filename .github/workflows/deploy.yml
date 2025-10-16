@@ -17,9 +17,25 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Test SSH Connection
+      - name: Test SSH with verbose output
         run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "echo 'SSH connection successful'; whoami; pwd"
+          ssh -v -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "echo 'TEST OUTPUT'; exit 0" || echo "SSH command failed with exit code $?"
+
+      - name: Simple command test
+        run: |
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "date; whoami; pwd; echo 'Command completed'" 2>&1 || echo "Command failed"
+
+      - name: Check SSH connection and force output
+        run: |
+          echo "Attempting SSH connection..."
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" bash -c "
+            echo 'Connected successfully'
+            whoami
+            pwd
+            ls -la /
+            echo 'Connection test complete'
+          " 2>&1
+          echo "SSH command exit code: $?"
 
       - name: Check if directory exists
         run: |

@@ -9,78 +9,59 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      FRONTEND_DIR: /srv/app-frontend/frontend
     steps:
-      - name: Prep SSH known_hosts
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
+          echo "${{ secrets.DROPLET_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          script: |
-            exec > >(tee -a /tmp/deploy.log) 2>&1
-            set -e
-            echo "=== Current directory and git status ==="
-            cd /srv/app-frontend/frontend || { echo "Directory /srv/app-frontend/frontend does not exist"; exit 1; }
-            pwd
-            git status
-            git log --oneline -5
-            
-            echo "=== Fetching latest from origin ==="
-            git fetch origin
-            
-            echo "=== Force checkout and reset to specified ref ==="
-            git checkout ${{ github.event.inputs.ref || 'main' }}
-            git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
-            
-            echo "=== Clearing all caches and build artifacts ==="
-            rm -rf node_modules
-            rm -rf dist
-            rm -rf .next
-            rm -rf .nuxt
-            rm -rf build
-            npm cache clean --force
-            
-            echo "=== Fresh install of dependencies ==="
-            npm ci
-            
-            echo "=== Building application (fresh build) ==="
-            npm run build
-            
-            echo "=== Verifying build output ==="
-            ls -la dist/
-            
-            echo "=== Syncing files ==="
-            sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
-            
-            echo "=== Verifying deployed files ==="
-            sudo ls -la /var/www/app/
-            
-            echo "=== Reloading nginx ==="
-            sudo systemctl reload nginx
-            
-            echo "=== Deployment completed ==="
-            git log --oneline -1
-            echo "Deployed commit: $(git rev-parse HEAD)"
-            
-            echo "=== Deploy log written to /tmp/deploy.log ==="
-
-      - name: Show deployment log
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          script: |
-            echo "=== DEPLOYMENT LOG ==="
-            cat /tmp/deploy.log
-            rm -f /tmp/deploy.log
+      - name: Deploy Frontend
+        run: |
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" << 'EOF'
+          set -e
+          
+          echo "=== Current directory and git status ==="
+          cd /srv/app-frontend/frontend || { echo "Directory /srv/app-frontend/frontend does not exist"; exit 1; }
+          pwd
+          git status
+          git log --oneline -5
+          
+          echo "=== Fetching latest from origin ==="
+          git fetch origin
+          
+          echo "=== Force checkout and reset to specified ref ==="
+          git checkout ${{ github.event.inputs.ref || 'main' }}
+          git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
+          
+          echo "=== Clearing all caches and build artifacts ==="
+          rm -rf node_modules
+          rm -rf dist
+          rm -rf .next
+          rm -rf .nuxt
+          rm -rf build
+          npm cache clean --force
+          
+          echo "=== Fresh install of dependencies ==="
+          npm ci
+          
+          echo "=== Building application (fresh build) ==="
+          npm run build
+          
+          echo "=== Verifying build output ==="
+          ls -la dist/
+          
+          echo "=== Syncing files ==="
+          sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
+          
+          echo "=== Verifying deployed files ==="
+          sudo ls -la /var/www/app/
+          
+          echo "=== Reloading nginx ==="
+          sudo systemctl reload nginx
+          
+          echo "=== Deployment completed ==="
+          git log --oneline -1
+          echo "Deployed commit: $(git rev-parse HEAD)"
+          EOF

@@ -17,14 +17,14 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Test with TTY
+      - name: Test SSH Output
         run: |
-          ssh -t -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "date; whoami; pwd; echo 'Command completed'"
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" 'exec 2>&1; date; whoami; pwd; echo "Command completed"'
 
       - name: Deploy Frontend
         run: |
-          ssh -t -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" '
-          set -ex
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" 'exec 2>&1; bash -x << "DEPLOY_EOF"
+          set -e
           echo "=== Starting deployment ==="
           echo "Current user: $(whoami)"
           echo "Current directory: $(pwd)"
@@ -71,4 +71,4 @@ jobs:
           echo "=== Deployment completed ==="
           git log --oneline -1
           echo "Deployed commit: $(git rev-parse HEAD)"
-          '
+          DEPLOY_EOF'

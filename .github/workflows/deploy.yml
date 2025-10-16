@@ -27,9 +27,45 @@ jobs:
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           script: |
             set -e
+            echo "=== Current directory and git status ==="
             cd /srv/app-frontend/frontend
-            git pull
+            pwd
+            git status
+            git log --oneline -5
+            
+            echo "=== Fetching latest from origin ==="
+            git fetch origin
+            
+            echo "=== Force checkout and reset to specified ref ==="
+            git checkout ${{ github.event.inputs.ref || 'main' }}
+            git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
+            
+            echo "=== Clearing all caches and build artifacts ==="
+            rm -rf node_modules
+            rm -rf dist
+            rm -rf .next
+            rm -rf .nuxt
+            rm -rf build
+            npm cache clean --force
+            
+            echo "=== Fresh install of dependencies ==="
             npm ci
+            
+            echo "=== Building application (fresh build) ==="
             npm run build
+            
+            echo "=== Verifying build output ==="
+            ls -la dist/
+            
+            echo "=== Syncing files ==="
             sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
+            
+            echo "=== Verifying deployed files ==="
+            sudo ls -la /var/www/app/
+            
+            echo "=== Reloading nginx ==="
             sudo systemctl reload nginx
+            
+            echo "=== Deployment completed ==="
+            git log --oneline -1
+            echo "Deployed commit: $(git rev-parse HEAD)"

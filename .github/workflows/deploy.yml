@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      FRONTEND_DIR: /srv/frontend-app   # adjust if different
+      FRONTEND_DIR: /srv/app-frontend/frontend
     steps:
       - name: Prep SSH known_hosts
         run: |
@@ -31,5 +31,5 @@ jobs:
             git pull
             npm ci
             npm run build
-            sudo rsync -a --delete dist/ /var/www/app/
+            sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
             sudo systemctl reload nginx

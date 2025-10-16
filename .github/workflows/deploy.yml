@@ -17,50 +17,54 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
+      - name: Test SSH Connection
+        run: |
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "echo 'SSH connection successful'; whoami; pwd"
+
+      - name: Check if directory exists
+        run: |
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "ls -la /srv/app-frontend/ || echo 'Directory /srv/app-frontend does not exist'"
+
       - name: Deploy Frontend
         run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "
-          set -e
-          echo '=== Current directory and git status ==='
-          cd /srv/app-frontend/frontend || { echo 'Directory /srv/app-frontend/frontend does not exist'; exit 1; }
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" '
+          set -ex
+          echo "=== Starting deployment ==="
+          echo "Current user: $(whoami)"
+          echo "Current directory: $(pwd)"
+          
+          echo "=== Checking if frontend directory exists ==="
+          if [ ! -d "/srv/app-frontend/frontend" ]; then
+            echo "ERROR: Directory /srv/app-frontend/frontend does not exist"
+            echo "Available directories in /srv:"
+            ls -la /srv/ || echo "Cannot list /srv"
+            exit 1
+          fi
+          
+          echo "=== Changing to frontend directory ==="
+          cd /srv/app-frontend/frontend
           pwd
-          git status
-          git log --oneline -5
           
-          echo '=== Fetching latest from origin ==='
-          git fetch origin
+          echo "=== Git status ==="
+          git status || echo "Git status failed"
+          git log --oneline -5 || echo "Git log failed"
           
-          echo '=== Force checkout and reset to specified ref ==='
-          git checkout ${{ github.event.inputs.ref || 'main' }}
-          git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
+          echo "=== Fetching from origin ==="
+          git fetch origin || echo "Git fetch failed"
           
-          echo '=== Clearing all caches and build artifacts ==='
-          rm -rf node_modules
-          rm -rf dist
-          rm -rf .next
-          rm -rf .nuxt
-          rm -rf build
-          npm cache clean --force
+          echo "=== Checkout and reset ==="
+          git checkout ${{ github.event.inputs.ref || 'main' }} || echo "Git checkout failed"
+          git reset --hard origin/${{ github.event.inputs.ref || 'main' }} || echo "Git reset failed"
           
-          echo '=== Fresh install of dependencies ==='
-          npm ci
+          echo "=== Clearing caches ==="
+          rm -rf node_modules dist .next .nuxt build
+          npm cache clean --force || echo "npm cache clean failed"
           
-          echo '=== Building application (fresh build) ==='
-          npm run build
+          echo "=== Installing dependencies ==="
+          npm ci || echo "npm ci failed"
           
-          echo '=== Verifying build output ==='
-          ls -la dist/
+          echo "=== Building ==="
+          npm run build || echo "npm run build failed"
           
-          echo '=== Syncing files ==='
-          sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
-          
-          echo '=== Verifying deployed files ==='
-          sudo ls -la /var/www/app/
-          
-          echo '=== Reloading nginx ==='
-          sudo systemctl reload nginx
-          
-          echo '=== Deployment completed ==='
-          git log --oneline -1
-          echo 'Deployed commit:' \$(git rev-parse HEAD)
-          "
+          echo "=== Deployment completed ==="
+          '

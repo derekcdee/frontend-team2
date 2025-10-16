@@ -17,9 +17,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy Frontend
+      - name: Create deployment script
         run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" << 'EOF'
+          cat > deploy_script.sh << 'SCRIPT_EOF'
           set -e
           
           echo "=== Current directory and git status ==="
@@ -64,4 +64,9 @@ jobs:
           echo "=== Deployment completed ==="
           git log --oneline -1
           echo "Deployed commit: $(git rev-parse HEAD)"
-          EOF
+          SCRIPT_EOF
+
+      - name: Deploy Frontend
+        run: |
+          scp -o StrictHostKeyChecking=no -P "${{ secrets.DROPLET_SSH_PORT || 22 }}" deploy_script.sh "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}:/tmp/"
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "chmod +x /tmp/deploy_script.sh && /tmp/deploy_script.sh && rm /tmp/deploy_script.sh"

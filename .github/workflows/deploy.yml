@@ -17,33 +17,13 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Test SSH with verbose output
+      - name: Test with TTY
         run: |
-          ssh -v -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "echo 'TEST OUTPUT'; exit 0" || echo "SSH command failed with exit code $?"
-
-      - name: Simple command test
-        run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "date; whoami; pwd; echo 'Command completed'" 2>&1 || echo "Command failed"
-
-      - name: Check SSH connection and force output
-        run: |
-          echo "Attempting SSH connection..."
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" bash -c "
-            echo 'Connected successfully'
-            whoami
-            pwd
-            ls -la /
-            echo 'Connection test complete'
-          " 2>&1
-          echo "SSH command exit code: $?"
-
-      - name: Check if directory exists
-        run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "ls -la /srv/app-frontend/ || echo 'Directory /srv/app-frontend does not exist'"
+          ssh -t -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" "date; whoami; pwd; echo 'Command completed'"
 
       - name: Deploy Frontend
         run: |
-          ssh -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" '
+          ssh -t -o StrictHostKeyChecking=no -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" '
           set -ex
           echo "=== Starting deployment ==="
           echo "Current user: $(whoami)"
@@ -62,25 +42,33 @@ jobs:
           pwd
           
           echo "=== Git status ==="
-          git status || echo "Git status failed"
-          git log --oneline -5 || echo "Git log failed"
+          git status
+          git log --oneline -5
           
           echo "=== Fetching from origin ==="
-          git fetch origin || echo "Git fetch failed"
+          git fetch origin
           
           echo "=== Checkout and reset ==="
-          git checkout ${{ github.event.inputs.ref || 'main' }} || echo "Git checkout failed"
-          git reset --hard origin/${{ github.event.inputs.ref || 'main' }} || echo "Git reset failed"
+          git checkout ${{ github.event.inputs.ref || 'main' }}
+          git reset --hard origin/${{ github.event.inputs.ref || 'main' }}
           
           echo "=== Clearing caches ==="
           rm -rf node_modules dist .next .nuxt build
-          npm cache clean --force || echo "npm cache clean failed"
+          npm cache clean --force
           
           echo "=== Installing dependencies ==="
-          npm ci || echo "npm ci failed"
+          npm ci
           
           echo "=== Building ==="
-          npm run build || echo "npm run build failed"
+          npm run build
+          
+          echo "=== Syncing files ==="
+          sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
+          
+          echo "=== Reloading nginx ==="
+          sudo systemctl reload nginx
           
           echo "=== Deployment completed ==="
+          git log --oneline -1
+          echo "Deployed commit: $(git rev-parse HEAD)"
           '

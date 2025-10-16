@@ -1,17 +1,33 @@
-name: Trigger Backend Deploy
+name: Deploy Frontend
 on:
-  workflow_run:
-    workflows: ["Deploy Frontend"]
-    types: [completed]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        default: main
+        required: true
+
 jobs:
-  kick:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  deploy:
     runs-on: ubuntu-latest
+    env:
+      FRONTEND_DIR: /srv/frontend-app        # change if your path differs
     steps:
-      - name: Dispatch to backend repo
-        uses: peter-evans/repository-dispatch@v3
+      - name: Add droplet to known_hosts
+        run: ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          token: ${{ secrets.BACKEND_REPO_PAT }}
-          repository: your-org-or-user/backend-repo
-          event-type: deploy
-          client-payload: '{"ref":"main"}'
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd "$FRONTEND_DIR"
+            git pull
+            npm ci
+            npm run build
+            sudo rsync -a --delete dist/ /var/www/app/
+            sudo systemctl reload nginx

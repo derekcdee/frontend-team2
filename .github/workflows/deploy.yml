@@ -1,0 +1,17 @@
+name: Trigger Backend Deploy
+on:
+  workflow_run:
+    workflows: ["Deploy Frontend"]
+    types: [completed]
+jobs:
+  kick:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch to backend repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.BACKEND_REPO_PAT }}
+          repository: your-org-or-user/backend-repo
+          event-type: deploy
+          client-payload: '{"ref":"main"}'

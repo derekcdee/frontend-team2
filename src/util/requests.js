@@ -6,7 +6,7 @@ import { isValidElement } from 'react';
 
 export function _ajax(settings = {}) {
     // Add base URL
-    settings.url = `/server${settings.url}`;
+    settings.url = `/api${settings.url}`;
 
     // Special handling for FormData (file uploads)
     if (settings.data instanceof FormData) {

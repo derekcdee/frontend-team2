@@ -44,38 +44,31 @@ jobs:
         run: |
           set -euxo pipefail
 
-          # Write SSH key & known_hosts
+          # --- SSH setup ---
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-          # SSH options: no TTY, quiet, pubkey only
+          # Non-interactive, quiet SSH options (NO TTY)
           SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o BatchMode=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o LogLevel=ERROR -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o RequestTTY=no -T"
 
-          # Hard remote temp path (no custom env needed)
+          # Hard remote temp path
           RTMP="/tmp/app_tmp_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}"
 
-          # Preflight: ensure remote shell is QUIET (no stray echoes/MOTD).
-          CLEAN="$(ssh $SSH_OPTS "$USER@$HOST" 'set -eu; : > ~/.hushlogin || true; printf "__CLEAN__"')"
-          if [ "$CLEAN" != "__CLEAN__" ]; then
-            echo "Remote login produced unexpected output (likely from ~/.bashrc or MOTD)."
-            echo 'Fix by guarding shell init with: [ -n "$PS1" ] || return'
-            exit 1
-          fi
-
-          # Ensure rsync exists and prep temp dir
+          # 1) One-time quieting + prep done in a separate call (MOTD may appear here; it's fine)
           ssh $SSH_OPTS "$USER@$HOST" "
             set -e
+            : > ~/.hushlogin || true     # quiet future sessions
             command -v rsync >/dev/null || { sudo apt-get update -y && sudo apt-get install -y rsync; }
             rm -rf '$RTMP'
             mkdir -p '$RTMP'
           "
 
-          # Rsync build to temp dir (quiet, no TTY)
+          # 2) Rsync the build into the temp dir (no shell chatter expected now)
           rsync -az --delete -e "ssh $SSH_OPTS" dist/ "$USER@$HOST:$RTMP/"
 
-          # Promote into /var/www/app and reload nginx (no stdin to sudo)
+          # 3) Promote to /var/www/app with sudo (no stdin to sudo)
           ssh $SSH_OPTS "$USER@$HOST" "
             set -euo pipefail
             sudo mkdir -p /var/www/app

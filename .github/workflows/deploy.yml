@@ -1,4 +1,4 @@
-name: Deploy Frontend (scp tar + sudo tar)
+name: Deploy Frontend (native scp + sudo tar)
 
 on:
   workflow_dispatch:
@@ -31,34 +31,33 @@ jobs:
           du -sh dist || true
           tar -C dist -czf dist.tar.gz .
 
-      - name: Upload dist.tar.gz via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          source: "dist.tar.gz"
-          target: "/tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz"
-          overwrite: true
-          tar_tmp_path: ""     # don't retar; we already tarred
+      - name: Push dist.tar.gz with native scp and deploy
+        env:
+          HOST: ${{ secrets.DROPLET_HOST }}
+          USER: ${{ secrets.DROPLET_USER }}
+          PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+          REMOTE_TAR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz
+        run: |
+          set -euxo pipefail
 
-      - name: Unpack to /var/www/app and reload nginx
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          script_stop: true
-          command_timeout: 30m
-          script: |
-            set -euxo pipefail
+          # write SSH key & prime known_hosts
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          # copy the tarball (native scp avoids the action’s OS mis-detect)
+          scp -P "$PORT" -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes dist.tar.gz "$USER@$HOST:$REMOTE_TAR"
+
+          # unpack into /var/www/app and reload nginx — no stdin to sudo
+          ssh -p "$PORT" -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes "$USER@$HOST" "
+            set -euo pipefail
             : > ~/.hushlogin || true
-            TAR="/tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz"
             sudo mkdir -p /var/www/app
-            echo "Space before deploy:"; df -h /var/www || true
-            sudo tar -xzf "$TAR" -C /var/www/app
-            sudo rm -f "$TAR"
-            echo "Space after deploy:"; df -h /var/www || true
+            echo 'Space before:'; df -h /var/www || true
+            sudo tar -xzf '$REMOTE_TAR' -C /var/www/app
+            sudo rm -f '$REMOTE_TAR'
+            echo 'Space after:'; df -h /var/www || true
             sudo systemctl reload nginx
+          "

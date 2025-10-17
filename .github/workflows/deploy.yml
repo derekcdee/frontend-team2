@@ -1,4 +1,4 @@
-name: Deploy Frontend (rsync to tmp + sudo rsync)
+name: Deploy Frontend (quiet rsync)
 
 on:
   workflow_dispatch:
@@ -33,12 +33,9 @@ jobs:
           set -euxo pipefail
           npm ci
           npm run build
-          echo "Local build size:"
-          du -sh dist || true
-          # quick sanity check
-          test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
+          test -f dist/index.html
 
-      - name: Deploy via rsync
+      - name: Deploy via rsync (quiet, non-tty)
         env:
           HOST: ${{ secrets.DROPLET_HOST }}
           USER: ${{ secrets.DROPLET_USER }}
@@ -48,49 +45,42 @@ jobs:
         run: |
           set -euxo pipefail
 
-          # write SSH key & prime known_hosts
+          # Write SSH key & known_hosts
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=10"
+          # IMPORTANT: no quotes around ~/.ssh/id_rsa so ~ expands.
+          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o LogLevel=ERROR -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o RequestTTY=no -T"
 
-          # ensure rsync on remote and prep temp dir (no sudo/stdio mixing)
-          ssh $SSH_OPTS "$USER@$HOST" "
+          # Preflight: ensure remote shell is QUIET (no stray echoes/MOTD).
+          # If this prints anything besides __CLEAN__, we abort to protect rsync.
+          CLEAN=$(
+            ssh $SSH_OPTS "$USER@$HOST" 'set -eu; : > ~/.hushlogin || true; printf "__CLEAN__"'
+          )
+          if [ "$CLEAN" != "__CLEAN__" ]; then
+            echo "Remote login produced unexpected output (likely from ~/.bashrc or MOTD)."
+            echo "Please remove any echo/printf in ~/.bashrc (wrap with: [ -n \"$PS1\" ] || return)."
+            exit 1
+          fi
+
+          # Ensure rsync available and prep temp dir (no sudo/stdio mixing)
+          ssh $SSH_OPTS "$USER@$HOST" '
             set -e
-            : > ~/.hushlogin || true
             command -v rsync >/dev/null || { sudo apt-get update -y && sudo apt-get install -y rsync; }
-            rm -rf '$REMOTE_TMP'
-            mkdir -p '$REMOTE_TMP'
-          "
+            rm -rf "'"$REMOTE_TMP"'"
+            mkdir -p "'"$REMOTE_TMP"'"
+          '
 
-          echo "Uploading dist/ to remote temp: $REMOTE_TMP"
+          # rsync to temp dir — -T (no TTY) and quiet ssh. This avoids protocol noise.
           rsync -az --delete -e "ssh $SSH_OPTS" dist/ "$USER@$HOST:$REMOTE_TMP/"
 
-          echo "Promoting to /var/www/app with sudo rsync"
-          ssh $SSH_OPTS "$USER@$HOST" "
+          # Promote to /var/www/app using sudo rsync (no stdin to sudo)
+          ssh $SSH_OPTS "$USER@$HOST" '
             set -euo pipefail
             sudo mkdir -p /var/www/app
-            echo 'Space before:'; df -h /var/www || true
-            sudo rsync -av --delete '$REMOTE_TMP'/' /var/www/app/
-            rm -rf '$REMOTE_TMP'
-            echo 'Space after:'; df -h /var/www || true
+            sudo rsync -av --delete "'"$REMOTE_TMP"'"/ /var/www/app/
+            rm -rf "'"$REMOTE_TMP"'"
             sudo systemctl reload nginx
-          "
-
-      - name: Final check
-        env:
-          HOST: ${{ secrets.DROPLET_HOST }}
-          USER: ${{ secrets.DROPLET_USER }}
-          PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
-        run: |
-          set -euxo pipefail
-          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
-          ssh $SSH_OPTS "$USER@$HOST" "
-            set -e
-            test -f /var/www/app/index.html && echo 'index.html present'
-            sudo nginx -t
-            systemctl is-active nginx && echo 'nginx active'
-          "
+          '

@@ -28,30 +28,48 @@ jobs:
         run: |
           npm ci
           npm run build
+          du -sh dist || true
 
-      - name: Push dist via tar+ssh and extract with sudo
+      - name: Push dist via tar+ssh to temp, then sudo rsync to /var/www/app
         env:
           HOST: ${{ secrets.DROPLET_HOST }}
           USER: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+          TMP_DIR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}
         run: |
           set -euxo pipefail
 
-          # write key
+          # write SSH key
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          # ensure target exists
-          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" \
-            'sudo mkdir -p /var/www/app'
+          # prep remote: temp dir + ensure rsync + show free space
+          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" <<'REMOTE'
+          set -e
+          : > ~/.hushlogin || true
+          command -v rsync >/dev/null || { sudo apt-get update -y && sudo apt-get install -y rsync; }
+          REMOTE
 
-          # stream tarball to remote and extract as root
+          # stream tar into temp dir under user home (no sudo on stdin)
+          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" "rm -rf '$TMP_DIR' && mkdir -p '$TMP_DIR'"
           tar -C dist -czf - . \
-          | ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" \
-              'sudo tar -C /var/www/app -xzf -'
+          | ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" "tar -C '$TMP_DIR' -xzf -"
+
+          # verify size and free space before final sync
+          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" <<REMOTE
+          set -e
+          echo "Remote temp size:"
+          du -sh "$TMP_DIR" || true
+          echo "Disk space on /var/www:"
+          df -h /var/www || true
+          sudo mkdir -p /var/www/app
+          # sync into web root with sudo (no stdin used)
+          sudo rsync -av --delete "$TMP_DIR"/ /var/www/app/
+          rm -rf "$TMP_DIR"
+          REMOTE
 
       - name: Reload nginx
         uses: appleboy/ssh-action@v1.0.3

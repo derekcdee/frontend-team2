@@ -1,4 +1,4 @@
-name: Deploy Frontend (quiet rsync)
+name: Deploy Frontend (SSH stream + sudo tar)
 
 on:
   workflow_dispatch:
@@ -34,45 +34,53 @@ jobs:
           npm ci
           npm run build
           test -f dist/index.html
+          # package the build
+          tar -C dist -czf dist.tar.gz .
+          # compute checksum for integrity
+          sha256sum dist.tar.gz | awk '{print $1}' > dist.sha256
 
-      - name: Deploy via rsync (quiet, non-tty)
+      - name: Upload & deploy over raw SSH
         env:
           HOST: ${{ secrets.DROPLET_HOST }}
           USER: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+          REMOTE_TAR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz
         run: |
           set -euxo pipefail
 
-          # --- SSH setup ---
+          # --- SSH prep ---
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-          # Non-interactive, quiet SSH options (NO TTY)
-          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o BatchMode=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=yes -o LogLevel=ERROR -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o RequestTTY=no -T"
+          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa \
+            -o IdentitiesOnly=yes -o BatchMode=yes -o PreferredAuthentications=publickey \
+            -o StrictHostKeyChecking=yes -o LogLevel=ERROR \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o RequestTTY=no -T"
 
-          # Hard remote temp path
-          RTMP="/tmp/app_tmp_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}"
+          # quiet future logins a bit; install tar if it was missing (rare)
+          ssh $SSH_OPTS "$USER@$HOST" 'set -e; : > ~/.hushlogin || true; command -v tar >/dev/null || sudo apt-get update -y && sudo apt-get install -y tar'
 
-          # 1) One-time quieting + prep done in a separate call (MOTD may appear here; it's fine)
-          ssh $SSH_OPTS "$USER@$HOST" "
-            set -e
-            : > ~/.hushlogin || true     # quiet future sessions
-            command -v rsync >/dev/null || { sudo apt-get update -y && sudo apt-get install -y rsync; }
-            rm -rf '$RTMP'
-            mkdir -p '$RTMP'
-          "
+          # --- Upload artifact robustly (no rsync/scp protocol) ---
+          # stream the tarball
+          cat dist.tar.gz | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR'"
+          # upload checksum
+          CHECKSUM="$(cat dist.sha256)"
+          printf '%s\n' "$CHECKSUM" | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR.sha256'"
 
-          # 2) Rsync the build into the temp dir (no shell chatter expected now)
-          rsync -az --delete -e "ssh $SSH_OPTS" dist/ "$USER@$HOST:$RTMP/"
-
-          # 3) Promote to /var/www/app with sudo (no stdin to sudo)
+          # --- Verify & deploy ---
           ssh $SSH_OPTS "$USER@$HOST" "
             set -euo pipefail
+            # verify checksum on remote
+            echo \"$CHECKSUM  $REMOTE_TAR\" | sha256sum -c -
+            # ensure target dir and extract
             sudo mkdir -p /var/www/app
-            sudo rsync -av --delete '$RTMP'/ /var/www/app/
-            rm -rf '$RTMP'
+            echo 'Space before:'; df -h /var/www || true
+            sudo tar -xzf '$REMOTE_TAR' -C /var/www/app
+            # cleanup and reload
+            sudo rm -f '$REMOTE_TAR' '$REMOTE_TAR.sha256'
+            echo 'Space after:'; df -h /var/www || true
             sudo systemctl reload nginx
           "

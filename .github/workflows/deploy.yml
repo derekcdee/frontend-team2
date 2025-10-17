@@ -1,135 +1,64 @@
-name: Deploy Frontend (atomic SSH tar deploy)
-
+name: Deploy Frontend
 on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Git ref to deploy
+        description: Git ref to deploy (used only for logging; build runs on server)
         default: main
         required: true
-
-concurrency:
-  group: deploy-frontend
-  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.ref || 'main' }}
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Build
-        env:
-          GIT_COMMIT: ${{ github.sha }}
+      - name: Prep SSH known_hosts
         run: |
-          set -euxo pipefail
-          npm ci
-          npm run build
-          test -f dist/index.html
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
 
-          # stamp the build so we can confirm what's live
-          jq -n --arg commit "${GIT_COMMIT}" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            '{commit:$commit, built_at:$ts}' > dist/version.json
-
-          tar -C dist -czf dist.tar.gz .
-          sha256sum dist.tar.gz | awk '{print $1}' > dist.sha256
-
-      - name: Upload & atomic deploy on server
-        env:
-          HOST: ${{ secrets.DROPLET_HOST }}
-          USER: ${{ secrets.DROPLET_USER }}
-          PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
-          REMOTE_TAR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz
-          TARGET_DIR: /var/www/app
-        run: |
-          set -euxo pipefail
-
-          # --- SSH prep ---
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-
-          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa \
-            -o IdentitiesOnly=yes -o BatchMode=yes -o PreferredAuthentications=publickey \
-            -o StrictHostKeyChecking=yes -o LogLevel=ERROR \
-            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o RequestTTY=no -T"
-
-          # ensure tools exist; quiet logins; capture nginx root for sanity check
-          ssh $SSH_OPTS "$USER@$HOST" '
-            set -e
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          request_pty: true
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euxo pipefail
             : > ~/.hushlogin || true
-            command -v tar >/dev/null || { sudo apt-get update -y && sudo apt-get install -y tar; }
-            command -v jq  >/dev/null || { sudo apt-get update -y && sudo apt-get install -y jq; }
-          '
 
-          # upload artifact + checksum
-          cat dist.tar.gz     | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR'"
-          CHECKSUM="$(cat dist.sha256)"
-          printf '%s\n' "$CHECKSUM" | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR.sha256'"
+            command -v node >/dev/null || { echo "node not found"; exit 1; }
+            command -v npm  >/dev/null || { echo "npm not found";  exit 1; }
+            command -v git  >/dev/null || { echo "git not found";  exit 1; }
+            command -v rsync >/dev/null || { echo "rsync not found"; exit 1; }
+            command -v systemctl >/dev/null || { echo "systemctl not found"; exit 1; }
 
-          # atomic deploy: extract to app_new, then mv -T to swap
-          ssh $SSH_OPTS "$USER@$HOST" "
-            set -euo pipefail
+            echo "Requested ref: ${{ github.event.inputs.ref }}"
 
-            # verify checksum on remote
-            echo \"$CHECKSUM  $REMOTE_TAR\" | sha256sum -c -
+            # Memory helpers: increase Node's heap and add 2G swap if none exists
+            export NODE_OPTIONS="${NODE_OPTIONS:---max_old_space_size=2048}"
 
-            # find nginx root to ensure we're deploying to the right place
-            NGINX_ROOT=\$(grep -R \"^[[:space:]]*root[[:space:]]\\+\" /etc/nginx/sites-enabled 2>/dev/null | awk '{print \$3}' | tr -d ';' | head -n1 || true)
-            echo \"Detected nginx root: \${NGINX_ROOT:-unknown}\"
-            if [ -n \"\$NGINX_ROOT\" ] && [ \"\$NGINX_ROOT\" != \"$TARGET_DIR\" ]; then
-              echo \"WARNING: nginx is serving from '\$NGINX_ROOT', but this deploy targets '$TARGET_DIR'.\"
-              echo \"Either update nginx 'root' or change TARGET_DIR in the workflow.\"
+            if ! swapon --show | grep -q '^'; then
+              echo "No swap detected; creating 2G swapfile to help builds"
+              sudo fallocate -l 2G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
+              sudo chmod 600 /swapfile
+              sudo mkswap /swapfile
+              sudo swapon /swapfile
             fi
 
-            # prepare locations
-            sudo mkdir -p /var/www
-            NEW_DIR=\"${TARGET_DIR}_new\"
-            sudo rm -rf \"\$NEW_DIR\"
-            sudo mkdir -p \"\$NEW_DIR\"
+            cd /srv/app-frontend/frontend
 
-            echo 'Space before:'; df -h /var/www || true
+            # Your exact commands with absolute paths for outputs
+            git pull
+            npm ci --no-audit --no-fund
+            npm run build
 
-            # extract into the new dir
-            sudo tar -xzf '$REMOTE_TAR' -C \"\$NEW_DIR\"
-
-            # (optional) set ownership for web server user; adjust if different
-            if id www-data >/dev/null 2>&1; then
-              sudo chown -R www-data:www-data \"\$NEW_DIR\"
-            fi
-
-            # atomically replace current dir
-            if [ -d \"$TARGET_DIR\" ]; then
-              sudo rm -rf \"${TARGET_DIR}_bak\"
-              sudo mv \"$TARGET_DIR\" \"${TARGET_DIR}_bak\"
-            fi
-            sudo mv -T \"\$NEW_DIR\" \"$TARGET_DIR\"
-
-            # cleanup tarballs
-            sudo rm -f '$REMOTE_TAR' '$REMOTE_TAR.sha256'
-
-            echo 'Space after:'; df -h /var/www || true
-
-            # quick sanity: show version.json + index.html first line
-            echo '--- version.json ---'
-            sudo cat \"$TARGET_DIR/version.json\" 2>/dev/null || echo 'version.json missing'
-            echo '--- index.html head ---'
-            sudo head -n 3 \"$TARGET_DIR/index.html\" || true
-
-            # reload nginx to pick up any new static caching rules
+            sudo rsync -a --delete /srv/app-frontend/frontend/dist/ /var/www/app/
+            sudo nginx -t || true
             sudo systemctl reload nginx
 
-            echo 'Deployed to: $TARGET_DIR'
-          "
+            echo "DEPLOY COMMIT: $(git rev-parse --short HEAD)"

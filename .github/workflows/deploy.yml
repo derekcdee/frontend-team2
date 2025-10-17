@@ -1,4 +1,4 @@
-name: Deploy Frontend (tar over SSH)
+name: Deploy Frontend (scp tar + sudo tar)
 
 on:
   workflow_dispatch:
@@ -11,7 +11,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -26,56 +25,40 @@ jobs:
 
       - name: Build
         run: |
+          set -euxo pipefail
           npm ci
           npm run build
           du -sh dist || true
+          tar -C dist -czf dist.tar.gz .
 
-      - name: Push dist via tar+ssh to temp, then sudo rsync to /var/www/app
-        env:
-          HOST: ${{ secrets.DROPLET_HOST }}
-          USER: ${{ secrets.DROPLET_USER }}
-          PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
-          TMP_DIR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}
-        run: |
-          set -euxo pipefail
+      - name: Upload dist.tar.gz via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          source: "dist.tar.gz"
+          target: "/tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz"
+          overwrite: true
+          tar_tmp_path: ""     # don't retar; we already tarred
 
-          # write SSH key
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-          # prep remote: temp dir + ensure rsync + show free space
-          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" <<'REMOTE'
-          set -e
-          : > ~/.hushlogin || true
-          command -v rsync >/dev/null || { sudo apt-get update -y && sudo apt-get install -y rsync; }
-          REMOTE
-
-          # stream tar into temp dir under user home (no sudo on stdin)
-          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" "rm -rf '$TMP_DIR' && mkdir -p '$TMP_DIR'"
-          tar -C dist -czf - . \
-          | ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" "tar -C '$TMP_DIR' -xzf -"
-
-          # verify size and free space before final sync
-          ssh -o StrictHostKeyChecking=no -p "$PORT" -i ~/.ssh/id_rsa "$USER@$HOST" <<REMOTE
-          set -e
-          echo "Remote temp size:"
-          du -sh "$TMP_DIR" || true
-          echo "Disk space on /var/www:"
-          df -h /var/www || true
-          sudo mkdir -p /var/www/app
-          # sync into web root with sudo (no stdin used)
-          sudo rsync -av --delete "$TMP_DIR"/ /var/www/app/
-          rm -rf "$TMP_DIR"
-          REMOTE
-
-      - name: Reload nginx
+      - name: Unpack to /var/www/app and reload nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
-          script: sudo systemctl reload nginx
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euxo pipefail
+            : > ~/.hushlogin || true
+            TAR="/tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz"
+            sudo mkdir -p /var/www/app
+            echo "Space before deploy:"; df -h /var/www || true
+            sudo tar -xzf "$TAR" -C /var/www/app
+            sudo rm -f "$TAR"
+            echo "Space after deploy:"; df -h /var/www || true
+            sudo systemctl reload nginx

@@ -1,4 +1,4 @@
-name: Deploy Frontend (native scp + sudo tar)
+name: Deploy Frontend (rsync to tmp + sudo rsync)
 
 on:
   workflow_dispatch:
@@ -8,9 +8,14 @@ on:
         default: main
         required: true
 
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -28,16 +33,18 @@ jobs:
           set -euxo pipefail
           npm ci
           npm run build
+          echo "Local build size:"
           du -sh dist || true
-          tar -C dist -czf dist.tar.gz .
+          # quick sanity check
+          test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
 
-      - name: Push dist.tar.gz with native scp and deploy
+      - name: Deploy via rsync
         env:
           HOST: ${{ secrets.DROPLET_HOST }}
           USER: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
-          REMOTE_TAR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz
+          REMOTE_TMP: /tmp/app_tmp_${{ github.run_id }}_${{ github.run_attempt }}
         run: |
           set -euxo pipefail
 
@@ -47,17 +54,43 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "$PORT" "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-          # copy the tarball (native scp avoids the action’s OS mis-detect)
-          scp -P "$PORT" -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes dist.tar.gz "$USER@$HOST:$REMOTE_TAR"
+          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=10"
 
-          # unpack into /var/www/app and reload nginx — no stdin to sudo
-          ssh -p "$PORT" -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes "$USER@$HOST" "
-            set -euo pipefail
+          # ensure rsync on remote and prep temp dir (no sudo/stdio mixing)
+          ssh $SSH_OPTS "$USER@$HOST" "
+            set -e
             : > ~/.hushlogin || true
+            command -v rsync >/dev/null || { sudo apt-get update -y && sudo apt-get install -y rsync; }
+            rm -rf '$REMOTE_TMP'
+            mkdir -p '$REMOTE_TMP'
+          "
+
+          echo "Uploading dist/ to remote temp: $REMOTE_TMP"
+          rsync -az --delete -e "ssh $SSH_OPTS" dist/ "$USER@$HOST:$REMOTE_TMP/"
+
+          echo "Promoting to /var/www/app with sudo rsync"
+          ssh $SSH_OPTS "$USER@$HOST" "
+            set -euo pipefail
             sudo mkdir -p /var/www/app
             echo 'Space before:'; df -h /var/www || true
-            sudo tar -xzf '$REMOTE_TAR' -C /var/www/app
-            sudo rm -f '$REMOTE_TAR'
+            sudo rsync -av --delete '$REMOTE_TMP'/' /var/www/app/
+            rm -rf '$REMOTE_TMP'
             echo 'Space after:'; df -h /var/www || true
             sudo systemctl reload nginx
+          "
+
+      - name: Final check
+        env:
+          HOST: ${{ secrets.DROPLET_HOST }}
+          USER: ${{ secrets.DROPLET_USER }}
+          PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+        run: |
+          set -euxo pipefail
+          SSH_OPTS="-p $PORT -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+          ssh $SSH_OPTS "$USER@$HOST" "
+            set -e
+            test -f /var/www/app/index.html && echo 'index.html present'
+            sudo nginx -t
+            systemctl is-active nginx && echo 'nginx active'
           "

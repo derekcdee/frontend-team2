@@ -1,4 +1,4 @@
-name: Deploy Frontend (SSH stream + sudo tar)
+name: Deploy Frontend (atomic SSH tar deploy)
 
 on:
   workflow_dispatch:
@@ -29,23 +29,29 @@ jobs:
           cache: 'npm'
 
       - name: Build
+        env:
+          GIT_COMMIT: ${{ github.sha }}
         run: |
           set -euxo pipefail
           npm ci
           npm run build
           test -f dist/index.html
-          # package the build
+
+          # stamp the build so we can confirm what's live
+          jq -n --arg commit "${GIT_COMMIT}" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{commit:$commit, built_at:$ts}' > dist/version.json
+
           tar -C dist -czf dist.tar.gz .
-          # compute checksum for integrity
           sha256sum dist.tar.gz | awk '{print $1}' > dist.sha256
 
-      - name: Upload & deploy over raw SSH
+      - name: Upload & atomic deploy on server
         env:
           HOST: ${{ secrets.DROPLET_HOST }}
           USER: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
           REMOTE_TAR: /tmp/app_dist_${{ github.run_id }}_${{ github.run_attempt }}.tar.gz
+          TARGET_DIR: /var/www/app
         run: |
           set -euxo pipefail
 
@@ -60,27 +66,70 @@ jobs:
             -o StrictHostKeyChecking=yes -o LogLevel=ERROR \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o RequestTTY=no -T"
 
-          # quiet future logins a bit; install tar if it was missing (rare)
-          ssh $SSH_OPTS "$USER@$HOST" 'set -e; : > ~/.hushlogin || true; command -v tar >/dev/null || sudo apt-get update -y && sudo apt-get install -y tar'
+          # ensure tools exist; quiet logins; capture nginx root for sanity check
+          ssh $SSH_OPTS "$USER@$HOST" '
+            set -e
+            : > ~/.hushlogin || true
+            command -v tar >/dev/null || { sudo apt-get update -y && sudo apt-get install -y tar; }
+            command -v jq  >/dev/null || { sudo apt-get update -y && sudo apt-get install -y jq; }
+          '
 
-          # --- Upload artifact robustly (no rsync/scp protocol) ---
-          # stream the tarball
-          cat dist.tar.gz | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR'"
-          # upload checksum
+          # upload artifact + checksum
+          cat dist.tar.gz     | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR'"
           CHECKSUM="$(cat dist.sha256)"
           printf '%s\n' "$CHECKSUM" | ssh $SSH_OPTS "$USER@$HOST" "set -euo pipefail; cat > '$REMOTE_TAR.sha256'"
 
-          # --- Verify & deploy ---
+          # atomic deploy: extract to app_new, then mv -T to swap
           ssh $SSH_OPTS "$USER@$HOST" "
             set -euo pipefail
+
             # verify checksum on remote
             echo \"$CHECKSUM  $REMOTE_TAR\" | sha256sum -c -
-            # ensure target dir and extract
-            sudo mkdir -p /var/www/app
+
+            # find nginx root to ensure we're deploying to the right place
+            NGINX_ROOT=\$(grep -R \"^[[:space:]]*root[[:space:]]\\+\" /etc/nginx/sites-enabled 2>/dev/null | awk '{print \$3}' | tr -d ';' | head -n1 || true)
+            echo \"Detected nginx root: \${NGINX_ROOT:-unknown}\"
+            if [ -n \"\$NGINX_ROOT\" ] && [ \"\$NGINX_ROOT\" != \"$TARGET_DIR\" ]; then
+              echo \"WARNING: nginx is serving from '\$NGINX_ROOT', but this deploy targets '$TARGET_DIR'.\"
+              echo \"Either update nginx 'root' or change TARGET_DIR in the workflow.\"
+            fi
+
+            # prepare locations
+            sudo mkdir -p /var/www
+            NEW_DIR=\"${TARGET_DIR}_new\"
+            sudo rm -rf \"\$NEW_DIR\"
+            sudo mkdir -p \"\$NEW_DIR\"
+
             echo 'Space before:'; df -h /var/www || true
-            sudo tar -xzf '$REMOTE_TAR' -C /var/www/app
-            # cleanup and reload
+
+            # extract into the new dir
+            sudo tar -xzf '$REMOTE_TAR' -C \"\$NEW_DIR\"
+
+            # (optional) set ownership for web server user; adjust if different
+            if id www-data >/dev/null 2>&1; then
+              sudo chown -R www-data:www-data \"\$NEW_DIR\"
+            fi
+
+            # atomically replace current dir
+            if [ -d \"$TARGET_DIR\" ]; then
+              sudo rm -rf \"${TARGET_DIR}_bak\"
+              sudo mv \"$TARGET_DIR\" \"${TARGET_DIR}_bak\"
+            fi
+            sudo mv -T \"\$NEW_DIR\" \"$TARGET_DIR\"
+
+            # cleanup tarballs
             sudo rm -f '$REMOTE_TAR' '$REMOTE_TAR.sha256'
+
             echo 'Space after:'; df -h /var/www || true
+
+            # quick sanity: show version.json + index.html first line
+            echo '--- version.json ---'
+            sudo cat \"$TARGET_DIR/version.json\" 2>/dev/null || echo 'version.json missing'
+            echo '--- index.html head ---'
+            sudo head -n 3 \"$TARGET_DIR/index.html\" || true
+
+            # reload nginx to pick up any new static caching rules
             sudo systemctl reload nginx
+
+            echo 'Deployed to: $TARGET_DIR'
           "

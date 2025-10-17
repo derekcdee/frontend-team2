@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { DefaultButton } from "../util/Buttons";
-import cue from "../../images/wipcues.jpg"
 
 export default function ShopNowSection () {
     const navigate = useNavigate();
@@ -11,7 +10,7 @@ export default function ShopNowSection () {
             <div className="shop-now-container">
                 <div className="shop-now-image">
                     <img 
-                        src={cue} 
+                        src={"https://jmillercustomcues.nyc3.cdn.digitaloceanspaces.com/homepage/wipcues.jpg"} 
                         alt="Hand Craftmanship"
                         onError={(e) => {
                             // Fallback styling if image fails to load

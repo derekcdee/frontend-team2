@@ -50,14 +50,14 @@ jobs:
               sudo swapon /swapfile
             fi
 
-            cd /srv/app-frontend/frontend
+            cd /frontend
 
             # Your exact commands with absolute paths for outputs
             git pull
             npm ci --no-audit --no-fund
             npm run build
 
-            sudo rsync -a --delete /srv/app-frontend/frontend/dist/ /var/www/app/
+            sudo rsync -a --delete /frontend/dist/ /var/www/app/
             sudo nginx -t || true
             sudo systemctl reload nginx
 

@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Git ref to deploy (used only for logging; build runs on server)
+        description: Git ref to deploy
         default: main
         required: true
 
@@ -26,10 +26,9 @@ jobs:
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
           request_pty: true
           script_stop: true
-          command_timeout: 30m
+          command_timeout: 15m
           script: |
             set -euxo pipefail
-            : > ~/.hushlogin || true
 
             command -v node >/dev/null || { echo "node not found"; exit 1; }
             command -v npm  >/dev/null || { echo "npm not found";  exit 1; }
@@ -37,28 +36,10 @@ jobs:
             command -v rsync >/dev/null || { echo "rsync not found"; exit 1; }
             command -v systemctl >/dev/null || { echo "systemctl not found"; exit 1; }
 
-            echo "Requested ref: ${{ github.event.inputs.ref }}"
-
-            # Memory helpers: increase Node's heap and add 2G swap if none exists
-            export NODE_OPTIONS="${NODE_OPTIONS:---max_old_space_size=2048}"
-
-            if ! swapon --show | grep -q '^'; then
-              echo "No swap detected; creating 2G swapfile to help builds"
-              sudo fallocate -l 2G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
-              sudo chmod 600 /swapfile
-              sudo mkswap /swapfile
-              sudo swapon /swapfile
-            fi
-
             cd /frontend
-
-            # Your exact commands with absolute paths for outputs
+            
             git pull
             npm ci --no-audit --no-fund
             npm run build
-
-            sudo rsync -a --delete /frontend/dist/ /var/www/app/
-            sudo nginx -t || true
-            sudo systemctl reload nginx
-
+            rsync -a --delete /frontend/dist/ /var/www/app/
             echo "DEPLOY COMMIT: $(git rev-parse --short HEAD)"

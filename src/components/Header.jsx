@@ -27,7 +27,7 @@ const options = {
 };
 
 const navItems = [
-    { text: "Cues", options: options["Cues"] },
+    { text: "Cuesaaa", options: options["Cues"] },
     { text: "Accessories", link: "/collections/accessories" },
     // { text: "Build-A-Cue", link: "/build-a-cue" },
     { text: "Materials", options: options["Materials"] }

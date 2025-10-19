@@ -37,7 +37,7 @@ export default function CartPage() {
     // Filter country options to only allowed countries
     const countryOptions = allowedCountries.length > 0
         ? allCountryOptions.filter(opt => allowedCountries.includes(opt.value))
-        : allCountryOptions;
+        : [];
 
     // Fetch allowed shipping countries from backend on mount
     useEffect(() => {

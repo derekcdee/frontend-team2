@@ -43,7 +43,7 @@ export default function CreateAccountPage () {
                 {/* FIELDS */}
                 <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
                     <FormField 
-                        title="Email"
+                        title="Email*"
                         type="text"
                         value={email}
                         error={errors.email && errors.email.message}
@@ -92,7 +92,7 @@ export default function CreateAccountPage () {
                     </div>
 
                     <FormField 
-                        title="Password"
+                        title="Password*"
                         type="password"
                         value={password}
                         error={errors.password && errors.password.message}

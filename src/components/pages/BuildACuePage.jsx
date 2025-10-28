@@ -4,11 +4,11 @@ import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import "../../css/buttons.css";
 import { FullSpliceCue } from "../util/FullSpliceCue";
-import { StandardCue } from "../util/StandardCue";
+import { JMCC_Standard_Cue } from "../util/JMCC_Standard_Cue";
 
 // Model map definition
 const models = {
-    model1: StandardCue,
+    model1: JMCC_Standard_Cue,
     model2: FullSpliceCue,
 };
 

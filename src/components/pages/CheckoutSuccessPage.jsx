@@ -35,7 +35,6 @@ export default function CheckoutSuccessPage() {
             })
             .catch((error) => {
                 const errorMessage = error.errors?.[0] || "Failed to verify payment. Please contact support if you were charged.";
-                
                 navigate(`/checkout/failure?session_id=${sessionId}&error=${encodeURIComponent(errorMessage)}`);
                 setLoading(false);
             });
@@ -135,8 +134,8 @@ export default function CheckoutSuccessPage() {
                                     <div className="item-category">
                                         <h4>Cues ({orderDetails.items.cues.length})</h4>
                                         <ul>
-                                            {orderDetails.items.cues.map((cueGuid, index) => (
-                                                <li key={index}>Cue {cueGuid}</li>
+                                            {orderDetails.items.cues.map((cue, index) => (
+                                                <li key={index}>{cue.name || `Cue ${cue.guid}`}</li>
                                             ))}
                                         </ul>
                                     </div>
@@ -147,7 +146,7 @@ export default function CheckoutSuccessPage() {
                                         <ul>
                                             {orderDetails.items.accessories.map((accessory, index) => (
                                                 <li key={index}>
-                                                    {accessory.guid} (Quantity: {accessory.quantity})
+                                                    {accessory.name || accessory.guid} (Quantity: {accessory.quantity})
                                                 </li>
                                             ))}
                                         </ul>
@@ -173,8 +172,8 @@ export default function CheckoutSuccessPage() {
                             onClick={() => navigate("/collections/cues")}
                         />
                         <DefaultButton 
-                            text="View Order History" 
-                            onClick={() => navigate("/account/orders")}
+                            text="View Order" 
+                            onClick={() => navigate(`/account/orders/${orderDetails.orderId}`)}
                             className="secondary"
                         />
                     </div>

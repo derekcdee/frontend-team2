@@ -45,8 +45,9 @@ body {
 
 .jmiller-app {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
   min-height: 100dvh;
+  background-color: var(--miller-white);
 }
 
 h1, h2, h3, h4 {
@@ -672,4 +673,248 @@ a.header-icon:active {
 
 .miller-dialog-typography button:not([class^="fa-"]) {
   font-family: inherit;
+}
+
+.announcement-banner {
+  /* More sophisticated gradient with smoother transitions and better color flow */
+  background: var(--miller-dark-grey);
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+  background-size: 20px 20px;
+  color: #fff;
+  font-family: 'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  padding: 4px 0 4px 0;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  animation: fadeInBanner 0.7s;
+  border-radius: 0; /* square corners */
+  overflow: hidden;
+}
+
+@keyframes fadeInBanner {
+    from { opacity: 0; transform: translateY(-20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+.announcement-banner-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 60px; /* Add padding to prevent overlap with controls */
+    position: relative;
+}
+
+.announcement-message-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.announcement-message {
+    padding: 0 8px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    background: rgba(0,0,0,0.08);
+    margin: 2px 0;
+    border-radius: 0; /* square corners */
+    word-break: break-word;
+    font-size: 1em;
+    text-align: center;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.announcement-message.slide-right {
+    animation: slideOutRight 0.3s ease-in-out forwards;
+}
+
+.announcement-message.slide-left {
+    animation: slideOutLeft 0.3s ease-in-out forwards;
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    51% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    51% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.announcement-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0;
+    margin: 0;
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+}
+
+.announcement-control:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.announcement-dot:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Remove the nested i element styling since we're using FontAwesome classes directly */
+.announcement-control::before {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    line-height: 1;
+}
+
+.announcement-control-prev {
+    left: 20px;
+}
+
+.announcement-control-next {
+    right: 20px;
+}
+
+.announcement-control:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.announcement-control:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.announcement-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.announcement-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    opacity: 0.8;
+    flex-shrink: 0;
+    padding: 0;
+    min-width: 4px; /* Ensure it stays circular */
+    min-height: 4px; /* Ensure it stays circular */
+}
+
+.announcement-dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    transform: scale(1.5);
+}
+
+.announcement-dot.active {
+    background: white;
+    opacity: 1;
+    transform: scale(1.8);
+    box-shadow: 0 0 4px rgba(255,255,255,0.5);
+}
+
+@media (max-width: 600px) {
+    .announcement-banner {
+        font-size: 0.95rem;
+        padding: 0px 0px 4px 0;
+    }
+    
+    .announcement-banner-inner {
+        padding: 0 50px; /* Adjust padding for mobile */
+    }
+    
+    .announcement-message {
+        font-size: 0.9em;
+    }
+    
+    .announcement-control {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+    
+    .announcement-control-prev {
+        left: 16px;
+    }
+    
+    .announcement-control-next {
+        right: 16px;
+    }
+    
+    .announcement-dots {
+        gap: 5px;
+    }
+    
+    .announcement-dot {
+        width: 3px;
+        height: 3px;
+        min-width: 3px;
+        min-height: 3px;
+    }
 }

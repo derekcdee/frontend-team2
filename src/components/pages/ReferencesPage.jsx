@@ -5,22 +5,22 @@ export default function ReferencesPage() {
         {
             name: "Andrew",
             description: "Backend developer specializing in server-side architecture and API development. Focuses on database optimization, security implementation, and scalable backend solutions.",
-            url: "https://linkedin.com/in/andrew-dev",
-            email: "andrew@jmillercues.com",
+            url: "https://www.linkedin.com/in/andrewhejl7777/",
+            email: "hejlandrew@gmail.com",
             category: "Backend Developer"
         },
         {
             name: "Derek",
             description: "Full-stack developer with expertise in both frontend and backend technologies. Handles end-to-end application development, system integration, and project coordination.",
-            url: "https://linkedin.com/in/derek-dev",
-            email: "derek@jmillercues.com",
+            url: "https://www.linkedin.com/in/derek-dailey-64118920b",
+            email: "derekdailey301@gmail.com",
             category: "Full-Stack Developer"
         },
         {
             name: "Ethan",
             description: "Backend developer focused on server infrastructure and data management. Specializes in API design, database architecture, and backend performance optimization.",
-            url: "https://linkedin.com/in/ethan-dev",
-            email: "ethan@jmillercues.com",
+            url: "https://www.linkedin.com/in/ethankeyser",
+            email: "ethan.keyser2004@gmail.com",
             category: "Backend Developer"
         }
     ];
@@ -59,18 +59,6 @@ export default function ReferencesPage() {
     ];
 
     const images = [
-        {
-            name: "Unsplash",
-            description: "High-quality stock photography for wood textures and crafting imagery",
-            url: "https://unsplash.com/",
-            category: "Stock Photography"
-        },
-        {
-            name: "Pexels",
-            description: "Free stock photos and videos for material and product photography",
-            url: "https://www.pexels.com/",
-            category: "Stock Photography"
-        },
         {
             name: "Adobe Stock",
             description: "Professional stock images for crystal and gemstone photography",

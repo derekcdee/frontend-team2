@@ -48,3 +48,37 @@ export function clearCartRedux() {
         type: actionTypes.CLEAR_CART
     });
 }
+
+/*==============================================================
+# Featured Cues
+==============================================================*/
+export function setFeaturedCues(items) {
+    store.dispatch({
+        type: actionTypes.SET_FEATURED_CUES,
+        items
+    });
+}
+
+export function setFeaturedCuesLoading(loading) {
+    store.dispatch({
+        type: actionTypes.SET_FEATURED_CUES_LOADING,
+        loading
+    });
+}
+
+/*==============================================================
+# Announcements
+==============================================================*/
+export function setAnnouncements(items) {
+    store.dispatch({
+        type: actionTypes.SET_ANNOUNCEMENTS,
+        items
+    });
+}
+
+export function setAnnouncementsLoading(loading) {
+    store.dispatch({
+        type: actionTypes.SET_ANNOUNCEMENTS_LOADING,
+        loading
+    });
+}

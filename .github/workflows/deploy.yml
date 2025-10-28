@@ -1,0 +1,45 @@
+name: Deploy Frontend
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        default: main
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prep SSH known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -p "${{ secrets.DROPLET_SSH_PORT || 22 }}" "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          request_pty: true
+          script_stop: true
+          command_timeout: 15m
+          script: |
+            set -euxo pipefail
+
+            command -v node >/dev/null || { echo "node not found"; exit 1; }
+            command -v npm  >/dev/null || { echo "npm not found";  exit 1; }
+            command -v git  >/dev/null || { echo "git not found";  exit 1; }
+            command -v rsync >/dev/null || { echo "rsync not found"; exit 1; }
+            command -v systemctl >/dev/null || { echo "systemctl not found"; exit 1; }
+
+            cd /frontend
+            
+            git pull
+            npm ci --no-audit --no-fund
+            npm run build
+            rsync -a --delete /frontend/dist/ /var/www/app/
+            echo "DEPLOY COMMIT: $(git rev-parse --short HEAD)"

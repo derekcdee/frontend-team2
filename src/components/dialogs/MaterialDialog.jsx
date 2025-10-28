@@ -245,27 +245,44 @@ const MaterialDialog = () => {
                     maxHeight: isMobile ? '100dvh' : '95vh',
                     width: isMobile ? '100%' : '85vw',
                 },
-                className: 'miller-dialog-typography'
+                className: 'miller-dialog-typography',
+                style: { borderRadius: 0 }
             }}
         >
             {/* Header */}
             <Box
                 sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'space-between',
                     p: 2,
                     borderBottom: '1px solid',
                     borderColor: 'divider'
                 }}
             >
-                <Typography variant="h4" component="h2" sx={{ 
-                    fontWeight: 600,
-                    fontFamily: "'bouwsma-uncial', serif !important"
-                }}>
-                    {loading ? 'Loading...' : error ? 'Error' : displayName}
-                </Typography>
-                <IconButton onClick={handleClose} size="small">
+                <Box sx={{ flex: 1, pr: 2 }}>
+                    <Typography variant="h4" component="h2" sx={{ 
+                        fontWeight: 600,
+                        fontFamily: "'bouwsma-uncial', serif !important",
+                        mb: 1
+                    }}>
+                        {loading ? 'Loading...' : error ? 'Error' : displayName}
+                    </Typography>
+                    <Typography 
+                        variant="body2" 
+                        sx={{ 
+                            fontSize: '0.8rem',
+                            color: 'text.secondary',
+                            fontFamily: "'VTGoblinHand', system-ui, Helvetica, Arial, sans-serif !important",
+                            lineHeight: 1.3,
+                            fontStyle: 'italic'
+                        }}
+                    >
+                        Please note: Some materials are subject to availability. If needed, 
+                        contact us for specific material availability and potential lead times.
+                    </Typography>
+                </Box>
+                <IconButton onClick={handleClose} size="small" sx={{ mt: 0.5 }}>
                     <CloseIcon />
                 </IconButton>
             </Box>
@@ -291,7 +308,7 @@ const MaterialDialog = () => {
                                 <Box
                                     sx={{
                                         width: '100%',
-                                        height: isMobile ? '300px' : '400px',
+                                        height: isMobile ? '300px' : '475px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -302,10 +319,10 @@ const MaterialDialog = () => {
                                         src={images[currentImageIndex]}
                                         alt={`${displayName} - Image ${currentImageIndex + 1}`}
                                         style={{
-                                            maxWidth: '90%',
-                                            maxHeight: '90%',
+                                            width: '100%',
+                                            height: '100%',
                                             objectFit: 'contain',
-                                            borderRadius: '8px'
+                                            objectPosition: 'center',
                                         }}
                                     />
                                     
@@ -367,7 +384,7 @@ const MaterialDialog = () => {
                         )}
 
                         {/* Content Section */}
-                        <Box sx={{ p: 3 }}>
+                        <Box sx={{ p: isMobile ? '24px 12px' : 3 }}>
                             {/* Status and Tier */}
                             <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
                                 {material.status && (

@@ -281,3 +281,190 @@ export function DefaultToggle({ titleOn, titleOff, onChange, value }) {
         </div>
     );
 }
+
+/**
+ * Date Picker input with floating label and calendar icon
+ */
+export const FormDatePicker = forwardRef(({ title, value, onChange, error, disabled, ...restProps }, ref) => {
+    const [showCalendar, setShowCalendar] = useState(false);
+    const inputRef = useRef(null);
+    const calendarRef = useRef(null);
+
+    useOutsideClick(calendarRef, () => setShowCalendar(false));
+
+    // Parse value to Date object
+    let selectedDate = value ? new Date(value) : null;
+    if (selectedDate && isNaN(selectedDate.getTime())) selectedDate = null;
+
+    // Calendar state
+    const today = new Date();
+    const [calendarMonth, setCalendarMonth] = useState(selectedDate?.getMonth() ?? today.getMonth());
+    const [calendarYear, setCalendarYear] = useState(selectedDate?.getFullYear() ?? today.getFullYear());
+
+    // Helpers
+    const daysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
+    const firstDayOfMonth = (month, year) => new Date(year, month, 1).getDay();
+
+    const handleDateSelect = (day) => {
+        const date = new Date(calendarYear, calendarMonth, day);
+        setShowCalendar(false);
+        if (onChange) {
+            // Format as yyyy-MM-ddTHH:mm for datetime-local
+            const iso = date.toISOString().slice(0, 16);
+            onChange({
+                target: {
+                    value: iso,
+                    name: restProps.name
+                }
+            });
+        }
+    };
+
+    const handleMonthChange = (offset) => {
+        let newMonth = calendarMonth + offset;
+        let newYear = calendarYear;
+        if (newMonth < 0) {
+            newMonth = 11;
+            newYear -= 1;
+        } else if (newMonth > 11) {
+            newMonth = 0;
+            newYear += 1;
+        }
+        setCalendarMonth(newMonth);
+        setCalendarYear(newYear);
+    };
+
+    const handleClear = (e) => {
+        e.stopPropagation();
+        if (onChange) {
+            onChange({
+                target: {
+                    value: "",
+                    name: restProps.name
+                }
+            });
+        }
+        setShowCalendar(false);
+    };
+
+    // Render calendar grid
+    const renderCalendar = () => {
+        const days = [];
+        const firstDay = firstDayOfMonth(calendarMonth, calendarYear);
+        const totalDays = daysInMonth(calendarMonth, calendarYear);
+
+        // Empty slots for days before the first
+        for (let i = 0; i < firstDay; i++) {
+            days.push(<div key={`empty-${i}`} className="datepicker-day empty"></div>);
+        }
+        // Actual days
+        for (let d = 1; d <= totalDays; d++) {
+            const isSelected =
+                selectedDate &&
+                selectedDate.getDate() === d &&
+                selectedDate.getMonth() === calendarMonth &&
+                selectedDate.getFullYear() === calendarYear;
+            days.push(
+                <div
+                    key={d}
+                    className={`datepicker-day${isSelected ? " selected" : ""}`}
+                    onClick={() => handleDateSelect(d)}
+                >
+                    {d}
+                </div>
+            );
+        }
+        return days;
+    };
+
+    // Classes
+    const classes = ["form-field"];
+    if (value) classes.push("text-within");
+    if (error) classes.push("input-error");
+
+    // Format display value
+    let displayValue = "";
+    if (selectedDate) {
+        displayValue = selectedDate.toLocaleDateString();
+    }
+
+    return (
+        <div>
+            <div className={classes.join(" ")} style={{ position: "relative" }}>
+                <input
+                    type="text"
+                    ref={inputRef}
+                    className="form-field-input"
+                    value={displayValue}
+                    onFocus={() => !disabled && setShowCalendar(true)}
+                    onClick={() => !disabled && setShowCalendar(true)}
+                    disabled={disabled}
+                    readOnly
+                    {...restProps}
+                />
+                <label className="form-field-title">{title}</label>
+                <div style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0px"
+                }}>
+                    <i
+                        className="fa-solid fa-calendar form-select-chevron"
+                        style={{
+                            fontSize: "18px",
+                            color: "#747474",
+                            cursor: disabled ? "not-allowed" : "pointer",
+                            opacity: disabled ? 0.6 : 1
+                        }}
+                        onClick={() => !disabled && setShowCalendar((v) => !v)}
+                    />
+                    {value && (
+                        <i
+                            className="fa-solid fa-x clear-icon"
+                            style={{
+                                fontSize: "18px",
+                                color: "#747474",
+                                cursor: disabled ? "not-allowed" : "pointer",
+                                opacity: disabled ? 0.6 : 1,
+                                marginLeft: "8px"
+                            }}
+                            onClick={handleClear}
+                            tabIndex={-1}
+                        />
+                    )}
+                </div>
+                {showCalendar && (
+                    <div className="datepicker-popup" ref={calendarRef}>
+                        <div className="datepicker-header">
+                            <button type="button" className="datepicker-nav" onClick={() => handleMonthChange(-1)}>
+                                &lt;
+                            </button>
+                            <span>
+                                {new Date(calendarYear, calendarMonth).toLocaleString("default", {
+                                    month: "long",
+                                })}{" "}
+                                {calendarYear}
+                            </span>
+                            <button type="button" className="datepicker-nav" onClick={() => handleMonthChange(1)}>
+                                &gt;
+                            </button>
+                        </div>
+                        <div className="datepicker-grid">
+                            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+                                <div key={d} className="datepicker-day header">
+                                    {d}
+                                </div>
+                            ))}
+                            {renderCalendar()}
+                        </div>
+                    </div>
+                )}
+            </div>
+            <p className="form-error-text">{error}</p>
+        </div>
+    );
+});

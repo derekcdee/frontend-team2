@@ -3,11 +3,19 @@ import { receiveResponse} from './notifications';
 import { setCartItems } from './redux/actionCreators';
 import { isValidElement } from 'react';
 
+export function getBaseUrl() {
+    const isDevelopment = import.meta.env.MODE === 'development';
+
+    if (isDevelopment) {
+        return import.meta.env.VITE_DEV_SERVER_URL;
+    } else {
+        return import.meta.env.VITE_PROD_SERVER_URL;
+    }
+};
 
 export function _ajax(settings = {}) {
-    // Add base URL
-    settings.url = `http://localhost:5000${settings.url}`;
-
+    // Add base URL based on environment
+    settings.url = `${getBaseUrl()}${settings.url}`;
     // Special handling for FormData (file uploads)
     if (settings.data instanceof FormData) {
         settings.processData = false; // Don't process FormData
@@ -38,17 +46,20 @@ export function _ajax(settings = {}) {
         })
         .catch((err) => {
             let response;
-            
             // Handle network errors (connection refused, timeout, etc.)
             if (!err.responseJSON) {
                 response = {
                     errors: [`Internal server error. Please try again later.`],
+                    status: 'unexpectedFailure', // Backend response status
+                    httpStatus: err.status || 500, // HTTP status code
                 };
             } else {
                 // Handle server errors with JSON response
                 response = err.responseJSON ? JSON.parse(err.responseJSON) : err;
+                // Add HTTP status code to the response (don't overwrite backend's status field)
+                response.httpStatus = err.status;
             }
-            
+
             // Automatically display errors/logs notifications from response
             receiveResponse(response);
             return Promise.reject(response);
@@ -297,10 +308,6 @@ export function contactUs(payload) {
 }
 
 /*==============================================================
-# Products
-==============================================================*/
-
-/*==============================================================
 # Emailer
 ==============================================================*/
 
@@ -317,6 +324,17 @@ export function emailOrderConfirm( email, orderID ) {
         url: "/email/orderconfirm",
         method: "POST",
         data: { email, orderID }
+    });
+}
+
+/*==============================================================
+# Announcements
+==============================================================*/
+
+export function getActiveAnnouncements() {
+    return _ajax({
+        url: "/announcements",
+        method: "GET",
     });
 }
 
@@ -531,6 +549,38 @@ export function editCue(id, cueData) {
 export function deleteCue(id) {
     return _ajax({
         url: "/admin/cues/" + id,
+        method: "DELETE",
+    });
+}
+
+// admin announcements section
+
+export function getAdminAnnouncements() {
+    return _ajax({
+        url: "/admin/announcements",
+        method: "GET",
+    });
+}
+
+export function createAnnouncement(active, message, startAt, endAt) {
+    return _ajax({
+        url: "/admin/announcements",
+        method: "POST",
+        data: { active, message, startAt, endAt }
+    });
+}
+
+export function editAnnouncement(id, active, message, startAt, endAt) {
+    return _ajax({
+        url: "/admin/announcements/" + id,
+        method: "PATCH",
+        data: { active, message, startAt, endAt }
+    });
+}
+
+export function deleteAnnouncement(id) {
+    return _ajax({
+        url: "/admin/announcements/" + id,
         method: "DELETE",
     });
 }

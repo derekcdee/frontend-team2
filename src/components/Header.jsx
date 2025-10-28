@@ -10,6 +10,7 @@ import { searchSite } from "../util/requests";
 import { Card, MaterialCard } from "./util/Card"; // Import the Card component
 import { SOCIAL_MEDIA_LINKS } from "../util/globalConstants";
 import { showMaterialDialog } from "./dialogs/MaterialDialog";
+import { useSelector } from "react-redux";
 
 const options = {
     "Materials": [
@@ -28,9 +29,116 @@ const options = {
 const navItems = [
     { text: "Cues", options: options["Cues"] },
     { text: "Accessories", link: "/collections/accessories" },
-    { text: "Build-A-Cue", link: "/build-a-cue" },
+    // { text: "Build-A-Cue", link: "/build-a-cue" },
     { text: "Materials", options: options["Materials"] }
 ];
+
+function AnnouncementBanner({ announcements }) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [slideDirection, setSlideDirection] = useState('right');
+    
+    useEffect(() => {
+        if (announcements.length <= 1) return;
+        
+        const interval = setInterval(() => {
+            setSlideDirection('right');
+            setIsAnimating(true);
+            setTimeout(() => {
+                setCurrentIndex(prev => (prev + 1) % announcements.length);
+                setIsAnimating(false);
+            }, 300);
+        }, 12000);
+        
+        return () => clearInterval(interval);
+    }, [announcements.length]);
+    
+    const handleDotClick = (index) => {
+        if (index === currentIndex || isAnimating) return;
+        
+        const direction = index > currentIndex ? 'right' : 'left';
+        setSlideDirection(direction);
+        setIsAnimating(true);
+        
+        setTimeout(() => {
+            setCurrentIndex(index);
+            setIsAnimating(false);
+        }, 300);
+    };
+    
+    const handlePrevClick = () => {
+        if (isAnimating) return;
+        
+        setSlideDirection('left');
+        setIsAnimating(true);
+        
+        setTimeout(() => {
+            setCurrentIndex(prev => prev === 0 ? announcements.length - 1 : prev - 1);
+            setIsAnimating(false);
+        }, 300);
+    };
+    
+    const handleNextClick = () => {
+        if (isAnimating) return;
+        
+        setSlideDirection('right');
+        setIsAnimating(true);
+        
+        setTimeout(() => {
+            setCurrentIndex(prev => (prev + 1) % announcements.length);
+            setIsAnimating(false);
+        }, 300);
+    };
+    
+    if (!announcements || announcements.length === 0) return null;
+    
+    return (
+        <div className="announcement-banner">
+            <div className="announcement-banner-inner">
+                {announcements.length > 1 && (
+                    <button 
+                        className="announcement-control announcement-control-prev fa-solid fa-angle-left"
+                        onClick={handlePrevClick}
+                        aria-label="Previous announcement"
+                        disabled={isAnimating}
+                    />
+                )}
+                
+                <div className="announcement-message-container">
+                    <span 
+                        className={`announcement-message ${isAnimating ? `slide-${slideDirection}` : ''}`}
+                        key={currentIndex}
+                    >
+                        {announcements[currentIndex]?.message}
+                    </span>
+                </div>
+                
+                {announcements.length > 1 && (
+                    <>
+                        <button 
+                            className="announcement-control announcement-control-next fa-solid fa-angle-right"
+                            onClick={handleNextClick}
+                            aria-label="Next announcement"
+                            disabled={isAnimating}
+                        />
+                        
+                        <div className="announcement-dots">
+                            {announcements.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`announcement-dot ${index === currentIndex ? 'active' : ''}`}
+                                    onClick={() => handleDotClick(index)}
+                                    aria-label={`Go to announcement ${index + 1}`}
+                                    disabled={isAnimating}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}
 
 export default function Header() {
     const [openDropdown, setOpenDropdown] = useState(null);
@@ -156,89 +264,105 @@ export default function Header() {
         setSearchOpen(false);
     };
 
+    // Get announcements from redux
+    const { items: announcements, loading: announcementsLoading } = useSelector(state => state.announcements);
+
+    // Only show active announcements
+    const activeAnnouncements = announcements?.filter(a => a.active);
+
     return (
-        <header className="main-header sticky" ref={headerRef}>
-            {openDrawer && <div className="overlay header-overlay" />}
-            {/* Drawer */}
-            <div className="header-drawer">
-                <button className={openDrawer ? "fa-solid fa-xmark header-icon" : "fa-solid fa-bars header-icon"} onClick={() => setOpenDrawer(!openDrawer)}/>
+        <>
+            {/* Announcement Banner */}
+            <div>
+                {!location.pathname.startsWith('/account') && !openDrawer && !searchOpen && !announcementsLoading && (
+                    <AnnouncementBanner announcements={activeAnnouncements || []} />
+                )}
+            </div>
 
-                {/* MENU DRAWER HERE*/}
-                <div className={openDrawer ? "header-drawer-menu open" : "header-drawer-menu"}>
-                    
-                    {/* MENU DRAWER NAV*/}
-                    <nav className="drawer-nav">
-                        <ul className="list-menu">
-                            {navItems.map((navItem) => {
-                                const { text, link, options } = navItem;
+            {/* Existing Header Content */}
+            <header className="main-header sticky" ref={headerRef}>
+                {openDrawer && <div className="overlay header-overlay" />}
+                {/* Drawer */}
+                <div className="header-drawer">
+                    <button className={openDrawer ? "fa-solid fa-xmark header-icon" : "fa-solid fa-bars header-icon"} onClick={() => setOpenDrawer(!openDrawer)}/>
 
-                                return (
-                                    <li key={text}>
-                                        <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown} onLinkClick={handleLinkClick}/>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </nav>
-                    {/* MENU DRAWER FOOTER*/}
-                    <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
-                        <DrawerLoginButton onClick={handleLinkClick} />
-                        <div>
-                            {SOCIAL_MEDIA_LINKS.map((social) => (
-                                <a 
-                                    key={social.name}
-                                    href={social.url}
-                                    className={`header-icon ${social.icon}`}
-                                    aria-label={social.name}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                />
-                            ))}
+                    {/* MENU DRAWER HERE*/}
+                    <div className={openDrawer ? "header-drawer-menu open" : "header-drawer-menu"}>
+                        
+                        {/* MENU DRAWER NAV*/}
+                        <nav className="drawer-nav">
+                            <ul className="list-menu">
+                                {navItems.map((navItem) => {
+                                    const { text, link, options } = navItem;
+
+                                    return (
+                                        <li key={text}>
+                                            <DrawerNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} openDropdown={openDropdown} onLinkClick={handleLinkClick}/>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </nav>
+                        {/* MENU DRAWER FOOTER*/}
+                        <div className={openDropdown ? "drawer-footer hidden" : "drawer-footer"}>
+                            <DrawerLoginButton onClick={handleLinkClick} />
+                            <div>
+                                {SOCIAL_MEDIA_LINKS.map((social) => (
+                                    <a 
+                                        key={social.name}
+                                        href={social.url}
+                                        className={`header-icon ${social.icon}`}
+                                        aria-label={social.name}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Main Heading */}
-            <div className="header-heading">
-                <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" } onClick={handleLinkClick}>
-                    <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
-                </NavLink>
-            </div>
+                {/* Main Heading */}
+                <div className="header-heading">
+                    <NavLink to="/" className={hasScrolled ? "scrolled-past" : "" } onClick={handleLinkClick}>
+                        <img src={logo} className={hasScrolled ? "header-logo scrolled-past" : "header-logo" }/>
+                    </NavLink>
+                </div>
 
-            {/* Nav Section w/ Dropdown Menu*/}
-            <nav className="header-navigation">
-                <ul className="header-list-menu list-menu">
-                    {navItems.map((navItem) => {
-                        const { text, link, options } = navItem;
+                {/* Nav Section w/ Dropdown Menu*/}
+                <nav className="header-navigation">
+                    <ul className="header-list-menu list-menu">
+                        {navItems.map((navItem) => {
+                            const { text, link, options } = navItem;
 
-                        return (
-                            <li key={text}>
-                                <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} onLinkClick={handleLinkClick}/>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
+                            return (
+                                <li key={text}>
+                                    <HeaderNavItem text={text} link={link} options={options} isDropdown={!link && options} isOpen={openDropdown === text} onToggle={handleDropdown} onLinkClick={handleLinkClick}/>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </nav>
 
-            {/* Icons */}
-            <div className="header-icons">
-                <button 
-                    className="fa-solid fa-magnifying-glass header-icon" 
-                    onClick={handleSearchOpen}
-                    aria-label="Search"
+                {/* Icons */}
+                <div className="header-icons">
+                    <button 
+                        className="fa-solid fa-magnifying-glass header-icon" 
+                        onClick={handleSearchOpen}
+                        aria-label="Search"
+                    />
+                    <LoginButton onClick={handleLinkClick} />
+                    <CartButton onClick={handleLinkClick} />
+                </div>
+
+                <SearchDialog 
+                    open={searchOpen} 
+                    onClose={handleSearchClose}
+                    handleLinkClick={handleLinkClick}
+                    hasScrolled={hasScrolled} 
                 />
-                <LoginButton onClick={handleLinkClick} />
-                <CartButton onClick={handleLinkClick} />
-            </div>
-
-            <SearchDialog 
-                open={searchOpen} 
-                onClose={handleSearchClose}
-                handleLinkClick={handleLinkClick}
-                hasScrolled={hasScrolled} 
-            />
-        </header>
+            </header>
+        </>
     );
 }
 
@@ -458,7 +582,10 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                     boxShadow: 'none',
                     // Height handling for search results
                     height: searchResults.length > 0 || nothingFound ? 'auto' : 'auto', // Let black background adjust to content
-                    minHeight: hasScrolled ? '70px' : '100px',
+                    minHeight: {
+                        xs: hasScrolled ? '60px' : '90px', // Mobile
+                        sm: hasScrolled ? '70px' : '90px' // Desktop
+                    },
                     // Use 95vh to take up almost the entire viewport while leaving a small margin
                     maxHeight: searchResults.length > 0 || nothingFound ? '100dvh' : 'auto',
                     // Always maintain scroll capability
@@ -495,7 +622,10 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        height: hasScrolled ? '70px' : '100px',
+                        height: {
+                            xs: hasScrolled ? '60px' : '90px', // Mobile heights - changed from 100px to 90px
+                            sm: hasScrolled ? '70px' : '90px' // Desktop heights - unchanged
+                        },
                         width: '100%',
                         boxSizing: 'border-box',
                         transition: 'height 0.3s ease',
@@ -617,6 +747,7 @@ function SearchDialog({ open, onClose, handleLinkClick, hasScrolled }) {
                                             title={name}
                                             images={item.imageUrls}
                                             tag={item.cueNumber || item.accessoryNumber || ''}
+                                            featured={item.featured}
                                             price={item.price}
                                             linkTo={link}
                                             onClick={handleProductClick}

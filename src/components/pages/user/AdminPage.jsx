@@ -3096,7 +3096,7 @@ function UserDialog({ open, onClose, title: initialTitle, getData, setDialogProp
 function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDialogProps, element = { message: '', active: false, startAt: '', endAt: '' } }) {
     const [savedAnnouncement, setSavedAnnouncement] = useState(false);
     const [localTitle, setLocalTitle] = useState(initialTitle);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // Add this line
 
     const { register, handleSubmit, watch, formState: { errors }, reset, setValue, setError, clearErrors } = useForm({
         defaultValues: element,
@@ -3119,16 +3119,17 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
     }, [open]);
 
     const onSubmit = (data) => {
+        setIsLoading(true); // Add this line
         if (data.startAt && !data.endAt) {
             setError("endAt", { type: "manual", message: "End Date is required if Start Date is set." });
             clearErrors("startAt");
-            setIsLoading(false);
+            setIsLoading(false); // Add this line
             return;
         }
         if (!data.startAt && data.endAt) {
             setError("startAt", { type: "manual", message: "Start Date is required if End Date is set." });
             clearErrors("endAt");
-            setIsLoading(false);
+            setIsLoading(false); // Add this line
             return;
         }
         clearErrors("startAt");
@@ -3149,10 +3150,10 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
                     setLocalTitle(`Edit Announcement`);
                     getData();
                     getAndCacheAnnouncements();
-                    setIsLoading(false);
+                    setIsLoading(false); // Add this line
                 })
                 .catch((err) => {
-                    setIsLoading(false);
+                    setIsLoading(false); // Add this line
                 })
         } else {
             createAnnouncement(data.active, data.message, data.startAt, data.endAt)
@@ -3163,16 +3164,16 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
                     setDialogProps({ element: response.data });
                     getData();
                     getAndCacheAnnouncements();
-                    setIsLoading(false);
+                    setIsLoading(false); // Add this line
                 })
                 .catch((err) => {
-                    setIsLoading(false);
+                    setIsLoading(false); // Add this line
                 })
         }
     };
 
     const handleSaveClick = () => {
-        if (formRef.current && !isLoading) {
+        if (formRef.current && !isLoading) { // Add !isLoading check
             formRef.current.requestSubmit();
         }
     };
@@ -3183,7 +3184,7 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
     const endAt = watch("endAt");
 
     return (
-        <Dialog open={open} onClose={isLoading ? () => { } : onClose} fullScreen>
+        <Dialog open={open} onClose={isLoading ? () => {} : onClose} fullScreen>
             <DialogTitle style={dialogTitleStyle}>
                 {localTitle}
                 <div style={{ float: 'right', display: 'flex' }}>
@@ -3198,7 +3199,7 @@ function AnnouncementDialog({ open, onClose, title: initialTitle, getData, setDi
                         type="button"
                         className='fa-solid fa-xmark admin-action-button'
                         style={{ display: 'inline-block', justifySelf: 'right', fontSize: '1.5rem', marginTop: '-0.05rem', opacity: isLoading ? 0.5 : 1 }}
-                        onClick={isLoading ? () => { } : onClose}
+                        onClick={isLoading ? () => {} : onClose}
                         disabled={isLoading}
                     />
                 </div>

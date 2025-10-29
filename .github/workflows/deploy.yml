@@ -6,11 +6,10 @@ on:
         description: Git ref to deploy
         default: main
         required: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      FRONTEND_DIR: /srv/app-frontend/frontend
     steps:
       - name: Prep SSH known_hosts
         run: |
@@ -25,11 +24,22 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          request_pty: true
+          script_stop: true
+          command_timeout: 15m
           script: |
-            set -e
-            cd /srv/app-frontend/frontend/dist/
+            set -euxo pipefail
+
+            command -v node >/dev/null || { echo "node not found"; exit 1; }
+            command -v npm  >/dev/null || { echo "npm not found";  exit 1; }
+            command -v git  >/dev/null || { echo "git not found";  exit 1; }
+            command -v rsync >/dev/null || { echo "rsync not found"; exit 1; }
+            command -v systemctl >/dev/null || { echo "systemctl not found"; exit 1; }
+
+            cd /frontend
+            
             git pull
-            npm ci
+            npm ci --no-audit --no-fund
             npm run build
-            sudo rsync -av --delete /srv/app-frontend/frontend/dist/ /var/www/app/
-            sudo systemctl reload nginx
+            rsync -a --delete /frontend/dist/ /var/www/app/
+            echo "DEPLOY COMMIT: $(git rev-parse --short HEAD)"

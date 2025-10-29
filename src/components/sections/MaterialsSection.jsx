@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { DefaultButton } from "../util/Buttons";
-import cue from "../../images/materials.jpg"
 
 export default function MaterialsSection() {
     const navigate = useNavigate();
@@ -11,7 +10,7 @@ export default function MaterialsSection() {
             <div className="materials-container">
                 <div className="materials-image">
                     <img 
-                        src={cue} 
+                        src={"https://jmillercustomcues.nyc3.cdn.digitaloceanspaces.com/homepage/materials.jpg"} 
                         alt="Premium Materials"
                         onError={(e) => {
                             // Fallback styling if image fails to load

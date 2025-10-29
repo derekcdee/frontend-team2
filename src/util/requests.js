@@ -409,6 +409,13 @@ export function editOrder(id, orderData) {
     });
 }
 
+export function getAdminAnalytics() {
+    return _ajax({
+        url: "/admin/analytics",
+        method: "GET"
+    })
+}
+
 // admin accessories section
 
 export function getAdminAccessories() {
